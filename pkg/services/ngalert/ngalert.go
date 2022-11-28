@@ -205,7 +205,7 @@ func (ng *AlertNG) init() error {
 		Tracer:               ng.tracer,
 	}
 
-	history, err := configureHistorianBackend(ng.Cfg.UnifiedAlerting.StateHistory, ng.annotationsRepo, ng.dashboardService, ng.store)
+	history, err := configureHistorianBackend(ng.Cfg.UnifiedAlerting.StateHistory, ng.annotationsRepo, ng.dashboardService, ng.store, ng.store)
 	if err != nil {
 		return err
 	}
@@ -378,7 +378,7 @@ func readQuotaConfig(cfg *setting.Cfg) (*quota.Map, error) {
 	return limits, nil
 }
 
-func configureHistorianBackend(cfg setting.UnifiedAlertingStateHistorySettings, ar annotations.Repository, ds dashboards.DashboardService, rs historian.RuleStore) (state.Historian, error) {
+func configureHistorianBackend(cfg setting.UnifiedAlertingStateHistorySettings, ar annotations.Repository, ds dashboards.DashboardService, rs historian.RuleStore, store *store.DBstore) (state.Historian, error) {
 	if !cfg.Enabled {
 		return historian.NewNopHistorian(), nil
 	}
@@ -403,7 +403,7 @@ func configureHistorianBackend(cfg setting.UnifiedAlertingStateHistorySettings, 
 		return backend, nil
 	}
 	if cfg.Backend == "sql" {
-		return historian.NewSqlBackend(), nil
+		return historian.NewSqlStateHistorian(store), nil
 	}
 
 	return nil, fmt.Errorf("unrecognized state history backend: %s", cfg.Backend)
