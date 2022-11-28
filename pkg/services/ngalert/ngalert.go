@@ -263,6 +263,7 @@ func (ng *AlertNG) init() error {
 		EvaluatorFactory:     evalFactory,
 		FeatureManager:       ng.FeatureToggles,
 		AppUrl:               appUrl,
+		Historian:            history,
 	}
 	api.RegisterAPIEndpoints(ng.Metrics.GetAPIMetrics())
 

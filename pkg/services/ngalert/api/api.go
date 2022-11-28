@@ -84,6 +84,7 @@ type API struct {
 	AlertsRouter         *sender.AlertsRouter
 	EvaluatorFactory     eval.EvaluatorFactory
 	FeatureManager       featuremgmt.FeatureToggles
+	Historian            Historian
 
 	AppUrl *url.URL
 }
@@ -154,7 +155,8 @@ func (api *API) RegisterAPIEndpoints(m *metrics.API) {
 	}), m)
 
 	api.RegisterHistoryApiEndpoints(NewHistoryApi(&HistorySrv{
-		log: logger,
+		log:  logger,
+		hist: api.Historian,
 	}), m)
 }
 
