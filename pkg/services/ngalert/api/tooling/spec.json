@@ -1295,7 +1295,7 @@
           "history"
         ],
         "summary": "Query state history for a rule.",
-        "operationId": "RouteGetStateHistory",
+        "operationId": "RouteGetRuleStateHistory",
         "responses": {
           "200": {
             "$ref": "#/responses/StateHistory"
@@ -6091,6 +6091,7 @@
       "$ref": "#/definitions/gettableSilence"
     },
     "gettableSilences": {
+      "description": "GettableSilences gettable silences",
       "type": "array",
       "items": {
         "$ref": "#/definitions/gettableSilence"
