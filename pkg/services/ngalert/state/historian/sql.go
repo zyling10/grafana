@@ -2,6 +2,7 @@ package historian
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,7 +53,25 @@ func (s *SqlStateHistorian) RecordStates(ctx context.Context, rule *models.Alert
 func (s *SqlStateHistorian) QueryStates(ctx context.Context, query models.HistoryQuery) (*data.Frame, error) {
 	// TODO: There should be an app logic layer above this.
 	// TODO: We should not allow querying of state history of rules that the user is not authorized to view.
-	return data.NewFrame("states"), nil
+	records := make([]historyRecord, 0)
+	err := s.store.SQLStore.WithDbSession(ctx, func(sess *sqlstore.DBSession) error {
+		filter := ""
+		_, err := sess.Table("alert_history").Where(filter).AllCols().Get(&records)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].At.Before(records[j].At)
+	})
+
+	frame := data.NewFrame("states")
+
+	frame.Meta.
+
+	return frame, nil
 }
 
 func (s *SqlStateHistorian) buildRecords(rule *models.AlertRule, states []state.StateTransition, logger log.Logger) ([]historyRecord, error) {
