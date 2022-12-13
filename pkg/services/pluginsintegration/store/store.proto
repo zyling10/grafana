@@ -220,6 +220,19 @@ message GetPluginErrorsRequest {
 }
 
 message GetPluginErrorsResponse {
+  repeated PluginError pluginErrors = 1;
+}
+
+message PluginError {
+  string id = 1;
+  string error = 2;
+}
+
+message GetStaticRoutesRequest {
+
+}
+
+message GetStaticRoutesResponse {
 
 }
 
@@ -228,4 +241,7 @@ service PluginManager {
   rpc GetPlugins(GetPluginsRequest) returns (GetPluginsResponse);
   rpc AddPlugin(AddPluginRequest) returns (AddPluginResponse);
   rpc RemovePlugin(RemovePluginRequest) returns (RemovePluginResponse);
+
+  rpc PluginErrors(GetPluginErrorsRequest) returns (GetPluginErrorsResponse); // Can we attach error to a plugin instead?
+  rpc StaticRoute(GetStaticRoutesRequest) returns (GetStaticRoutesResponse); // Can we attach error to a plugin instead?
 }
