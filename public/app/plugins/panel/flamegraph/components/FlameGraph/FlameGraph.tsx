@@ -63,6 +63,7 @@ const FlameGraph = ({
   const totalTicks = data.fields[1].values.get(0);
   const valueField =
     data.fields.find((f) => f.name === 'value') ?? data.fields.find((f) => f.type === FieldType.number);
+  console.log(data, valueField);
   if (!valueField) {
     throw new Error('Malformed dataFrame: value field of type number is not in the query response');
   }

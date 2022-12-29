@@ -156,6 +156,7 @@ export function TraceView(props: Props) {
             updateViewRangeTime={updateViewRangeTime}
             viewRange={viewRange}
             timeZone={timeZone}
+            dataFrame={props.dataFrames[0]}
           />
           <TraceTimelineViewer
             registerAccessors={noop}

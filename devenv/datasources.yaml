@@ -51,16 +51,17 @@ datasources:
     jsonData:
       implementation: prometheus
 
-  - name: gdev-prometheus
-    uid: gdev-prometheus
+  - name: Mimir
     type: prometheus
     access: proxy
-    url: http://localhost:9090
+    uid: mimir
+    url: http://localhost:9009/prometheus
     jsonData:
-      manageAlerts: true
-      alertmanagerUid: gdev-alertmanager
-      prometheusType: Prometheus #Cortex | Mimir | Prometheus | Thanos
-      prometheusVersion: 2.40.0
+      exemplarTraceIdDestinations:
+        - datasourceUid: tempo
+          name: traceID
+      httpMethod: POST
+      timeInterval: "2s"
 
   - name: gdev-slow-prometheus
     type: prometheus
@@ -232,37 +233,17 @@ datasources:
       defaultRegion: eu-west-2
       customMetricsNamespaces: "CWAgent"
 
-  - name: gdev-loki
+  - name: Loki
     type: loki
     access: proxy
+    uid: loki
     url: http://localhost:3100
-    editable: false
-    correlations:
-      - targetUID: gdev-jaeger
-        label: "Jaeger traces"
-        description: "Related traces stored in Jaeger"
-      - targetUID: gdev-zipkin
-        label: "Zipkin traces"
-        description: "Related traces stored in Zipkin"
-      - targetUID: gdev-prometheus
-        label: "Logs to metrics"
-        description: "Related metrics stored in Prometheus"
-        config:
-          type: query
-          target:
-            expr: "{ job=\"test\" }"
-          field: "traceID"
     jsonData:
-      manageAlerts: false
       derivedFields:
-        - name: "traceID"
-          matcherRegex: "traceID=(\\w+)"
-          url: "$${__value.raw}"
-          datasourceUid: gdev-jaeger
-        - name: "traceID"
-          matcherRegex: "traceID=(\\w+)"
-          url: "$${__value.raw}"
-          datasourceUid: gdev-zipkin
+        - datasourceUid: tempo
+          matcherRegex: "^.*?traceI[d|D]=(\\w+).*$"
+          name: traceId
+          url: '$${__value.raw}'
 
   - name: gdev-jaeger
     type: jaeger
@@ -278,9 +259,24 @@ datasources:
     url: http://localhost:9411
     editable: false
 
-  - name: gdev-tempo
+  - name: Tempo
     type: tempo
-    uid: gdev-tempo
     access: proxy
+    uid: tempo
     url: http://localhost:3200
-    editable: false
+    jsonData:
+      nodeGraph:
+        enabled: true
+      serviceMap:
+        datasourceUid: 'Mimir'
+      tracesToLogs:
+        datasourceUid: loki
+        filterByTraceID: false
+        spanEndTimeShift: "500ms"
+        spanStartTimeShift: "-500ms"
+        tags: [ 'beast' ]
+  - name: Phlare
+    type: phlare
+    access: proxy
+    uid: phlare
+    url: http://localhost:4100

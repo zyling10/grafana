@@ -19,7 +19,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import MdKeyboardArrowRight from 'react-icons/lib/md/keyboard-arrow-right';
 
-import { dateTimeFormat, GrafanaTheme2, TimeZone } from '@grafana/data';
+import { DataFrame, dateTimeFormat, GrafanaTheme2, TimeZone } from '@grafana/data';
 import {
   Badge,
   Button,
@@ -37,6 +37,7 @@ import {
 } from '@grafana/ui';
 
 import { autoColor, TUpdateViewRangeTimeFunction, ViewRange, ViewRangeTimeUpdate } from '..';
+import { FlameGraphExploreContainer } from '../../../../public/app/features/explore/FlameGraphExploreContainer';
 import { SelectedView } from '../../../../public/app/plugins/panel/flamegraph/components/types';
 import ExternalLinks from '../common/ExternalLinks';
 import TraceName from '../common/TraceName';
@@ -175,6 +176,7 @@ export type TracePageHeaderEmbedProps = {
   updateViewRangeTime: TUpdateViewRangeTimeFunction;
   viewRange: ViewRange;
   timeZone: TimeZone;
+  dataFrame: DataFrame;
 };
 
 export const HEADER_ITEMS = [
@@ -228,6 +230,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
     updateViewRangeTime,
     viewRange,
     timeZone,
+    dataFrame,
   } = props;
 
   const styles = useStyles2(getStyles);
@@ -399,6 +402,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
               updateNextViewRangeTime={updateNextViewRangeTime}
               updateViewRangeTime={updateViewRangeTime}
             />
+            <FlameGraphExploreContainer dataFrames={[dataFrame]} />
           </div>
         )}
       </VerticalGroup>

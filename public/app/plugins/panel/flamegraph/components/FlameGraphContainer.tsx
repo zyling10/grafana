@@ -41,6 +41,8 @@ const FlameGraphContainer = (props: Props) => {
     return nestedSetToLevels(dataView);
   }, [props.data]);
 
+  console.log(levels);
+
   const styles = useStyles2(() => getStyles(props.app, PIXELS_PER_LEVEL * levels.length));
 
   // If user resizes window with both as the selected view
