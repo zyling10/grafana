@@ -270,9 +270,20 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
             <small className={cx(styles.TracePageHeaderTraceId, uTxMuted)}>{formatDuration(trace.duration)}</small>
           </HorizontalGroup>
         </h1>
-        <Button icon={'link'} size={'sm'} fill={'outline'}>
-          Logs
-        </Button>
+        <HorizontalGroup justify={'flex-end'} spacing={'sm'}>
+          <Button icon={'plus'} size={'sm'} fill={'outline'} variant={'destructive'}>
+            Add To Incident
+          </Button>
+          <Button icon={'copy'} size={'sm'} fill={'outline'}>
+            Trace ID
+          </Button>
+          <Button icon={'link'} size={'sm'} fill={'outline'}>
+            Logs
+          </Button>
+          <Button icon={'export'} size={'sm'} fill={'outline'}>
+            Export
+          </Button>
+        </HorizontalGroup>
       </HorizontalGroup>
 
       <HorizontalGroup>
@@ -377,15 +388,11 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
           </HorizontalGroup>
         </Collapse>
         <HorizontalGroup justify={'space-between'}>
-          <div
-            className={cx(
-              css`
-                color: #aaa;
-              `
-            )}
-          >
-            Displaying 19/34 spans
-          </div>
+          <HorizontalGroup justify={'flex-start'} spacing={'sm'}>
+            <div className={cx(styles.TempHttpUrl)}>Spans 19/34</div>
+            <div className={cx(styles.TempHttpUrl)}>Services 14/14</div>
+            <div className={cx(styles.TempHttpUrl)}>Depth 3/7</div>
+          </HorizontalGroup>
           <RadioButtonGroup<SelectedView> options={viewOptions} value={SelectedView.TopTable} onChange={() => {}} />
         </HorizontalGroup>
         {!hideMap && !slimView && (
@@ -402,7 +409,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
               updateNextViewRangeTime={updateNextViewRangeTime}
               updateViewRangeTime={updateViewRangeTime}
             />
-            <FlameGraphExploreContainer dataFrames={[dataFrame]} />
+            {/*<FlameGraphExploreContainer dataFrames={[dataFrame]} />*/}
           </div>
         )}
       </VerticalGroup>
