@@ -28,16 +28,15 @@ import {
   Icon,
   InlineField,
   InlineFieldRow,
-  Input,
   QueryField,
   RadioButtonGroup,
+  RangeSlider,
   Select,
   useStyles2,
   VerticalGroup,
 } from '@grafana/ui';
 
 import { autoColor, TUpdateViewRangeTimeFunction, ViewRange, ViewRangeTimeUpdate } from '..';
-import { FlameGraphExploreContainer } from '../../../../public/app/features/explore/FlameGraphExploreContainer';
 import { SelectedView } from '../../../../public/app/plugins/panel/flamegraph/components/types';
 import ExternalLinks from '../common/ExternalLinks';
 import TraceName from '../common/TraceName';
@@ -230,7 +229,6 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
     updateViewRangeTime,
     viewRange,
     timeZone,
-    dataFrame,
   } = props;
 
   const styles = useStyles2(getStyles);
@@ -322,7 +320,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
   );
 
   let viewOptions: Array<{ value: SelectedView; label: string; description: string }> = [
-    { value: SelectedView.TopTable, label: 'Minimap', description: 'Show the minimap' },
+    { value: SelectedView.TopTable, label: 'Span List', description: 'Show the trace as a span list' },
     { value: SelectedView.FlameGraph, label: 'Flame Graph', description: 'Show the flame graph' },
   ];
 
@@ -353,7 +351,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
         </div>
         <Collapse label={'Span Filters'} collapsible isOpen={filtersOpen} onToggle={setFiltersOpen}>
           <InlineFieldRow>
-            <InlineField label="Span Name" labelWidth={14} grow>
+            <InlineField label="Span Name" labelWidth={14}>
               <Select
                 inputId="spanName"
                 options={[]}
@@ -365,15 +363,12 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
               />
             </InlineField>
             <InlineField label="Tags" labelWidth={14} grow tooltip="Values should be in logfmt.">
-              <QueryField placeholder="http.status_code=200 error=true" portalOrigin="tempo" />
+              <QueryField placeholder="http.status_code=200" portalOrigin="tempo" />
             </InlineField>
-          </InlineFieldRow>
-          <InlineFieldRow>
-            <InlineField label="Min Duration" labelWidth={14} grow>
-              <Input id="minDuration" value={''} placeholder={'e.g. 1.2s, 100ms'} />
-            </InlineField>
-            <InlineField label="Max Duration" labelWidth={14} grow>
-              <Input id="maxDuration" value={''} placeholder={'e.g. 1.2s, 100ms'} />
+            <InlineField label="Duration" labelWidth={14}>
+              <div style={{ width: '200px' }}>
+                <RangeSlider min={1} max={32} value={[4, 13]} />
+              </div>
             </InlineField>
           </InlineFieldRow>
           <HorizontalGroup justify={'space-between'} align={'flex-start'}>
