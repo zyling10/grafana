@@ -33,7 +33,7 @@ export function TraceViewContainer(props: Props) {
   }
 
   return (
-    <Collapse label={'Trace View'} isOpen>
+    <Collapse label={''} isOpen>
       <TraceView
         exploreId={exploreId}
         dataFrames={dataFrames}

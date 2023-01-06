@@ -160,6 +160,9 @@ const getStyles = (theme: GrafanaTheme2) => {
       padding: 1px 8px;
       font-size: 12px;
     `,
+    Temp: css`
+      height: 100%;
+    `,
   };
 };
 
@@ -312,7 +315,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
               candidateSpan?.tags.find((t) => t.key === 'http.target')?.value}
           </div>
           {candidateSpan?.tags.find((t) => t.key === 'http.status_code')?.value && (
-            <Badge text={candidateSpan?.tags.find((t) => t.key === 'http.status_code')?.value} color={'red'} />
+            <Badge text={candidateSpan?.tags.find((t) => t.key === 'http.status_code')?.value} color={'green'} />
           )}
         </div>
       </HorizontalGroup>
@@ -351,7 +354,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
         </div>
         <Collapse label={'Span Filters'} collapsible isOpen={filtersOpen} onToggle={setFiltersOpen}>
           <InlineFieldRow>
-            <InlineField label="Span Name" labelWidth={14}>
+            <InlineField label="Span Name" labelWidth={14} grow>
               <Select
                 inputId="spanName"
                 options={[]}
@@ -365,19 +368,29 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
             <InlineField label="Tags" labelWidth={14} grow tooltip="Values should be in logfmt.">
               <QueryField placeholder="http.status_code=200" portalOrigin="tempo" />
             </InlineField>
-            <InlineField label="Duration" labelWidth={14}>
-              <div style={{ width: '200px' }}>
+            <InlineField label="Duration" labelWidth={14} className={cx(styles.Temp)}>
+              <div style={{ width: '200px', display: 'flex', alignItems: 'flex-end' }}>
                 <RangeSlider min={1} max={32} value={[4, 13]} />
               </div>
             </InlineField>
           </InlineFieldRow>
           <HorizontalGroup justify={'space-between'} align={'flex-start'}>
-            <Button size={'sm'} variant={'secondary'} fill={'outline'}>
-              Critical Path
-            </Button>
-            <HorizontalGroup justify={'flex-end'}>
+            <HorizontalGroup>
               <Button size={'sm'} variant={'secondary'} fill={'outline'}>
+                Critical Path
+              </Button>
+              <Button size={'sm'} variant={'destructive'} fill={'outline'}>
                 Reset
+              </Button>
+            </HorizontalGroup>
+
+            <HorizontalGroup justify={'flex-end'} spacing={'sm'}>
+              <small>1/14 results</small>
+              <Button size={'sm'} variant={'secondary'} fill={'outline'}>
+                Prev
+              </Button>
+              <Button size={'sm'} variant={'secondary'} fill={'outline'}>
+                Next
               </Button>
             </HorizontalGroup>
           </HorizontalGroup>
@@ -388,7 +401,7 @@ export default function TracePageHeader(props: TracePageHeaderEmbedProps) {
             <div className={cx(styles.TempHttpUrl)}>Services 14/14</div>
             <div className={cx(styles.TempHttpUrl)}>Depth 3/7</div>
           </HorizontalGroup>
-          <RadioButtonGroup<SelectedView> options={viewOptions} value={SelectedView.TopTable} onChange={() => {}} />
+          <RadioButtonGroup<SelectedView> options={viewOptions} value={SelectedView.FlameGraph} onChange={() => {}} />
         </HorizontalGroup>
         {!hideMap && !slimView && (
           <div
