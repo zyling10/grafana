@@ -5,6 +5,7 @@ import {
   AbsoluteTimeRange,
   Field,
   hasLogsContextSupport,
+  hasLogsContextUiSupport,
   LoadingState,
   LogRowModel,
   RawTimeRange,
@@ -61,6 +62,19 @@ class LogsContainer extends PureComponent<LogsContainerProps> {
     }
 
     return [];
+  };
+
+  getLogRowContextUi = (row: LogRowModel, refresh?: () => void): React.ReactNode => {
+    const { datasourceInstance, logsQueries } = this.props;
+
+    if (hasLogsContextUiSupport(datasourceInstance) && datasourceInstance.getLogRowContextUi) {
+      const query = (logsQueries ?? []).find(
+        (q) => q.refId === row.dataFrame.refId && q.datasource != null && q.datasource.type === datasourceInstance.type
+      );
+      return datasourceInstance.getLogRowContextUi(row, refresh, query);
+    }
+
+    return <></>;
   };
 
   showContextToggle = (row?: LogRowModel): boolean => {
@@ -159,6 +173,7 @@ class LogsContainer extends PureComponent<LogsContainerProps> {
             scanRange={range.raw}
             showContextToggle={this.showContextToggle}
             getRowContext={this.getLogRowContext}
+            getRowContextUi={this.getLogRowContextUi}
             getFieldLinks={this.getFieldLinks}
             addResultsToCache={() => addResultsToCache(exploreId)}
             clearCache={() => clearCache(exploreId)}

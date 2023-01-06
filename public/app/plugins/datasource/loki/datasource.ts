@@ -9,6 +9,7 @@ import {
   CoreApp,
   DataFrame,
   DataFrameView,
+  DataQuery,
   DataQueryError,
   DataQueryRequest,
   DataQueryResponse,
@@ -50,6 +51,7 @@ import LanguageProvider from './LanguageProvider';
 import { LiveStreams, LokiLiveTarget } from './LiveStreams';
 import { transformBackendResult } from './backendResultTransformer';
 import { LokiAnnotationsQueryEditor } from './components/AnnotationsQueryEditor';
+import { LokiContextUi } from './components/LokiContextUi';
 import { escapeLabelValueInExactSelector, escapeLabelValueInSelector, isRegexSelector } from './languageUtils';
 import { labelNamesRegex, labelValuesRegex } from './migrations/variableQueryMigrations';
 import {
@@ -66,11 +68,12 @@ import {
   getLabelFilterPositions,
 } from './modifyQuery';
 import { getQueryHints } from './queryHints';
-import { getLogQueryFromMetricsQuery, getNormalizedLokiQuery, isLogsQuery, isValidQuery } from './queryUtils';
+import { getLogQueryFromMetricsQuery, getNormalizedLokiQuery, getParserFromQuery, isLogsQuery, isValidQuery } from './queryUtils';
 import { sortDataFrameByTime } from './sortDataFrame';
 import { doLokiChannelStream } from './streaming';
 import { trackQuery } from './tracking';
 import {
+  ContextFilter,
   LokiOptions,
   LokiQuery,
   LokiQueryDirection,
@@ -124,6 +127,8 @@ export class LokiDatasource
   languageProvider: LanguageProvider;
   maxLines: number;
 
+  contextFilters: Map<string, ContextFilter> = new Map();
+
   constructor(
     private instanceSettings: DataSourceInstanceSettings<LokiOptions>,
     private readonly templateSrv: TemplateSrv = getTemplateSrv(),
@@ -157,6 +162,38 @@ export class LokiDatasource
     }
   }
 
+  getLogRowContextUi(row: LogRowModel, refresh?: () => void, query?: DataQuery): React.ReactNode {
+    const allLabels = this.languageProvider.getLabelKeys();
+
+    if (allLabels.length === 0) {
+      return;
+    }
+
+    Object.keys(row.labels).forEach((label: string) => {
+      if (!this.contextFilters.has(label)) {
+        const filter: ContextFilter = {
+          key: label,
+          value: row.labels[label],
+          enabled: allLabels.includes(label),
+          fromParser: !allLabels.includes(label),
+        };
+        this.contextFilters.set(label, filter);
+      }
+    });
+
+    const ui = LokiContextUi({
+      filters: this.contextFilters,
+      updateFilter: (label: string, value: Map<string, ContextFilter>) => {
+        this.contextFilters = value;
+        if (refresh) {
+          refresh();
+        }
+      },
+    });
+
+    return ui;
+  }
+  
   getSupportedSupplementaryQueryTypes(): SupplementaryQueryType[] {
     return [SupplementaryQueryType.LogsVolume, SupplementaryQueryType.LogsSample];
   }
@@ -576,10 +613,14 @@ export class LokiDatasource
     return Math.ceil(date.valueOf() * 1e6);
   }
 
-  getLogRowContext = async (row: LogRowModel, options?: RowContextOptions): Promise<{ data: DataFrame[] }> => {
+  getLogRowContext = async (
+    row: LogRowModel,
+    options?: RowContextOptions,
+    origQuery?: DataQuery
+  ): Promise<{ data: DataFrame[] }> => {
     const direction = (options && options.direction) || 'BACKWARD';
     const limit = (options && options.limit) || 10;
-    const { query, range } = await this.prepareLogRowContextQueryTarget(row, limit, direction);
+    const { query, range } = await this.prepareLogRowContextQueryTarget(row, limit, direction, origQuery);
 
     const processDataFrame = (frame: DataFrame): DataFrame => {
       // log-row-context requires specific field-names to work, so we set them here: "ts", "line", "id"
@@ -645,14 +686,18 @@ export class LokiDatasource
   prepareLogRowContextQueryTarget = async (
     row: LogRowModel,
     limit: number,
-    direction: 'BACKWARD' | 'FORWARD'
+    direction: 'BACKWARD' | 'FORWARD',
+    origQuery?: DataQuery
   ): Promise<{ query: LokiQuery; range: TimeRange }> => {
     // need to await the languageProvider to be started to have all labels. This call is not blocking after it has been called once.
     await this.languageProvider.start();
     const labels = this.languageProvider.getLabelKeys();
-    const expr = Object.keys(row.labels)
-      .map((label: string) => {
-        if (labels.includes(label)) {
+    const contextFilters = [...this.contextFilters.entries()];
+
+    let expr = contextFilters
+      .map(([label]) => {
+        const filter = this.contextFilters.get(label);
+        if (filter && !filter.fromParser && filter.enabled && labels.includes(label)) {
           // escape backslashes in label as users can't escape them by themselves
           return `${label}="${escapeLabelValueInExactSelector(row.labels[label])}"`;
         }
@@ -662,12 +707,30 @@ export class LokiDatasource
       .filter((label) => !!label)
       .join(',');
 
+    expr = `{${expr}}`;
+
+    const parserContextFilters = contextFilters.filter(([_, filter]) => filter.fromParser && filter.enabled);
+    if (parserContextFilters.length) {
+      // we should also filter for labels from parsers, let's find the right parser
+      if (origQuery) {
+        const parser = getParserFromQuery((origQuery as LokiQuery).expr);
+        expr = addParserToQuery(expr, parser);
+      }
+      for (const [label, filter] of parserContextFilters) {
+        if (filter.enabled) {
+          expr = addLabelToQuery(expr, label, '=', filter.value);
+        }
+      }
+    }
+
+    console.log('expr', expr);
+
     const contextTimeBuffer = 2 * 60 * 60 * 1000; // 2h buffer
 
     const queryDirection = direction === 'FORWARD' ? LokiQueryDirection.Forward : LokiQueryDirection.Backward;
 
     const query: LokiQuery = {
-      expr: `{${expr}}`,
+      expr,
       queryType: LokiQueryType.Range,
       refId: `${REF_ID_STARTER_LOG_ROW_CONTEXT}${row.dataFrame.refId || ''}`,
       maxLines: limit,
