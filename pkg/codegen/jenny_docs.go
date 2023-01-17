@@ -99,19 +99,27 @@ type templateData struct {
 // -------------------- JSON to Markdown conversion --------------------
 // Copied from https://github.com/marcusolsson/json-schema-docs and slightly changed to fit the DocsJenny
 
+type additionalPropertyVal struct {
+	Type                 string `json:"type,omitempty"`
+	Format               string `json:"format,omitempty"`
+	AdditionalProperties json.RawMessage
+	Items                json.RawMessage
+}
+
 type schema struct {
-	ID          string             `json:"$id,omitempty"`
-	Ref         string             `json:"$ref,omitempty"`
-	Schema      string             `json:"$schema,omitempty"`
-	Title       string             `json:"title,omitempty"`
-	Description string             `json:"description,omitempty"`
-	Required    []string           `json:"required,omitempty"`
-	Type        PropertyTypes      `json:"type,omitempty"`
-	Properties  map[string]*schema `json:"properties,omitempty"`
-	Items       *schema            `json:"items,omitempty"`
-	Definitions map[string]*schema `json:"definitions,omitempty"`
-	Enum        []Any              `json:"enum"`
-	Default     any                `json:"default"`
+	ID                   string                     `json:"$id,omitempty"`
+	Ref                  string                     `json:"$ref,omitempty"`
+	Schema               string                     `json:"$schema,omitempty"`
+	Title                string                     `json:"title,omitempty"`
+	Description          string                     `json:"description,omitempty"`
+	Required             []string                   `json:"required,omitempty"`
+	Type                 PropertyTypes              `json:"type,omitempty"`
+	Properties           map[string]*schema         `json:"properties,omitempty"`
+	AdditionalProperties map[string]json.RawMessage `json:"additionalProperties,omitempty"`
+	Items                *schema                    `json:"items,omitempty"`
+	Definitions          map[string]*schema         `json:"definitions,omitempty"`
+	Enum                 []Any                      `json:"enum"`
+	Default              any                        `json:"default"`
 }
 
 func jsonToMarkdown(jsonData []byte, tpl string, kindName string) ([]byte, error) {
@@ -234,7 +242,7 @@ func (s schema) Markdown(level int) string {
 
 	var buf bytes.Buffer
 
-	if s.Title != "" {
+	if s.Title != "" && len(s.AdditionalProperties) == 0 {
 		fmt.Fprintln(&buf, makeHeading(s.Title, level))
 		fmt.Fprintln(&buf)
 	}
@@ -244,11 +252,6 @@ func (s schema) Markdown(level int) string {
 		if s.Default != nil {
 			fmt.Fprintf(&buf, "The default value is: `%v`.", s.Default)
 		}
-		fmt.Fprintln(&buf)
-	}
-
-	if len(s.Properties) > 0 {
-		fmt.Fprintln(&buf, makeHeading("Properties", level+1))
 		fmt.Fprintln(&buf)
 	}
 
@@ -282,6 +285,11 @@ func findDefinitions(s *schema) []*schema {
 	var objs []*schema
 
 	for k, p := range s.Properties {
+		// No need to render properties table for a map type
+		if len(p.AdditionalProperties) > 0 {
+			continue
+		}
+
 		// Use the identifier as the title.
 		if p.Type.HasType(PropertyTypeObject) {
 			if len(p.Title) == 0 {
@@ -312,6 +320,45 @@ func findDefinitions(s *schema) []*schema {
 	return objs
 }
 
+func renderMapType(props map[string]json.RawMessage) string {
+	res, _ := json.Marshal(props)
+	return string(res)
+}
+
+func propertyType(name string, value *schema) []string {
+	if len(value.AdditionalProperties) > 0 {
+		typeStr := renderMapType(value.AdditionalProperties)
+		return []string{typeStr}
+	}
+
+	// Generate relative links for objects and arrays of objects.
+	var propType []string
+	for _, pt := range value.Type {
+		switch pt {
+		case PropertyTypeObject:
+			pName, anchor := propNameAndAnchor(name, value.Title)
+			propType = append(propType, fmt.Sprintf("[%s](#%s)", pName, anchor))
+		case PropertyTypeArray:
+			if value.Items != nil {
+				for _, pi := range value.Items.Type {
+					if pi == PropertyTypeObject {
+						pName, anchor := propNameAndAnchor(name, value.Items.Title)
+						propType = append(propType, fmt.Sprintf("[%s](#%s)[]", pName, anchor))
+					} else {
+						propType = append(propType, fmt.Sprintf("%s[]", pi))
+					}
+				}
+			} else {
+				propType = append(propType, string(pt))
+			}
+		default:
+			propType = append(propType, string(pt))
+		}
+	}
+
+	return propType
+}
+
 func printProperties(w io.Writer, s *schema) {
 	table := tablewriter.NewWriter(w)
 	table.SetHeader([]string{"Property", "Type", "Required", "Description"})
@@ -324,31 +371,9 @@ func printProperties(w io.Writer, s *schema) {
 	// Buffer all property rows so that we can sort them before printing them.
 	var rows [][]string
 
-	for k, p := range s.Properties {
-		// Generate relative links for objects and arrays of objects.
-		var propType []string
-		for _, pt := range p.Type {
-			switch pt {
-			case PropertyTypeObject:
-				name, anchor := propNameAndAnchor(k, p.Title)
-				propType = append(propType, fmt.Sprintf("[%s](#%s)", name, anchor))
-			case PropertyTypeArray:
-				if p.Items != nil {
-					for _, pi := range p.Items.Type {
-						if pi == PropertyTypeObject {
-							name, anchor := propNameAndAnchor(k, p.Items.Title)
-							propType = append(propType, fmt.Sprintf("[%s](#%s)[]", name, anchor))
-						} else {
-							propType = append(propType, fmt.Sprintf("%s[]", pi))
-						}
-					}
-				} else {
-					propType = append(propType, string(pt))
-				}
-			default:
-				propType = append(propType, string(pt))
-			}
-		}
+	// Generates top-level types for each property
+	for name, prop := range s.Properties {
+		propType := propertyType(name, prop)
 
 		var propTypeStr string
 		if len(propType) == 1 {
@@ -361,27 +386,27 @@ func printProperties(w io.Writer, s *schema) {
 
 		// Emphasize required properties.
 		var required string
-		if in(s.Required, k) {
+		if in(s.Required, name) {
 			required = "**Yes**"
 		} else {
 			required = "No"
 		}
 
-		desc := p.Description
+		desc := prop.Description
 
-		if len(p.Enum) > 0 {
+		if len(prop.Enum) > 0 {
 			var vals []string
-			for _, e := range p.Enum {
+			for _, e := range prop.Enum {
 				vals = append(vals, e.String())
 			}
 			desc += " Possible values are: `" + strings.Join(vals, "`, `") + "`."
 		}
 
-		if p.Default != nil {
-			desc += fmt.Sprintf(" Default: `%v`.", p.Default)
+		if prop.Default != nil {
+			desc += fmt.Sprintf(" Default: `%v`.", prop.Default)
 		}
 
-		rows = append(rows, []string{fmt.Sprintf("`%s`", k), propTypeStr, required, formatForTable(desc)})
+		rows = append(rows, []string{fmt.Sprintf("`%s`", name), propTypeStr, required, formatForTable(desc)})
 	}
 
 	// Sort by the required column, then by the name column.

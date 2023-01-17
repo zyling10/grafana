@@ -768,6 +768,18 @@
         0
       ]
     },
+    "test": {
+      "name": "Test",
+      "pluralName": "Tests",
+      "machineName": "test",
+      "pluralMachineName": "tests",
+      "lineageIsGroup": false,
+      "maturity": "merged",
+      "currentVersion": [
+        0,
+        0
+      ]
+    },
     "testdata_dsoptions": {
       "name": "Testdata-DSOptions",
       "pluralName": "Testdata-DSOptionss",
@@ -972,10 +984,11 @@
           "queryhistory",
           "serviceaccount",
           "team",
+          "test",
           "thumb",
           "user"
         ],
-        "count": 11
+        "count": 12
       }
     },
     "maturity": {
@@ -1004,9 +1017,10 @@
           "playlist",
           "stat_panel",
           "team",
+          "test",
           "text_panel"
         ],
-        "count": 13
+        "count": 14
       },
       "planned": {
         "name": "planned",

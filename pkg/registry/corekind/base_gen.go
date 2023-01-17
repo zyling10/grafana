@@ -12,9 +12,7 @@ package corekind
 import (
 	"fmt"
 
-	"github.com/grafana/grafana/pkg/kinds/dashboard"
-	"github.com/grafana/grafana/pkg/kinds/playlist"
-	"github.com/grafana/grafana/pkg/kinds/team"
+	"github.com/grafana/grafana/pkg/kinds/test"
 	"github.com/grafana/grafana/pkg/kindsys"
 	"github.com/grafana/thema"
 )
@@ -30,55 +28,29 @@ import (
 // Prefer All*() methods when performing operations generically across all kinds.
 // For example, a validation HTTP middleware for any kind-schematized object type.
 type Base struct {
-	all       []kindsys.Core
-	dashboard *dashboard.Kind
-	playlist  *playlist.Kind
-	team      *team.Kind
+	all  []kindsys.Core
+	test *test.Kind
 }
 
 // type guards
 var (
-	_ kindsys.Core = &dashboard.Kind{}
-	_ kindsys.Core = &playlist.Kind{}
-	_ kindsys.Core = &team.Kind{}
+	_ kindsys.Core = &test.Kind{}
 )
 
-// Dashboard returns the [kindsys.Interface] implementation for the dashboard kind.
-func (b *Base) Dashboard() *dashboard.Kind {
-	return b.dashboard
-}
-
-// Playlist returns the [kindsys.Interface] implementation for the playlist kind.
-func (b *Base) Playlist() *playlist.Kind {
-	return b.playlist
-}
-
-// Team returns the [kindsys.Interface] implementation for the team kind.
-func (b *Base) Team() *team.Kind {
-	return b.team
+// Test returns the [kindsys.Interface] implementation for the test kind.
+func (b *Base) Test() *test.Kind {
+	return b.test
 }
 
 func doNewBase(rt *thema.Runtime) *Base {
 	var err error
 	reg := &Base{}
 
-	reg.dashboard, err = dashboard.NewKind(rt)
+	reg.test, err = test.NewKind(rt)
 	if err != nil {
-		panic(fmt.Sprintf("error while initializing the dashboard Kind: %s", err))
+		panic(fmt.Sprintf("error while initializing the test Kind: %s", err))
 	}
-	reg.all = append(reg.all, reg.dashboard)
-
-	reg.playlist, err = playlist.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the playlist Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.playlist)
-
-	reg.team, err = team.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the team Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.team)
+	reg.all = append(reg.all, reg.test)
 
 	return reg
 }
