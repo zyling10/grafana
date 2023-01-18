@@ -20,7 +20,7 @@ import (
 	"github.com/xeipuuv/gojsonpointer"
 )
 
-func DocsJenny(docsPath string) OneToOne {
+func DocsJenny(docsPath string) codejen.OneToOne[SchemaForGen] {
 	return docsJenny{
 		docsPath: docsPath,
 	}
@@ -34,8 +34,8 @@ func (j docsJenny) JennyName() string {
 	return "DocsJenny"
 }
 
-func (j docsJenny) Generate(decl *DeclForGen) (*codejen.File, error) {
-	f, err := jsonschema.GenerateSchema(decl.Lineage().Latest())
+func (j docsJenny) Generate(sfg SchemaForGen) (*codejen.File, error) {
+	f, err := jsonschema.GenerateSchema(sfg.Schema.Lineage().Latest())
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate json representation for the schema: %v", err)
 	}
@@ -57,13 +57,12 @@ func (j docsJenny) Generate(decl *DeclForGen) (*codejen.File, error) {
 
 	// fixes the references between the types within a json after making components.schema.<types> the root of the json
 	kindJsonStr := strings.Replace(string(obj.Components.Schemas), "#/components/schemas/", "#/", -1)
-
-	kindProps := decl.Properties.Common()
-	kindName := strings.ToLower(kindProps.Name)
+	kindName := sfg.Schema.Lineage().Name()
 	data := templateData{
-		KindName:     kindProps.Name,
-		KindVersion:  decl.Lineage().Latest().Version().String(),
-		KindMaturity: string(kindProps.Maturity),
+		KindName:    sfg.Name,
+		KindVersion: sfg.Schema.Lineage().Latest().Version().String(),
+		// TODO: Add maturity
+		KindMaturity: "",
 		Markdown:     "{{ .Markdown 1 }}",
 	}
 
@@ -77,7 +76,7 @@ func (j docsJenny) Generate(decl *DeclForGen) (*codejen.File, error) {
 		return nil, fmt.Errorf("failed to build markdown for kind %s: %v", kindName, err)
 	}
 
-	return codejen.NewFile(filepath.Join(j.docsPath, kindName, "schema-reference.md"), doc, j), nil
+	return codejen.NewFile(filepath.Join(j.docsPath, strings.ToLower(kindName), "schema-reference.md"), doc, j), nil
 }
 
 // makeTemplate pre-populates the template with the kind metadata

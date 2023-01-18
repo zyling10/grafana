@@ -56,6 +56,9 @@ func main() {
 		codegen.PluginTreeListJenny(),
 		codegen.PluginGoTypesJenny("pkg/tsdb", adaptToPipeline(corecodegen.GoTypesJenny{})),
 		codegen.PluginTSTypesJenny("public/app/plugins", adaptToPipeline(corecodegen.TSTypesJenny{})),
+		codegen.PluginDocsJenny(adaptToPipeline(corecodegen.DocsJenny(
+			filepath.Join("docs", "sources", "developers", "kinds", "composable"),
+		))),
 	)
 
 	pluginKindGen.AddPostprocessors(corecodegen.SlashHeaderMapper("public/app/plugins/gen.go"))
