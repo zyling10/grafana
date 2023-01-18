@@ -183,15 +183,27 @@ func (cd *CoremodelDeclaration) GenerateGoCoremodel(path string) (WriteDiffer, e
 		return nil, fmt.Errorf("error executing imports template: %w", err)
 	}
 
-	gostr, err := codegen.Generate(oT, lin.Name(), codegen.Options{
-		GenerateTypes: true,
-		SkipPrune:     true,
-		SkipFmt:       true,
-		UserTemplates: map[string]string{
-			"imports.tmpl": importbuf.String(),
-			"typedef.tmpl": tmplTypedef,
+	ccfg := codegen.Configuration{
+		PackageName: lin.Name(),
+		Compatibility: codegen.CompatibilityOptions{
+			AlwaysPrefixEnumValues: true,
 		},
-	})
+		Generate: codegen.GenerateOptions{
+			Models: true,
+		},
+		OutputOptions: codegen.OutputOptions{
+			SkipFmt:   true,
+			SkipPrune: true,
+			UserTemplates: map[string]string{
+				"imports.tmpl": importbuf.String(),
+				"typedef.tmpl": tmplTypedef,
+			},
+		},
+		ImportMapping:     nil,
+		AdditionalImports: nil,
+	}
+
+	gostr, err := codegen.Generate(oT, ccfg)
 	if err != nil {
 		return nil, fmt.Errorf("openapi generation failed: %w", err)
 	}

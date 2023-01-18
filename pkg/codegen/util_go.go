@@ -238,9 +238,33 @@ func DecoderCompactor() dstutil.ApplyFunc {
 		return false
 	}
 }
+
 func ddepoint(e dst.Expr) dst.Expr {
 	if star, is := e.(*dst.StarExpr); is {
 		return star.X
 	}
 	return e
+}
+
+func FixTODOCommnets() dstutil.ApplyFunc {
+	return func(cursor *dstutil.Cursor) bool {
+		switch f := cursor.Node().(type) {
+		case *dst.File:
+			for _, d := range f.Decls {
+				fixTODOComments(d.Decorations().Start.All())
+			}
+		case *dst.Field:
+			fixTODOComments(f.Decorations().Start.All())
+		}
+
+		return true
+	}
+}
+
+func fixTODOComments(comments []string) {
+	todoRegex := regexp.MustCompile("(//) (.*) (TODO.*)")
+	if len(comments) > 0 {
+		fmt.Println(comments[0])
+		comments[0] = todoRegex.ReplaceAllString(comments[0], "$1 $3")
+	}
 }
