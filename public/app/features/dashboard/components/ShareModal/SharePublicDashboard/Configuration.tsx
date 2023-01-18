@@ -71,6 +71,12 @@ export const Configuration = ({
               data-testid={selectors.EnableSwitch}
             />
           </Layout>
+          <div>
+            <Layout orientation={isDesktop ? 0 : 1} spacing="xs" justify="space-between">
+              <Label description="Invite people by email">Make public for only specified people</Label>
+              <Switch {...register('isEmailSharingEnabled')} data-testid={selectors.EnableEmailSharingSwitch} />
+            </Layout>
+          </div>
         </VerticalGroup>
       </FieldSet>
     </>

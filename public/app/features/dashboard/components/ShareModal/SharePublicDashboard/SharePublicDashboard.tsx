@@ -55,6 +55,7 @@ export type SharePublicDashboardInputs = {
   isAnnotationsEnabled: boolean;
   enabledSwitch: boolean;
   isTimeRangeEnabled: boolean;
+  isEmailSharingEnabled: boolean;
 } & SharePublicDashboardAcknowledgmentInputs;
 
 export const SharePublicDashboard = (props: Props) => {
@@ -86,6 +87,7 @@ export const SharePublicDashboard = (props: Props) => {
       usageAcknowledgment: false,
       isAnnotationsEnabled: false,
       isTimeRangeEnabled: false,
+      isEmailSharingEnabled: false,
       enabledSwitch: false,
     },
   });
