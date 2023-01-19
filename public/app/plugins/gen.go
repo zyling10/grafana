@@ -1,3 +1,8 @@
+//go:build ignore
+// +build ignore
+
+//go:generate go run gen.go
+
 package main
 
 import (
@@ -51,9 +56,6 @@ func main() {
 		codegen.PluginTreeListJenny(),
 		codegen.PluginGoTypesJenny("pkg/tsdb", adaptToPipeline(corecodegen.GoTypesJenny{ExpandReferences: true})),
 		codegen.PluginTSTypesJenny("public/app/plugins", adaptToPipeline(corecodegen.TSTypesJenny{})),
-		//codegen.PluginDocsJenny(adaptToPipeline(corecodegen.DocsJenny(
-		//	filepath.Join("docs", "sources", "developers", "kinds", "composable"),
-		//))),
 		codegen.PluginDocsJenny(toDeclForGen(corecodegen.DocsJenny(
 			filepath.Join("docs", "sources", "developers", "kinds", "composable"),
 		))),
