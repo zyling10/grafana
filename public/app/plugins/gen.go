@@ -92,3 +92,13 @@ func adaptToPipeline(j codejen.OneToOne[corecodegen.SchemaForGen]) codejen.OneTo
 		}
 	})
 }
+
+func toDeclForGen(j codejen.OneToOne[*corecodegen.DeclForGen]) codejen.OneToOne[*pfs.PluginDecl] {
+	return codejen.AdaptOneToOne(j, func(pd *pfs.PluginDecl) *corecodegen.DeclForGen {
+		kd, err := corecodegen.ForGen(pd.Lineage.Runtime(), pd.KindDecl)
+		if err != nil {
+			panic("should be unreachable")
+		}
+		return kd
+	})
+}
