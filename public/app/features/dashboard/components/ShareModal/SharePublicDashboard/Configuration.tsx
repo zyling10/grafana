@@ -11,16 +11,19 @@ import { DashboardModel } from 'app/features/dashboard/state';
 import { useIsDesktop } from 'app/features/dashboard/utils/screen';
 import { getTimeRange } from 'app/features/dashboard/utils/timeRange';
 
+import { EmailSharingConfiguration } from './EmailSharingConfiguration';
 import { SharePublicDashboardInputs } from './SharePublicDashboard';
 
 export const Configuration = ({
   disabled,
   dashboard,
   register,
+  isEmailSharingEnabled,
 }: {
   disabled: boolean;
   dashboard: DashboardModel;
   register: UseFormRegister<SharePublicDashboardInputs>;
+  isEmailSharingEnabled: boolean;
 }) => {
   const selectors = e2eSelectors.pages.ShareDashboardModal.PublicDashboard;
   const styles = useStyles2(getStyles);
@@ -71,12 +74,7 @@ export const Configuration = ({
               data-testid={selectors.EnableSwitch}
             />
           </Layout>
-          <div>
-            <Layout orientation={isDesktop ? 0 : 1} spacing="xs" justify="space-between">
-              <Label description="Invite people by email">Make public for only specified people</Label>
-              <Switch {...register('isEmailSharingEnabled')} data-testid={selectors.EnableEmailSharingSwitch} />
-            </Layout>
-          </div>
+          <EmailSharingConfiguration register={register} isEnabled={isEmailSharingEnabled} />
         </VerticalGroup>
       </FieldSet>
     </>

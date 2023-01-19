@@ -221,6 +221,7 @@ export const SharePublicDashboard = (props: Props) => {
               register={register}
               dashboard={props.dashboard}
               disabled={!hasWritePermissions || isLoading || isGetError}
+              isEmailSharingEnabled={watch('isEmailSharingEnabled')}
             />
             {publicDashboardPersisted(publicDashboard) && watch('enabledSwitch') && (
               <Field label="Link URL" className={styles.publicUrl}>
