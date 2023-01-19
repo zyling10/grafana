@@ -145,7 +145,24 @@ func newSchema(b []byte, kindName string) (*schema, error) {
 		return nil, err
 	}
 
-	return resolveSchema(data[kindName], root)
+	s, err := getKindSchema(data, kindName)
+	if err != nil {
+		return nil, err
+	}
+	return resolveSchema(s, root)
+}
+
+// composable kinds names are in camelcase, while core kinds have lower case names
+func getKindSchema(data map[string]*schema, kindName string) (*schema, error) {
+	if s, ok := data[kindName]; ok {
+		return s, nil
+	}
+
+	if s, ok := data[strings.ToLower(kindName)]; ok {
+		return s, nil
+	}
+
+	return nil, fmt.Errorf("no schema found for kind: %s", kindName)
 }
 
 // resolveSchema recursively resolves schemas.
