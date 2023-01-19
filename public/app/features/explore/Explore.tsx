@@ -15,6 +15,7 @@ import {
   RawTimeRange,
   EventBus,
   SplitOpenOptions,
+  SupplementaryQueryType,
 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { config, getDataSourceSrv, reportInteraction } from '@grafana/runtime';
@@ -36,6 +37,7 @@ import { ExploreToolbar } from './ExploreToolbar';
 import { FlameGraphExploreContainer } from './FlameGraphExploreContainer';
 import { GraphContainer } from './Graph/GraphContainer';
 import LogsContainer from './LogsContainer';
+import { LogsSamplePanel } from './LogsSamplePanel';
 import { NoData } from './NoData';
 import { NoDataSourceCallToAction } from './NoDataSourceCallToAction';
 import { NodeGraphContainer } from './NodeGraphContainer';
@@ -48,7 +50,14 @@ import TableContainer from './TableContainer';
 import { TraceViewContainer } from './TraceView/TraceViewContainer';
 import { changeSize } from './state/explorePane';
 import { splitOpen } from './state/main';
-import { addQueryRow, modifyQueries, scanStart, scanStopAction, setQueries } from './state/query';
+import {
+  addQueryRow,
+  modifyQueries,
+  scanStart,
+  scanStopAction,
+  setQueries,
+  setSupplementaryQueryEnabled,
+} from './state/query';
 import { isSplit } from './state/selectors';
 import { makeAbsoluteTime, updateTimeRange } from './state/time';
 
@@ -349,6 +358,23 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
     );
   }
 
+  renderLogsSamplePanel() {
+    const { logsSample, timeZone, setSupplementaryQueryEnabled, exploreId, datasourceInstance } = this.props;
+
+    return (
+      <LogsSamplePanel
+        data={logsSample.data}
+        timeZone={timeZone}
+        splitOpen={this.onSplitOpen('logs')}
+        enabled={logsSample.enabled}
+        datasourceInstance={datasourceInstance}
+        setLogsSampleEnabled={(enabled) =>
+          setSupplementaryQueryEnabled(exploreId, enabled, SupplementaryQueryType.LogsSample)
+        }
+      />
+    );
+  }
+
   renderNodeGraphPanel() {
     const { exploreId, showTrace, queryResponse, datasourceInstance } = this.props;
     const datasourceType = datasourceInstance ? datasourceInstance?.type : 'unknown';
@@ -408,6 +434,7 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
       showFlameGraph,
       timeZone,
       isFromCompactUrl,
+      showLogsSample,
     } = this.props;
     const { openDrawer } = this.state;
     const styles = getStyles(theme);
@@ -478,6 +505,7 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
                             <ErrorBoundaryAlert>{this.renderFlameGraphPanel()}</ErrorBoundaryAlert>
                           )}
                           {showTrace && <ErrorBoundaryAlert>{this.renderTraceViewPanel()}</ErrorBoundaryAlert>}
+                          {showLogsSample && <ErrorBoundaryAlert>{this.renderLogsSamplePanel()}</ErrorBoundaryAlert>}
                           {showNoData && <ErrorBoundaryAlert>{this.renderNoData()}</ErrorBoundaryAlert>}
                         </>
                       )}
@@ -520,6 +548,7 @@ function mapStateToProps(state: StoreState, { exploreId }: ExploreProps) {
     queries,
     isLive,
     graphResult,
+    tableResult,
     logsResult,
     showLogs,
     showMetrics,
@@ -532,7 +561,12 @@ function mapStateToProps(state: StoreState, { exploreId }: ExploreProps) {
     loading,
     isFromCompactUrl,
     showRawPrometheus,
+    supplementaryQueries,
   } = item;
+
+  const logsSample = supplementaryQueries[SupplementaryQueryType.LogsSample];
+  // We want to show log samples only if there is there is already graph or table result
+  const showLogsSample = !!(logsSample.dataProvider !== undefined && (graphResult || tableResult));
 
   return {
     datasourceInstance,
@@ -556,6 +590,8 @@ function mapStateToProps(state: StoreState, { exploreId }: ExploreProps) {
     splitted: isSplit(state),
     loading,
     isFromCompactUrl: isFromCompactUrl || false,
+    logsSample,
+    showLogsSample,
   };
 }
 
@@ -569,6 +605,7 @@ const mapDispatchToProps = {
   makeAbsoluteTime,
   addQueryRow,
   splitOpen,
+  setSupplementaryQueryEnabled,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
