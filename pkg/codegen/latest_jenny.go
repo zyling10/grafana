@@ -47,9 +47,7 @@ func (j *latestj) Generate(decl *DeclForGen) (*codejen.File, error) {
 		return nil, nil
 	}
 
-	if j.parentdir != "" {
-		f.RelativePath = filepath.Join(j.parentdir, comm.MachineName, f.RelativePath)
-	}
+	f.RelativePath = filepath.Join(j.parentdir, comm.MachineName, f.RelativePath)
 	f.From = append(f.From, j)
 	return f, nil
 }
