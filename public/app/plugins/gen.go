@@ -1,8 +1,3 @@
-//go:build ignore
-// +build ignore
-
-//go:generate go run gen.go
-
 package main
 
 import (
@@ -56,7 +51,10 @@ func main() {
 		codegen.PluginTreeListJenny(),
 		codegen.PluginGoTypesJenny("pkg/tsdb", adaptToPipeline(corecodegen.GoTypesJenny{})),
 		codegen.PluginTSTypesJenny("public/app/plugins", adaptToPipeline(corecodegen.TSTypesJenny{})),
-		codegen.PluginDocsJenny(adaptToPipeline(corecodegen.DocsJenny(
+		//codegen.PluginDocsJenny(adaptToPipeline(corecodegen.DocsJenny(
+		//	filepath.Join("docs", "sources", "developers", "kinds", "composable"),
+		//))),
+		codegen.PluginDocsJenny(toDeclForGen(corecodegen.DocsJenny(
 			filepath.Join("docs", "sources", "developers", "kinds", "composable"),
 		))),
 	)
@@ -95,7 +93,7 @@ func adaptToPipeline(j codejen.OneToOne[corecodegen.SchemaForGen]) codejen.OneTo
 
 func toDeclForGen(j codejen.OneToOne[*corecodegen.DeclForGen]) codejen.OneToOne[*pfs.PluginDecl] {
 	return codejen.AdaptOneToOne(j, func(pd *pfs.PluginDecl) *corecodegen.DeclForGen {
-		kd, err := corecodegen.ForGen(pd.Lineage.Runtime(), pd.KindDecl)
+		kd, err := corecodegen.ForGen(pd.Lineage.Runtime(), pd.KindDecl.Some())
 		if err != nil {
 			panic("should be unreachable")
 		}

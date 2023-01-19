@@ -1,8 +1,3 @@
-//go:build ignore
-// +build ignore
-
-//go:generate go run gen.go
-
 package main
 
 import (
@@ -41,7 +36,7 @@ func main() {
 		codegen.BaseCoreRegistryJenny(filepath.Join("pkg", "registry", "corekind"), kindsys.GoCoreKindParentPath),
 		codegen.LatestMajorsOrXJenny(kindsys.TSCoreKindParentPath, codegen.TSTypesJenny{}),
 		codegen.TSVeneerIndexJenny(filepath.Join("packages", "grafana-schema", "src")),
-		codegen.LatestJenny("", codegen.DocsJenny(filepath.Join("docs", "sources", "developers", "kinds", "core"))),
+		codegen.DocsJenny(filepath.Join("docs", "sources", "developers", "kinds", "core")),
 	)
 
 	header := codegen.SlashHeaderMapper("kinds/gen.go")

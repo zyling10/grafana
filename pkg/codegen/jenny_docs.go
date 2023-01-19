@@ -20,7 +20,7 @@ import (
 	"github.com/xeipuuv/gojsonpointer"
 )
 
-func DocsJenny(docsPath string) codejen.OneToOne[SchemaForGen] {
+func DocsJenny(docsPath string) OneToOne {
 	return docsJenny{
 		docsPath: docsPath,
 	}
@@ -34,8 +34,8 @@ func (j docsJenny) JennyName() string {
 	return "DocsJenny"
 }
 
-func (j docsJenny) Generate(sfg SchemaForGen) (*codejen.File, error) {
-	f, err := jsonschema.GenerateSchema(sfg.Schema.Lineage().Latest())
+func (j docsJenny) Generate(decl *DeclForGen) (*codejen.File, error) {
+	f, err := jsonschema.GenerateSchema(decl.Lineage().Latest())
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate json representation for the schema: %v", err)
 	}
@@ -57,12 +57,12 @@ func (j docsJenny) Generate(sfg SchemaForGen) (*codejen.File, error) {
 
 	// fixes the references between the types within a json after making components.schema.<types> the root of the json
 	kindJsonStr := strings.Replace(string(obj.Components.Schemas), "#/components/schemas/", "#/", -1)
-	kindName := sfg.Schema.Lineage().Name()
+
+	kindProps := decl.Properties.Common()
 	data := templateData{
-		KindName:    sfg.Name,
-		KindVersion: sfg.Schema.Lineage().Latest().Version().String(),
-		// TODO: Add maturity
-		KindMaturity: "",
+		KindName:     kindProps.Name,
+		KindVersion:  decl.Lineage().Latest().Version().String(),
+		KindMaturity: string(kindProps.Maturity),
 		Markdown:     "{{ .Markdown 1 }}",
 	}
 
@@ -71,12 +71,12 @@ func (j docsJenny) Generate(sfg SchemaForGen) (*codejen.File, error) {
 		return nil, err
 	}
 
-	doc, err := jsonToMarkdown([]byte(kindJsonStr), string(tmpl), kindName)
+	doc, err := jsonToMarkdown([]byte(kindJsonStr), string(tmpl), kindProps.Name)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build markdown for kind %s: %v", kindName, err)
+		return nil, fmt.Errorf("failed to build markdown for kind %s: %v", kindProps.Name, err)
 	}
 
-	return codejen.NewFile(filepath.Join(j.docsPath, strings.ToLower(kindName), "schema-reference.md"), doc, j), nil
+	return codejen.NewFile(filepath.Join(j.docsPath, strings.ToLower(kindProps.Name), "schema-reference.md"), doc, j), nil
 }
 
 // makeTemplate pre-populates the template with the kind metadata
