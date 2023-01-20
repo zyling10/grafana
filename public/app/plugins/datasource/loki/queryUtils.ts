@@ -1,6 +1,7 @@
 import { SyntaxNode } from '@lezer/common';
 import { escapeRegExp } from 'lodash';
 
+import { TimeRange } from '@grafana/data';
 import {
   parser,
   LineFilter,
@@ -283,4 +284,8 @@ export function isQueryWithLineFilter(query: string): boolean {
   });
 
   return queryWithLineFilter;
+}
+
+export function partitionTimeRange(timeRange: TimeRange): TimeRange[] {
+  return [timeRange];
 }

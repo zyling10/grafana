@@ -66,7 +66,13 @@ import {
   getLabelFilterPositions,
 } from './modifyQuery';
 import { getQueryHints } from './queryHints';
-import { getLogQueryFromMetricsQuery, getNormalizedLokiQuery, isLogsQuery, isValidQuery } from './queryUtils';
+import {
+  getLogQueryFromMetricsQuery,
+  getNormalizedLokiQuery,
+  isLogsQuery,
+  isValidQuery,
+  partitionTimeRange,
+} from './queryUtils';
 import { sortDataFrameByTime } from './sortDataFrame';
 import { doLokiChannelStream } from './streaming';
 import { trackQuery } from './tracking';
@@ -268,16 +274,21 @@ export class LokiDatasource
 
     if (fixedRequest.liveStreaming) {
       return this.runLiveQueryThroughBackend(fixedRequest);
-    } else {
-      const startTime = new Date();
-      return super.query(fixedRequest).pipe(
-        // in case of an empty query, this is somehow run twice. `share()` is no workaround here as the observable is generated from `of()`.
-        map((response) =>
-          transformBackendResult(response, fixedRequest.targets, this.instanceSettings.jsonData.derivedFields ?? [])
-        ),
-        tap((response) => trackQuery(response, fixedRequest, startTime))
-      );
     }
+
+    const startTime = new Date();
+    const timeRanges = partitionTimeRange(fixedRequest.range);
+    return merge(
+      ...timeRanges.map((range) =>
+        super.query({ ...fixedRequest, range }).pipe(
+          // in case of an empty query, this is somehow run twice. `share()` is no workaround here as the observable is generated from `of()`.
+          map((response) =>
+            transformBackendResult(response, fixedRequest.targets, this.instanceSettings.jsonData.derivedFields ?? [])
+          ),
+          tap((response) => trackQuery(response, fixedRequest, startTime))
+        )
+      )
+    );
   }
 
   runLiveQueryThroughBackend(request: DataQueryRequest<LokiQuery>): Observable<DataQueryResponse> {
