@@ -276,7 +276,8 @@ export class LokiDatasource
       return this.runLiveQueryThroughBackend(fixedRequest);
     }
 
-    const startTime = new Date();
+    //const startTime = new Date();
+    //tap((response) => trackQuery(response, fixedRequest, startTime))
     const timeRanges = partitionTimeRange(fixedRequest.range);
     return merge(
       ...timeRanges.map((range) =>
@@ -284,8 +285,7 @@ export class LokiDatasource
           // in case of an empty query, this is somehow run twice. `share()` is no workaround here as the observable is generated from `of()`.
           map((response) =>
             transformBackendResult(response, fixedRequest.targets, this.instanceSettings.jsonData.derivedFields ?? [])
-          ),
-          tap((response) => trackQuery(response, fixedRequest, startTime))
+          )
         )
       )
     );

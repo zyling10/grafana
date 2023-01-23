@@ -1,7 +1,7 @@
 import { SyntaxNode } from '@lezer/common';
 import { escapeRegExp } from 'lodash';
 
-import { TimeRange } from '@grafana/data';
+import { dateTime, TimeRange } from '@grafana/data';
 import {
   parser,
   LineFilter,
@@ -287,5 +287,24 @@ export function isQueryWithLineFilter(query: string): boolean {
 }
 
 export function partitionTimeRange(timeRange: TimeRange): TimeRange[] {
-  return [timeRange];
+  const partition: TimeRange[] = [];
+  const days = timeRange.to.diff(timeRange.from, 'days');
+
+  if (days <= 1) {
+    return [timeRange];
+  }
+
+  for (let start = dateTime(timeRange.from), end = dateTime(start).add(1, 'd'); end <= timeRange.to; ) {
+    partition.push({
+      from: start,
+      to: end,
+      raw: { from: start, to: end },
+    });
+    start = dateTime(end);
+    end = dateTime(start).add(1, 'd');
+  }
+
+  console.log(partition);
+
+  return partition;
 }
