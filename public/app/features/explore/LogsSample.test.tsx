@@ -20,6 +20,8 @@ const createProps = (propOverrides?: Partial<ComponentProps<typeof LogsSamplePan
     timeZone: 'timeZone',
     datasourceInstance: undefined,
     setLogsSampleEnabled: jest.fn(),
+    queries: [],
+    splitOpen: jest.fn(),
   };
 
   return { ...props, ...propOverrides };
