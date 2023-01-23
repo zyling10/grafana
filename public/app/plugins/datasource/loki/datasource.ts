@@ -162,16 +162,21 @@ export class LokiDatasource
   }
 
   getSupplementaryQuery(type: SupplementaryQueryType, query: LokiQuery): LokiQuery | undefined {
+    if (!this.getSupportedSupplementaryQueryTypes().includes(type)) {
+      return undefined;
+    }
+
     const normalizedQuery = getNormalizedLokiQuery(query);
     const expr = removeCommentsFromQuery(normalizedQuery.expr);
     let isQuerySuitable = false;
+    let supplementaryQuery = undefined;
 
     switch (type) {
       case SupplementaryQueryType.LogsVolume:
         // it has to be a logs-producing range-query
         isQuerySuitable = !!(query.expr && isLogsQuery(query.expr) && query.queryType === LokiQueryType.Range);
         if (isQuerySuitable) {
-          return {
+          supplementaryQuery = {
             ...normalizedQuery,
             refId: `${REF_ID_STARTER_LOG_VOLUME}${normalizedQuery.refId}`,
             instant: false,
@@ -179,22 +184,26 @@ export class LokiDatasource
             expr: `sum by (level) (count_over_time(${expr}[$__interval]))`,
           };
         }
+        break;
 
       case SupplementaryQueryType.LogsSample:
         // it has to be a metric query
         isQuerySuitable = !!(query.expr && !isLogsQuery(query.expr));
         if (isQuerySuitable) {
-          return {
+          supplementaryQuery = {
             ...normalizedQuery,
             refId: `${REF_ID_STARTER_LOG_SAMPLE}${normalizedQuery.refId}`,
             expr: getLogQueryFromMetricsQuery(expr),
             maxLines: 100,
           };
         }
+        break;
 
       default:
-        return undefined;
+        supplementaryQuery = undefined;
     }
+
+    return supplementaryQuery;
   }
 
   getLogsVolumeDataProvider(request: DataQueryRequest<LokiQuery>): Observable<DataQueryResponse> | undefined {
