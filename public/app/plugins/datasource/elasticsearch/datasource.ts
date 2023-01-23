@@ -601,7 +601,12 @@ export class ElasticDatasource
   }
 
   getSupplementaryQuery(type: SupplementaryQueryType, query: ElasticsearchQuery): ElasticsearchQuery | undefined {
+    if (!this.getSupportedSupplementaryQueryTypes().includes(type)) {
+      return undefined;
+    }
+
     let isQuerySuitable = false;
+    let supplementaryQuery: ElasticsearchQuery | undefined = undefined;
 
     switch (type) {
       case SupplementaryQueryType.LogsVolume:
@@ -636,7 +641,7 @@ export class ElasticDatasource
             field: timeField,
           });
 
-          return {
+          supplementaryQuery = {
             refId: `${REF_ID_STARTER_LOG_VOLUME}${query.refId}`,
             query: query.query,
             metrics: [{ type: 'count', id: '1' }],
@@ -644,10 +649,13 @@ export class ElasticDatasource
             bucketAggs,
           };
         }
+        break;
 
       default:
-        return undefined;
+        supplementaryQuery = undefined;
     }
+
+    return supplementaryQuery;
   }
 
   getLogsVolumeDataProvider(request: DataQueryRequest<ElasticsearchQuery>): Observable<DataQueryResponse> | undefined {
