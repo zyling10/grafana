@@ -26,8 +26,8 @@ import {
   getTextDimensionFromData,
 } from 'app/features/dimensions/utils';
 import { CanvasContextMenu } from 'app/plugins/panel/canvas/CanvasContextMenu';
-import { CONNECTION_ANCHOR_DIV_ID } from 'app/plugins/panel/canvas/ConnectionAnchors';
-import { Connections } from 'app/plugins/panel/canvas/Connections';
+import { CONNECTION_ANCHOR_DIV_ID } from 'app/plugins/panel/canvas/connections/ConnectionAnchors';
+import { Connections } from 'app/plugins/panel/canvas/connections/Connections';
 import { AnchorPoint, LayerActionID } from 'app/plugins/panel/canvas/types';
 
 import appEvents from '../../../core/app_events';
