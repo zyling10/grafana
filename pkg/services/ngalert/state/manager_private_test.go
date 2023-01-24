@@ -97,7 +97,7 @@ func TestManager_saveAlertStates(t *testing.T) {
 	for _, fromState := range allStates {
 		for i, toState := range allStates {
 			tr := StateTransition{
-				State: &State{
+				State: State{
 					State:       toState.State,
 					StateReason: toState.Reason,
 					Labels:      ngmodels.GenerateAlertLabels(5, fmt.Sprintf("%d--", i)),

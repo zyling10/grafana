@@ -140,13 +140,13 @@ func FromStateTransitionToPostableAlerts(firingStates []state.StateTransition, s
 		if !alertState.NeedsSending(stateManager.ResendDelay) {
 			continue
 		}
-		alert := stateToPostableAlert(alertState.State, appURL)
+		alert := stateToPostableAlert(&alertState.State, appURL)
 		alerts.PostableAlerts = append(alerts.PostableAlerts, *alert)
 		if alertState.StateReason == ngModels.StateReasonMissingSeries { // do not put stale state back to state manager
 			continue
 		}
 		alertState.LastSentAt = ts
-		sentAlerts = append(sentAlerts, alertState.State)
+		sentAlerts = append(sentAlerts, &alertState.State)
 	}
 	stateManager.Put(sentAlerts)
 	return alerts

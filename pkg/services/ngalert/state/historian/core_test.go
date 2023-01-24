@@ -90,7 +90,7 @@ func TestShouldRecord(t *testing.T) {
 	for _, tc := range allCombinations {
 		_, ok := negativeTransitions[tc]
 		trans := state.StateTransition{
-			State:               &state.State{State: tc.State, StateReason: tc.StateReason},
+			State:               state.State{State: tc.State, StateReason: tc.StateReason},
 			PreviousState:       tc.PreviousState,
 			PreviousStateReason: tc.PreviousStateReason,
 		}

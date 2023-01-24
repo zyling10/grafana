@@ -147,7 +147,7 @@ func IsNormalStateWithNoReason(s *State) bool {
 
 // StateTransition describes the transition from one state to another.
 type StateTransition struct {
-	*State
+	State
 	PreviousState       eval.State
 	PreviousStateReason string
 }

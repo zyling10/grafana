@@ -158,8 +158,8 @@ func TestNewBacktestingEvaluator(t *testing.T) {
 
 func TestEvaluatorTest(t *testing.T) {
 	states := []eval.State{eval.Normal, eval.Alerting, eval.Pending}
-	generateState := func(prefix string) *state.State {
-		return &state.State{
+	generateState := func(prefix string) state.State {
+		return state.State{
 			CacheID: "state-" + prefix,
 			Labels:  models.GenerateAlertLabels(rand.Intn(5)+1, prefix+"-"),
 			State:   states[rand.Intn(len(states))],
@@ -200,7 +200,7 @@ func TestEvaluatorTest(t *testing.T) {
 
 		for _, s := range allStates {
 			states = append(states, state.StateTransition{
-				State: &state.State{
+				State: state.State{
 					CacheID:     "state-" + s.String(),
 					Labels:      models.GenerateAlertLabels(rand.Intn(5)+1, s.String()+"-"),
 					State:       s,

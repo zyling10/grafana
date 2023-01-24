@@ -184,7 +184,7 @@ func (h *AnnotationBackend) recordAnnotationsSync(ctx context.Context, panel *pa
 	return nil
 }
 
-func buildAnnotationTextAndData(rule *ngmodels.AlertRule, currentState *state.State) (string, *simplejson.Json) {
+func buildAnnotationTextAndData(rule *ngmodels.AlertRule, currentState state.State) (string, *simplejson.Json) {
 	jsonData := simplejson.New()
 	var value string
 

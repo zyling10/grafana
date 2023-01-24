@@ -267,7 +267,7 @@ func (st *Manager) setNextState(ctx context.Context, alertRule *ngModels.AlertRu
 	st.cache.set(currentState)
 
 	nextState := StateTransition{
-		State:               currentState,
+		State:               *currentState,
 		PreviousState:       oldState,
 		PreviousStateReason: oldReason,
 	}
@@ -300,7 +300,7 @@ func (st *Manager) saveAlertStates(ctx context.Context, logger log.Logger, state
 
 	for _, s := range states {
 		// Do not save normal state to database and remove transition to Normal state but keep mapped states
-		if st.doNotSaveNormalState && IsNormalStateWithNoReason(s.State) && !s.Changed() {
+		if st.doNotSaveNormalState && IsNormalStateWithNoReason(&s.State) && !s.Changed() {
 			continue
 		}
 
@@ -416,7 +416,7 @@ func (st *Manager) deleteStaleStatesFromCache(ctx context.Context, logger log.Lo
 		}
 
 		record := StateTransition{
-			State:               s,
+			State:               *s,
 			PreviousState:       oldState,
 			PreviousStateReason: oldReason,
 		}

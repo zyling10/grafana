@@ -129,7 +129,7 @@ type lokiEntry struct {
 	Values        *simplejson.Json `json:"values"`
 }
 
-func valuesAsDataBlob(state *state.State) *simplejson.Json {
+func valuesAsDataBlob(state state.State) *simplejson.Json {
 	jsonData := simplejson.New()
 
 	switch state.State {
