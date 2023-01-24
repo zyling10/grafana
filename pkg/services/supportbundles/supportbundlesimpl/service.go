@@ -5,16 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	grafanaApi "github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/api/routing"
 	"github.com/grafana/grafana/pkg/infra/db"
 	"github.com/grafana/grafana/pkg/infra/kvstore"
 	"github.com/grafana/grafana/pkg/infra/log"
-	"github.com/grafana/grafana/pkg/infra/usagestats"
-	"github.com/grafana/grafana/pkg/plugins"
 	ac "github.com/grafana/grafana/pkg/services/accesscontrol"
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
-	"github.com/grafana/grafana/pkg/services/pluginsettings"
 	"github.com/grafana/grafana/pkg/services/supportbundles"
 	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/setting"
@@ -26,12 +22,10 @@ const (
 )
 
 type Service struct {
-	cfg            *setting.Cfg
-	store          bundleStore
-	pluginStore    plugins.Store
-	pluginSettings pluginsettings.Service
-	accessControl  ac.AccessControl
-	features       *featuremgmt.FeatureManager
+	cfg           *setting.Cfg
+	store         bundleStore
+	accessControl ac.AccessControl
+	features      *featuremgmt.FeatureManager
 
 	log log.Logger
 
@@ -47,19 +41,13 @@ func ProvideService(cfg *setting.Cfg,
 	accessControl ac.AccessControl,
 	accesscontrolService ac.Service,
 	routeRegister routing.RouteRegister,
-	userService user.Service,
 	settings setting.Provider,
-	pluginStore plugins.Store,
-	pluginSettings pluginsettings.Service,
-	features *featuremgmt.FeatureManager,
-	httpServer *grafanaApi.HTTPServer,
-	usageStats usagestats.Service) (*Service, error) {
+	userService user.Service,
+	features *featuremgmt.FeatureManager) (*Service, error) {
 	section := cfg.SectionWithEnvOverrides("support_bundles")
 	s := &Service{
 		cfg:             cfg,
 		store:           newStore(kvStore),
-		pluginStore:     pluginStore,
-		pluginSettings:  pluginSettings,
 		accessControl:   accessControl,
 		features:        features,
 		log:             log.New("supportbundle.service"),
@@ -78,15 +66,12 @@ func ProvideService(cfg *setting.Cfg,
 		}
 	}
 
-	s.registerAPIEndpoints(httpServer, routeRegister)
+	s.registerAPIEndpoints(routeRegister)
 
-	// TODO: move to relevant services
 	s.RegisterSupportItemCollector(basicCollector(cfg))
 	s.RegisterSupportItemCollector(settingsCollector(settings))
-	s.RegisterSupportItemCollector(usageStatesCollector(usageStats))
-	s.RegisterSupportItemCollector(userCollector(userService))
 	s.RegisterSupportItemCollector(dbCollector(sql))
-	s.RegisterSupportItemCollector(pluginInfoCollector(pluginStore, pluginSettings))
+	s.RegisterSupportItemCollector(userCollector(userService))
 
 	return s, nil
 }

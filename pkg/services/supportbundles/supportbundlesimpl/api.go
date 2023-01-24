@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	grafanaApi "github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/api/routing"
 	"github.com/grafana/grafana/pkg/middleware"
@@ -19,21 +18,13 @@ import (
 
 const rootUrl = "/api/support-bundles"
 
-func (s *Service) registerAPIEndpoints(httpServer *grafanaApi.HTTPServer, routeRegister routing.RouteRegister) {
+func (s *Service) registerAPIEndpoints(routeRegister routing.RouteRegister) {
 	authorize := ac.Middleware(s.accessControl)
 
 	orgRoleMiddleware := middleware.ReqGrafanaAdmin
 	if !s.serverAdminOnly {
 		orgRoleMiddleware = middleware.RoleAuth(roletype.RoleAdmin)
 	}
-
-	supportBundlePageAccess := ac.EvalAny(
-		ac.EvalPermission(ActionRead),
-		ac.EvalPermission(ActionCreate),
-	)
-
-	routeRegister.Get("/support-bundles", authorize(orgRoleMiddleware, supportBundlePageAccess), httpServer.Index)
-	routeRegister.Get("/support-bundles/create", authorize(orgRoleMiddleware, ac.EvalPermission(ActionCreate)), httpServer.Index)
 
 	routeRegister.Group(rootUrl, func(subrouter routing.RouteRegister) {
 		subrouter.Get("/", authorize(orgRoleMiddleware,
