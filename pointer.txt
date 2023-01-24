@@ -1,0 +1,26 @@
+goos: linux
+goarch: amd64
+pkg: github.com/grafana/grafana/pkg/services/ngalert/state/historian
+cpu: AMD Ryzen 7 PRO 5850U with Radeon Graphics     
+BenchmarkPointerRule-16    	    3663	    399616 ns/op	  175349 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3540	    407414 ns/op	  175361 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    2580	    413850 ns/op	  175512 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3714	    427762 ns/op	  175339 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3538	    389973 ns/op	  175364 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3924	    352066 ns/op	  175324 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3458	    330514 ns/op	  175368 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    2779	    401911 ns/op	  175471 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3122	    396674 ns/op	  175415 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    2746	    408773 ns/op	  175475 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3376	    402961 ns/op	  175383 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    4322	    362934 ns/op	  175286 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3492	    354933 ns/op	  175368 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3258	    379620 ns/op	  175396 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3076	    407830 ns/op	  175424 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    4414	    389911 ns/op	  175278 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3344	    377922 ns/op	  175387 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    2408	    427906 ns/op	  175546 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3076	    419922 ns/op	  175421 B/op	    3001 allocs/op
+BenchmarkPointerRule-16    	    3618	    416735 ns/op	  175352 B/op	    3001 allocs/op
+PASS
+ok  	github.com/grafana/grafana/pkg/services/ngalert/state/historian	32.995s

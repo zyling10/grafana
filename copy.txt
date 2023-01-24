@@ -1,0 +1,26 @@
+goos: linux
+goarch: amd64
+pkg: github.com/grafana/grafana/pkg/services/ngalert/state/historian
+cpu: AMD Ryzen 7 PRO 5850U with Radeon Graphics     
+BenchmarkCopyRule-16    	    2746	    376740 ns/op	  175479 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2536	    444008 ns/op	  175525 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3042	    398752 ns/op	  175428 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3181	    432986 ns/op	  175411 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2458	    445155 ns/op	  175536 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3585	    412508 ns/op	  175355 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2871	    401562 ns/op	  175462 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    4855	    380396 ns/op	  175253 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3580	    414926 ns/op	  175359 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2554	    428884 ns/op	  175519 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2838	    360101 ns/op	  175464 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2538	    438383 ns/op	  175524 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3000	    401667 ns/op	  175435 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    4237	    365483 ns/op	  175292 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    2977	    382097 ns/op	  175436 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3224	    376467 ns/op	  175404 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3111	    370259 ns/op	  175419 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3444	    398981 ns/op	  175378 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    3415	    421447 ns/op	  175381 B/op	    3001 allocs/op
+BenchmarkCopyRule-16    	    4165	    428842 ns/op	  175302 B/op	    3001 allocs/op
+PASS
+ok  	github.com/grafana/grafana/pkg/services/ngalert/state/historian	31.644s
