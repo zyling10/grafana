@@ -280,8 +280,8 @@ export class LokiDatasource
     //tap((response) => trackQuery(response, fixedRequest, startTime))
     const timeRanges = partitionTimeRange(fixedRequest.range);
     return merge(
-      ...timeRanges.map((range) =>
-        super.query({ ...fixedRequest, range }).pipe(
+      ...timeRanges.map((range, i) =>
+        super.query({ ...fixedRequest, range, requestId: `${fixedRequest}_${i}` }).pipe(
           // in case of an empty query, this is somehow run twice. `share()` is no workaround here as the observable is generated from `of()`.
           map((response) =>
             transformBackendResult(response, fixedRequest.targets, this.instanceSettings.jsonData.derivedFields ?? [])
