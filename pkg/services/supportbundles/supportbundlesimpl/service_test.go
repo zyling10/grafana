@@ -12,14 +12,12 @@ import (
 
 func TestService_RegisterSupportItemCollector(t *testing.T) {
 	s := &Service{
-		cfg:            &setting.Cfg{},
-		store:          nil,
-		pluginStore:    nil,
-		pluginSettings: nil,
-		accessControl:  nil,
-		features:       nil,
-		log:            log.NewNopLogger(),
-		collectors:     map[string]supportbundles.Collector{},
+		cfg:           &setting.Cfg{},
+		store:         nil,
+		accessControl: nil,
+		features:      nil,
+		log:           log.NewNopLogger(),
+		collectors:    map[string]supportbundles.Collector{},
 	}
 	collector := supportbundles.Collector{
 		UID:               "test",

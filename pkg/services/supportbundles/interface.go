@@ -43,5 +43,3 @@ type Collector struct {
 type Service interface {
 	RegisterSupportItemCollector(collector Collector)
 }
-
-type Front

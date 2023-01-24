@@ -18,6 +18,23 @@ import (
 
 const rootUrl = "/api/support-bundles"
 
+func (s *Service) RegisterFrontendRoutes(routeRegister routing.RouteRegister, IndexView func(c *models.ReqContext)) {
+	authorize := ac.Middleware(s.accessControl)
+
+	orgRoleMiddleware := middleware.ReqGrafanaAdmin
+	if !s.serverAdminOnly {
+		orgRoleMiddleware = middleware.RoleAuth(roletype.RoleAdmin)
+	}
+
+	supportBundlePageAccess := ac.EvalAny(
+		ac.EvalPermission(ActionRead),
+		ac.EvalPermission(ActionCreate),
+	)
+
+	routeRegister.Get("/support-bundles", authorize(orgRoleMiddleware, supportBundlePageAccess), IndexView)
+	routeRegister.Get("/support-bundles/create", authorize(orgRoleMiddleware, ac.EvalPermission(ActionCreate)), IndexView)
+}
+
 func (s *Service) registerAPIEndpoints(routeRegister routing.RouteRegister) {
 	authorize := ac.Middleware(s.accessControl)
 
