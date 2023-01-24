@@ -1,10 +1,19 @@
 import { getConfig } from 'app/core/config';
 import { VariableModel } from 'app/features/variables/types';
-import { DashboardDataDTO, DashboardMeta } from 'app/types/dashboard';
 
 import { PanelModel } from '../../../state';
 
 import { supportedDatasources } from './SupportedPubdashDatasources';
+
+export enum ShareType {
+  EMAIL,
+  PUBLIC,
+}
+
+export interface SharingRecipient {
+  uid: string;
+  recipient: string;
+}
 
 export interface PublicDashboard {
   accessToken?: string;
@@ -14,11 +23,10 @@ export interface PublicDashboard {
   dashboardUid: string;
   timeSettings?: object;
   timeSelectionEnabled: boolean;
-}
-
-export interface DashboardResponse {
-  dashboard: DashboardDataDTO;
-  meta: DashboardMeta;
+  share: {
+    type: ShareType;
+    recipients?: SharingRecipient[];
+  };
 }
 
 // Instance methods

@@ -33,6 +33,7 @@ import {
   generatePublicDashboardUrl,
   getUnsupportedDashboardDatasources,
   publicDashboardPersisted,
+  ShareType,
 } from 'app/features/dashboard/components/ShareModal/SharePublicDashboard/SharePublicDashboardUtils';
 import { ShareModalTabProps } from 'app/features/dashboard/components/ShareModal/types';
 import { useIsDesktop } from 'app/features/dashboard/utils/screen';
@@ -112,6 +113,7 @@ export const SharePublicDashboard = (props: Props) => {
       isAnnotationsEnabled: publicDashboard?.annotationsEnabled,
       isTimeRangeEnabled: publicDashboard?.timeSelectionEnabled,
       enabledSwitch: publicDashboard?.isEnabled,
+      isEmailSharingEnabled: publicDashboard?.share === ShareType.EMAIL,
     });
   }, [publicDashboard, reset]);
 
@@ -171,13 +173,7 @@ export const SharePublicDashboard = (props: Props) => {
   return (
     <>
       <HorizontalGroup>
-        <p
-          className={css`
-            margin: 0;
-          `}
-        >
-          Welcome to Grafana public dashboards alpha!
-        </p>
+        <p className={styles.title}>Welcome to Grafana public dashboards alpha!</p>
         {(isGetLoading || isFetching) && <Spinner />}
       </HorizontalGroup>
       <div className={styles.content}>
@@ -293,6 +289,9 @@ export const SharePublicDashboard = (props: Props) => {
 };
 
 const getStyles = (theme: GrafanaTheme2) => ({
+  title: css`
+    margin: 0;
+  `,
   content: css`
     margin: ${theme.spacing(1, 0, 0, 0)};
   `,

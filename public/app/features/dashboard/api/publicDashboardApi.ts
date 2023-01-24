@@ -4,7 +4,11 @@ import { lastValueFrom } from 'rxjs';
 import { BackendSrvRequest, getBackendSrv } from '@grafana/runtime/src';
 import { notifyApp } from 'app/core/actions';
 import { createErrorNotification, createSuccessNotification } from 'app/core/copy/appNotification';
-import { PublicDashboard } from 'app/features/dashboard/components/ShareModal/SharePublicDashboard/SharePublicDashboardUtils';
+import {
+  PublicDashboard,
+  ShareType,
+  SharingRecipient,
+} from 'app/features/dashboard/components/ShareModal/SharePublicDashboard/SharePublicDashboardUtils';
 import { DashboardModel } from 'app/features/dashboard/state';
 import { ListPublicDashboardResponse } from 'app/features/manage-dashboards/types';
 
@@ -52,6 +56,19 @@ export const publicDashboardApi = createApi({
           const customError = e as { error: { data: { message: string } } };
           dispatch(notifyApp(createErrorNotification(customError?.error?.data?.message)));
         }
+      },
+      transformResponse: (response: PublicDashboard, meta, arg) => {
+        console.log(response);
+        return {
+          ...response,
+          share: {
+            type: ShareType.EMAIL,
+            recipients: [
+              { uid: '1', recipient: 'mjuanito@gmail.com' },
+              { uid: '2', recipient: 'otro@amsa.com' },
+            ],
+          },
+        };
       },
       providesTags: (result, error, dashboardUid) => [{ type: 'PublicDashboard', id: dashboardUid }],
     }),
@@ -117,6 +134,21 @@ export const publicDashboardApi = createApi({
         'AuditTablePublicDashboard',
       ],
     }),
+    addSharingRecipient: builder.mutation<
+      SharingRecipient,
+      { dashboardUid: string; publicDashboardUid: string; recipient: string }
+    >({
+      query: ({ publicDashboardUid, recipient }) => ({
+        url: `/api/public-dashboards/${publicDashboardUid}/share/recipients`,
+        method: 'POST',
+        data: { recipient },
+      }),
+      async onQueryStarted({ recipient, publicDashboardUid }, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        dispatch(notifyApp(createSuccessNotification('Email sent!')));
+      },
+      invalidatesTags: (result, error, { dashboardUid }) => [{ type: 'PublicDashboard', id: dashboardUid }],
+    }),
   }),
 });
 
@@ -126,4 +158,5 @@ export const {
   useUpdatePublicDashboardMutation,
   useDeletePublicDashboardMutation,
   useListPublicDashboardsQuery,
+  useAddSharingRecipientMutation,
 } = publicDashboardApi;
