@@ -96,7 +96,7 @@ func (a *authenticator) getSignedInUser(ctx context.Context, token string) (*use
 	}
 
 	orgID := int64(0)
-	if id, ok := claims["orgID"].(string); ok {
+	if id, ok := claims["OrgID"].(string); ok {
 		if orgID, err = strconv.ParseInt(id, 10, 64); err != nil {
 			return nil, status.Error(codes.Unauthenticated, "invalid orgID claim")
 		}
@@ -105,6 +105,27 @@ func (a *authenticator) getSignedInUser(ctx context.Context, token string) (*use
 	userID, err := strconv.ParseInt(subject, 10, 64)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "unable to parse subject claim")
+	}
+
+	// HACK: if stackId exists... skip looking at database and create a new user
+	// This will only work with entity store (for now)
+	if stackIdStr, ok := claims["StackID"].(string); ok {
+		stackId := int64(0)
+		if stackId, err = strconv.ParseInt(stackIdStr, 10, 64); err != nil {
+			return nil, status.Error(codes.Unauthenticated, "invalid stackId claim")
+		}
+		usr := &user.SignedInUser{
+			UserID:  userID,
+			StackID: stackId,
+			OrgID:   orgID,
+		}
+		if v, ok := claims["Login"].(string); ok {
+			usr.Login = v
+		}
+		if v, ok := claims["DisplayName"].(string); ok {
+			usr.Name = v
+		}
+		return usr, nil
 	}
 
 	// TODO: figure out how to handle users with ID 0
@@ -139,10 +160,6 @@ func (a *authenticator) getSignedInUser(ctx context.Context, token string) (*use
 			a.logger.Error("failed fetching permissions for user", "userID", signedInUser.UserID, "error", err)
 		}
 		signedInUser.Permissions[signedInUser.OrgID] = accesscontrol.GroupScopesByAction(permissions)
-	}
-
-	if stackId, ok := claims["stackId"].(int64); ok {
-		signedInUser.StackID = stackId
 	}
 
 	return signedInUser, nil
