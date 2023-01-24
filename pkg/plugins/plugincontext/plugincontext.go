@@ -15,13 +15,14 @@ import (
 	"github.com/grafana/grafana/pkg/plugins/adapters"
 	"github.com/grafana/grafana/pkg/services/datasources"
 	"github.com/grafana/grafana/pkg/services/pluginsettings"
+	"github.com/grafana/grafana/pkg/services/supportbundles"
 	"github.com/grafana/grafana/pkg/services/user"
 )
 
 func ProvideService(cacheService *localcache.CacheService, pluginStore plugins.Store,
 	dataSourceCache datasources.CacheService, dataSourceService datasources.DataSourceService,
-	pluginSettingsService pluginsettings.Service) *Provider {
-	return &Provider{
+	pluginSettingsService pluginsettings.Service, supportBundles supportbundles.Service) *Provider {
+	p := &Provider{
 		cacheService:          cacheService,
 		pluginStore:           pluginStore,
 		dataSourceCache:       dataSourceCache,
@@ -29,6 +30,10 @@ func ProvideService(cacheService *localcache.CacheService, pluginStore plugins.S
 		pluginSettingsService: pluginSettingsService,
 		logger:                log.New("plugincontext"),
 	}
+
+	supportBundles.RegisterSupportItemCollector(p.pluginInfoCollector())
+
+	return p
 }
 
 type Provider struct {
@@ -130,5 +135,78 @@ func (p *Provider) getCachedPluginSettings(ctx context.Context, pluginID string,
 func (p *Provider) decryptSecureJsonDataFn(ctx context.Context) func(ds *datasources.DataSource) (map[string]string, error) {
 	return func(ds *datasources.DataSource) (map[string]string, error) {
 		return p.dataSourceService.DecryptedValues(ctx, ds)
+	}
+}
+
+func (p *Provider) pluginInfoCollector() supportbundles.Collector {
+	return supportbundles.Collector{
+		UID:               "plugins",
+		DisplayName:       "Plugin information",
+		Description:       "Plugin information for the Grafana instance",
+		IncludedByDefault: false,
+		Default:           true,
+		Fn: func(ctx context.Context) (*supportbundles.SupportItem, error) {
+			type pluginInfo struct {
+				data  plugins.JSONData
+				Class plugins.Class
+
+				// App fields
+				IncludedInAppID string
+				DefaultNavURL   string
+				Pinned          bool
+
+				// Signature fields
+				Signature plugins.SignatureStatus
+
+				// SystemJS fields
+				Module  string
+				BaseURL string
+
+				PluginVersion string
+				Enabled       bool
+				Updated       time.Time
+			}
+
+			plugins := p.pluginStore.Plugins(context.Background())
+
+			var pluginInfoList []pluginInfo
+			for _, plugin := range plugins {
+				// skip builtin plugins
+				if plugin.BuiltIn {
+					continue
+				}
+
+				pInfo := pluginInfo{
+					data:            plugin.JSONData,
+					Class:           plugin.Class,
+					IncludedInAppID: plugin.IncludedInAppID,
+					DefaultNavURL:   plugin.DefaultNavURL,
+					Pinned:          plugin.Pinned,
+					Signature:       plugin.Signature,
+					Module:          plugin.Module,
+					BaseURL:         plugin.BaseURL,
+				}
+
+				// TODO need to loop through all the orgs
+				// TODO ignore the error for now, not all plugins have settings
+				settings, err := p.pluginSettingsService.GetPluginSettingByPluginID(context.Background(), &pluginsettings.GetByPluginIDArgs{PluginID: plugin.ID, OrgID: 1})
+				if err == nil {
+					pInfo.PluginVersion = settings.PluginVersion
+					pInfo.Enabled = settings.Enabled
+					pInfo.Updated = settings.Updated
+				}
+
+				pluginInfoList = append(pluginInfoList, pInfo)
+			}
+
+			data, err := json.Marshal(pluginInfoList)
+			if err != nil {
+				return nil, err
+			}
+			return &supportbundles.SupportItem{
+				Filename:  "plugins.json",
+				FileBytes: data,
+			}, nil
+		},
 	}
 }
