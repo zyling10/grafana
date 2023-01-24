@@ -94,8 +94,9 @@ export class CompletionProvider implements monacoTypes.languages.CompletionItemP
 
   private overrideTagName(tagName: string): string {
     switch (tagName) {
-      case 'status':
-        return 'status.code';
+      case '.status.code':
+      case 'status.code':
+        return 'status';
       default:
         return tagName;
     }
