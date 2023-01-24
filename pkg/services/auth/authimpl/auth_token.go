@@ -316,12 +316,12 @@ func (s *UserAuthTokenService) TryRotateToken(ctx context.Context, token *auth.U
 			auth_token = ?,
 			auth_token_seen = ?,
 			rotated_at = ?
-		WHERE id = ? AND (auth_token_seen = ? OR rotated_at < ?)`
+		WHERE id = ? AND auth_token = ? AND (auth_token_seen = ? OR rotated_at < ?)`
 
 	var affected int64
 	err = s.sqlStore.WithTransactionalDbSession(ctx, func(dbSession *db.Session) error {
 		res, err := dbSession.Exec(sql, userAgent, clientIPStr, s.sqlStore.GetDialect().BooleanStr(true), hashedToken,
-			s.sqlStore.GetDialect().BooleanStr(false), now.Unix(), model.Id, s.sqlStore.GetDialect().BooleanStr(true),
+			s.sqlStore.GetDialect().BooleanStr(false), now.Unix(), model.Id, token.AuthToken, s.sqlStore.GetDialect().BooleanStr(true),
 			now.Add(-30*time.Second).Unix())
 		if err != nil {
 			return err
@@ -333,6 +333,17 @@ func (s *UserAuthTokenService) TryRotateToken(ctx context.Context, token *auth.U
 
 	if err != nil {
 		return false, err
+	}
+
+	if affected == 0 {
+		// The auth_token has just been updated by an other instance/thread
+		// so get the updated token from the db
+		userToken, err := s.lookupToken(ctx, token.UnhashedToken)
+		if err != nil {
+			return false, err
+		}
+
+		model = (*userAuthToken)(userToken)
 	}
 
 	ctxLogger.Debug("auth token rotated", "affected", affected, "auth_token_id", model.Id, "userId", model.UserId)
