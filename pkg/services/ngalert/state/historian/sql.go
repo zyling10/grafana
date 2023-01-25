@@ -10,6 +10,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/services/ngalert/models"
 	"github.com/grafana/grafana/pkg/services/ngalert/state"
+	history_model "github.com/grafana/grafana/pkg/services/ngalert/state/historian/model"
 	"github.com/grafana/grafana/pkg/services/ngalert/store"
 	"github.com/grafana/grafana/pkg/services/sqlstore"
 )
@@ -32,25 +33,30 @@ type label struct {
 	HistoryUID string `xorm:"history_uid"`
 }
 
-type SqlStateHistorian struct {
+type SqlBackend struct {
 	store *store.DBstore
 	log   log.Logger
 }
 
-func NewSqlStateHistorian(store *store.DBstore) *SqlStateHistorian {
-	return &SqlStateHistorian{
+func NewSqlBackend(store *store.DBstore) *SqlBackend {
+	return &SqlBackend{
 		store: store,
-		log:   log.New("ngalert.state.historian"),
+		log:   log.New("ngalert.state.historian", "backend", "sql"),
 	}
 }
 
-func (s *SqlStateHistorian) RecordStates(ctx context.Context, rule *models.AlertRule, states []state.StateTransition) {
+func (s *SqlBackend) RecordStatesAsync(ctx context.Context, rule history_model.RuleMeta, states []state.StateTransition) <-chan error {
 	logger := s.log.FromContext(ctx)
 	records, _ := s.buildRecords(rule, states, logger) // TODO
-	go s.writeHistory(ctx, records)
+	errCh := make(chan error, 1)
+	go func() {
+		defer close(errCh)
+		s.writeHistory(ctx, records) // TODO: should return error like the others.
+	}()
+	return errCh
 }
 
-func (s *SqlStateHistorian) QueryStates(ctx context.Context, query models.HistoryQuery) (*data.Frame, error) {
+func (s *SqlBackend) QueryStates(ctx context.Context, query models.HistoryQuery) (*data.Frame, error) {
 	// TODO: There should be an app logic layer above this.
 	// TODO: We should not allow querying of state history of rules that the user is not authorized to view.
 	records := make([]historyRecord, 0)
@@ -69,12 +75,10 @@ func (s *SqlStateHistorian) QueryStates(ctx context.Context, query models.Histor
 
 	frame := data.NewFrame("states")
 
-	frame.Meta.
-
 	return frame, nil
 }
 
-func (s *SqlStateHistorian) buildRecords(rule *models.AlertRule, states []state.StateTransition, logger log.Logger) ([]historyRecord, error) {
+func (s *SqlBackend) buildRecords(rule history_model.RuleMeta, states []state.StateTransition, logger log.Logger) ([]historyRecord, error) {
 	records := make([]historyRecord, 0, len(states))
 	for _, state := range states {
 		uid := uuid.New().String()
@@ -104,7 +108,7 @@ func (s *SqlStateHistorian) buildRecords(rule *models.AlertRule, states []state.
 	return records, nil
 }
 
-func (s *SqlStateHistorian) writeHistory(ctx context.Context, records []historyRecord) {
+func (s *SqlBackend) writeHistory(ctx context.Context, records []historyRecord) {
 	opts := sqlstore.NativeSettingsForDialect(s.store.SQLStore.GetDialect())
 
 	err := s.store.SQLStore.WithDbSession(ctx, func(sess *sqlstore.DBSession) error {
