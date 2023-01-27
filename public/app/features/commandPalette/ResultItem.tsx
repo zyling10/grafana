@@ -63,7 +63,9 @@ export const ResultItem = React.forwardRef(
 
     if (url) {
       const handleLinkClick = (ev: React.MouseEvent) => {
-        if (ev.ctrlKey) {
+        const isNewTabish = ev.ctrlKey || ev.metaKey || ev.shiftKey;
+
+        if (isNewTabish) {
           ev.stopPropagation();
         } else {
           ev.preventDefault();
