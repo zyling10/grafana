@@ -169,27 +169,30 @@ func fallbackDisplayName(rName string) string {
 }
 
 type TeamRole struct {
-	ID     int64 `json:"id" xorm:"pk autoincr 'id'"`
-	OrgID  int64 `json:"orgId" xorm:"org_id"`
-	RoleID int64 `json:"roleId" xorm:"role_id"`
-	TeamID int64 `json:"teamId" xorm:"team_id"`
+	ID     int64  `json:"id" xorm:"pk autoincr 'id'"`
+	OrgID  int64  `json:"orgId" xorm:"org_id"`
+	RoleID int64  `json:"roleId" xorm:"role_id"`
+	TeamID int64  `json:"teamId" xorm:"team_id"`
+	Scope  string `json:"scope,omitempty" xorm:"scope"`
 
 	Created time.Time
 }
 
 type UserRole struct {
-	ID     int64 `json:"id" xorm:"pk autoincr 'id'"`
-	OrgID  int64 `json:"orgId" xorm:"org_id"`
-	RoleID int64 `json:"roleId" xorm:"role_id"`
-	UserID int64 `json:"userId" xorm:"user_id"`
+	ID     int64  `json:"id" xorm:"pk autoincr 'id'"`
+	OrgID  int64  `json:"orgId" xorm:"org_id"`
+	RoleID int64  `json:"roleId" xorm:"role_id"`
+	UserID int64  `json:"userId" xorm:"user_id"`
+	Scope  string `json:"scope,omitempty" xorm:"scope"`
 
 	Created time.Time
 }
 
 type BuiltinRole struct {
-	ID     int64 `json:"id" xorm:"pk autoincr 'id'"`
-	RoleID int64 `json:"roleId" xorm:"role_id"`
-	OrgID  int64 `json:"orgId" xorm:"org_id"`
+	ID     int64  `json:"id" xorm:"pk autoincr 'id'"`
+	RoleID int64  `json:"roleId" xorm:"role_id"`
+	OrgID  int64  `json:"orgId" xorm:"org_id"`
+	Scope  string `json:"scope,omitempty" xorm:"scope"`
 	Role   string
 
 	Updated time.Time
