@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
 import { ActionId, ActionImpl } from 'kbar';
-import React from 'react';
+import React, { RefObject } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { useStyles2 } from '@grafana/ui';
+import { Link, useStyles2 } from '@grafana/ui';
 
 export const ResultItem = React.forwardRef(
   (
@@ -16,7 +16,7 @@ export const ResultItem = React.forwardRef(
       active: boolean;
       currentRootActionId: ActionId;
     },
-    ref: React.Ref<HTMLDivElement>
+    ref: React.Ref<HTMLDivElement | HTMLAnchorElement>
   ) => {
     const ancestors = React.useMemo(() => {
       if (!currentRootActionId) {
@@ -40,24 +40,51 @@ export const ResultItem = React.forwardRef(
       name += '...';
     }
 
-    return (
-      <div ref={ref} className={cx(styles.row, active && styles.activeRow)}>
-        <div className={styles.actionContainer}>
-          {action.icon}
-          <div className={styles.textContainer}>
-            <div>
-              {ancestors.length > 0 &&
-                ancestors.map((ancestor) => (
-                  <React.Fragment key={ancestor.id}>
-                    <span className={styles.breadcrumbAncestor}>{ancestor.name}</span>
-                    <span className={styles.breadcrumbAncestor}>&rsaquo;</span>
-                  </React.Fragment>
-                ))}
-              <span>{name}</span>
-            </div>
+    const url = (action as any).url;
+
+    const body = (
+      <div className={styles.actionContainer}>
+        {action.icon}
+        <div className={styles.textContainer}>
+          <div>
+            {ancestors.length > 0 &&
+              ancestors.map((ancestor) => (
+                <React.Fragment key={ancestor.id}>
+                  <span className={styles.breadcrumbAncestor}>{ancestor.name}</span>
+                  <span className={styles.breadcrumbAncestor}>&rsaquo;</span>
+                </React.Fragment>
+              ))}
+            <span>{name}</span>
           </div>
-          {action.subtitle && <span className={styles.subtitleText}>{action.subtitle}</span>}
         </div>
+        {action.subtitle && <span className={styles.subtitleText}>{action.subtitle}</span>}
+      </div>
+    );
+
+    if (url) {
+      const handleLinkClick = (ev: React.MouseEvent) => {
+        if (ev.ctrlKey) {
+          ev.stopPropagation();
+        } else {
+          ev.preventDefault();
+        }
+      };
+
+      return (
+        <Link
+          href={url}
+          ref={ref as RefObject<HTMLAnchorElement>}
+          className={cx(styles.row, active && styles.activeRow)}
+          onClick={handleLinkClick}
+        >
+          {body}
+        </Link>
+      );
+    }
+
+    return (
+      <div ref={ref as RefObject<HTMLDivElement>} className={cx(styles.row, active && styles.activeRow)}>
+        {body}
       </div>
     );
   }

@@ -124,9 +124,10 @@ export class AppWrapper extends React.Component<AppWrapperProps, AppWrapperState
                 >
                   <ModalsProvider>
                     <GlobalStyles />
-                    {this.commandPaletteEnabled() && <CommandPalette />}
                     <div className="grafana-app">
                       <Router history={locationService.getHistory()}>
+                        {this.commandPaletteEnabled() && <CommandPalette />}
+
                         {this.renderNavBar()}
                         <AppChrome>
                           {pageBanners.map((Banner, index) => (

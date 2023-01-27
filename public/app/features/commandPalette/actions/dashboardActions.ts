@@ -38,6 +38,7 @@ export async function getRecentDashboardActions(): Promise<CommandPaletteAction[
       name: `${name}`,
       section: t('command-palette.section.recent-dashboards', 'Recent dashboards'),
       priority: RECENT_DASHBOARDS_PRORITY,
+      url: locationUtil.stripBaseFromUrl(url),
       perform: () => {
         locationService.push(locationUtil.stripBaseFromUrl(url));
       },
@@ -66,6 +67,7 @@ export async function getDashboardSearchResultActions(searchQuery: string): Prom
       name: `${name}`,
       section: t('command-palette.section.dashboard-search-results', 'Dashboards'),
       priority: SEARCH_RESULTS_PRORITY,
+      url: locationUtil.stripBaseFromUrl(url),
       perform: () => {
         locationService.push(locationUtil.stripBaseFromUrl(url));
       },
