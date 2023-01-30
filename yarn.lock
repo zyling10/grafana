@@ -4854,6 +4854,7 @@ __metadata:
     "@testing-library/react-hooks": 8.0.1
     "@testing-library/user-event": 14.4.3
     "@types/d3-interpolate": ^3.0.0
+    "@types/dompurify": ^2.4.0
     "@types/history": 4.7.11
     "@types/jest": 29.2.3
     "@types/jquery": 3.5.14
@@ -4868,6 +4869,7 @@ __metadata:
     "@types/tinycolor2": 1.4.3
     d3-interpolate: 3.0.1
     date-fns: 2.29.3
+    dompurify: ^2.4.3
     esbuild: 0.16.17
     eventemitter3: 4.0.7
     fast_array_intersect: 1.1.0
@@ -10951,7 +10953,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dompurify@npm:^2":
+"@types/dompurify@npm:^2, @types/dompurify@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/dompurify@npm:2.4.0"
   dependencies:
@@ -18442,7 +18444,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^2.4.1":
+"dompurify@npm:^2.4.1, dompurify@npm:^2.4.3":
   version: 2.4.3
   resolution: "dompurify@npm:2.4.3"
   checksum: b440981f2a38cada2085759cc3d1e2f94571afc34343d011a8a6aa1ad91ae6abf651adbfa4994b0e2283f0ce81f7891cdb04b67d0b234c8d190cb70e9691f026

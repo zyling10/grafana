@@ -1,4 +1,5 @@
 import { sanitizeUrl as braintreeSanitizeUrl } from '@braintree/sanitize-url';
+import DOMPurify from 'dompurify';
 import * as xss from 'xss';
 
 const XSSWL = Object.keys(xss.whiteList).reduce<xss.IWhiteList>((acc, element) => {
@@ -49,8 +50,120 @@ export function sanitize(unsanitizedString: string): string {
   }
 }
 
+const panelHtmlConfig = {
+  USE_PROFILES: {
+    html: true,
+  },
+  ALLOWED_ATTR: [
+    'style',
+    'class',
+    'align',
+    'alt',
+    'autoplay',
+    'border',
+    'color',
+    'colspan',
+    'controls',
+    'coords',
+    'crossorigin',
+    'datetime',
+    'dir',
+    'face',
+    'height',
+    'href',
+    'loop',
+    'muted',
+    'open',
+    'playsinline',
+    'poster',
+    'preload',
+    'rowspan',
+    'shape',
+    'size',
+    'span',
+    'src',
+    'target',
+    'title',
+    'valign',
+    'width',
+  ],
+  ALLOWED_TAGS: [
+    'a',
+    'abbr',
+    'address',
+    'area',
+    'article',
+    'aside',
+    'audio',
+    'b',
+    'bdi',
+    'bdo',
+    'big',
+    'blockquote',
+    'br',
+    'caption',
+    'center',
+    'cite',
+    'code',
+    'col',
+    'colgroup',
+    'dd',
+    'del',
+    'details',
+    'div',
+    'dl',
+    'dt',
+    'em',
+    'figcaption',
+    'figure',
+    'font',
+    'footer',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'header',
+    'hr',
+    'i',
+    'img',
+    'ins',
+    'li',
+    'mark',
+    'nav',
+    'ol',
+    'p',
+    'pre',
+    's',
+    'section',
+    'small',
+    'span',
+    'sub',
+    'summary',
+    'sup',
+    'strong',
+    'strike',
+    'table',
+    'tbody',
+    'td',
+    'tfoot',
+    'th',
+    'thead',
+    'tr',
+    'tt',
+    'u',
+    'ul',
+    'video',
+  ],
+};
+
 export function sanitizeTextPanelContent(unsanitizedString: string): string {
   try {
+    if (false) {
+      console.log(xss.getDefaultCSSWhiteList());
+      return DOMPurify.sanitize(unsanitizedString, panelHtmlConfig);
+    }
     return sanitizeTextPanelWhitelist.process(unsanitizedString);
   } catch (error) {
     console.error('String could not be sanitized', unsanitizedString);
