@@ -31,8 +31,8 @@ func main() {
 
 	// Core kinds composite code generator. Produces all generated code in
 	// grafana/grafana that derives from core kinds.
-	coreKindsGen := codejen.JennyListWithNamer(func(def *codegen.DefForGen) string {
-		return def.Properties.Common().MachineName
+	coreKindsGen := codejen.JennyListWithNamer(func(decl *codegen.DeclForGen) string {
+		return decl.Properties.Common().MachineName
 	})
 
 	// All the jennies that comprise the core kinds generator pipeline
@@ -42,6 +42,9 @@ func main() {
 		codegen.BaseCoreRegistryJenny(filepath.Join("pkg", "registry", "corekind"), kindsys.GoCoreKindParentPath),
 		codegen.LatestMajorsOrXJenny(kindsys.TSCoreKindParentPath, codegen.TSTypesJenny{}),
 		codegen.TSVeneerIndexJenny(filepath.Join("packages", "grafana-schema", "src")),
+		codegen.CRDTypesJenny(kindsys.GoCoreKindParentPath),
+		codegen.YamlCRDJenny(kindsys.GoCoreKindParentPath),
+		codegen.CRDKindRegistryJenny(filepath.Join("pkg", "registry", "corecrd")),
 		codegen.DocsJenny(filepath.Join("docs", "sources", "developers", "kinds", "core")),
 	)
 
@@ -56,7 +59,7 @@ func main() {
 	groot := filepath.Dir(cwd)
 
 	rt := cuectx.GrafanaThemaRuntime()
-	var all []*codegen.DefForGen
+	var all []*codegen.DeclForGen
 
 	f := os.DirFS(filepath.Join(groot, kindsys.CoreDeclParentPath))
 	kinddirs := elsedie(fs.ReadDir(f, "."))("error reading core kind fs root directory")

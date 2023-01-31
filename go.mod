@@ -7,10 +7,6 @@ go 1.19
 // Also, use our fork with fixes for unimplemented methods (required for Go 1.16).
 replace github.com/denisenkom/go-mssqldb => github.com/grafana/go-mssqldb v0.0.0-20210326084033-d0ce3c521036
 
-// Override k8s.io/client-go outdated dependency, which is an indirect dependency of grafana/loki.
-// It's also present on grafana/loki's go.mod so we'll need till it gets updated.
-replace k8s.io/client-go => k8s.io/client-go v0.25.0
-
 replace github.com/russellhaering/goxmldsig@v1.1.0 => github.com/russellhaering/goxmldsig v1.1.1
 
 // Avoid using v2.0.0+incompatible Redigo used by dependencies as the latest maintained branch of Redigo is v1.
@@ -23,6 +19,19 @@ replace github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503
 
 // contains openapi encoder fixes. remove ASAP
 replace cuelang.org/go => github.com/sdboyer/cue v0.5.0-beta.2.0.20221218111347-341999f48bdb
+
+// For some insane reason, client-go seems to have a broken v12.0.0 tag on it that forces us to
+// hoist a replace statement.
+replace k8s.io/client-go => k8s.io/client-go v0.25.3
+
+require (
+	k8s.io/api v0.25.3 // indirect
+	k8s.io/apiextensions-apiserver v0.25.3
+	k8s.io/apimachinery v0.25.3
+	k8s.io/client-go v12.0.0+incompatible
+	k8s.io/kubectl v0.25.3
+	sigs.k8s.io/controller-runtime v0.13.1
+)
 
 require (
 	cloud.google.com/go/storage v1.28.1

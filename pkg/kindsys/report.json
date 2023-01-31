@@ -2,23 +2,20 @@
   "kinds": {
     "alertgroupspanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/alerting-squad-frontend"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/alertgroupspanelcfg/schema-reference",
+        "docs": "n/a",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/alertGroups/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/alertGroups/panelcfg.gen.ts"
+        "schema": "n/a",
+        "ts": "n/a"
       },
       "machineName": "alertgroupspanelcfg",
-      "maturity": "merged",
+      "maturity": "planned",
       "name": "AlertGroupsPanelCfg",
       "pluralMachineName": "alertgroupspanelcfgs",
       "pluralName": "AlertGroupsPanelCfgs",
@@ -26,12 +23,11 @@
     },
     "alertlistpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -48,12 +44,11 @@
     },
     "alertmanagerdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -70,12 +65,11 @@
     },
     "alertmanagerdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -92,20 +86,17 @@
     },
     "annotationslistpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/annotationslistpanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/annotationslistpanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/annolist/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/annolist/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/annolist/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/annolist/panelcfg.gen.ts"
       },
       "machineName": "annotationslistpanelcfg",
       "maturity": "experimental",
@@ -116,12 +107,16 @@
     },
     "apikey": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -137,12 +132,11 @@
     },
     "azuremonitordataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -159,12 +153,11 @@
     },
     "azuremonitordatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -181,20 +174,17 @@
     },
     "barchartpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/grafana-bi-squad"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/barchartpanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/barchartpanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/barchart/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/barchart/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/barchart/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/barchart/panelcfg.gen.ts"
       },
       "machineName": "barchartpanelcfg",
       "maturity": "experimental",
@@ -205,20 +195,17 @@
     },
     "bargaugepanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/bargaugepanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/bargaugepanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/bargauge/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/bargauge/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/bargauge/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/bargauge/panelcfg.gen.ts"
       },
       "machineName": "bargaugepanelcfg",
       "maturity": "experimental",
@@ -229,12 +216,11 @@
     },
     "cloudwatchdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -251,12 +237,11 @@
     },
     "cloudwatchdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -273,23 +258,22 @@
     },
     "dashboard": {
       "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
+      "crd": {
+        "dummySchema": true,
+        "group": "dashboard.core.grafana.com",
+        "scope": "Namespaced"
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 139,
+      "description": "A Grafana dashboard.",
       "lineageIsGroup": false,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/dashboard/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/dashboard",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/dashboard/dashboard_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/dashboard/x/dashboard_types.gen.ts"
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/core/dashboard/schema-reference",
+        "go": "https:/github.com/grafana/grafana/tree/main/pkg/kinds/dashboard",
+        "schema": "https:/github.com/grafana/grafana/tree/main/kinds/dashboard/dashboard_kind.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/dashboard/x/dashboard_types.gen.ts"
       },
       "machineName": "dashboard",
       "maturity": "experimental",
@@ -299,12 +283,11 @@
     },
     "dashboarddataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -321,12 +304,11 @@
     },
     "dashboarddatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -343,20 +325,17 @@
     },
     "dashboardlistpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/dashboardlistpanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/dashboardlistpanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/dashlist/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/dashlist/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/dashlist/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/dashlist/panelcfg.gen.ts"
       },
       "machineName": "dashboardlistpanelcfg",
       "maturity": "experimental",
@@ -367,12 +346,16 @@
     },
     "datasource": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -388,12 +371,11 @@
     },
     "debugpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -410,12 +392,11 @@
     },
     "elasticsearchdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -432,12 +413,11 @@
     },
     "elasticsearchdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -454,12 +434,11 @@
     },
     "flamegraphpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -476,12 +455,16 @@
     },
     "folder": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -497,20 +480,17 @@
     },
     "gaugepanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/gaugepanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/gaugepanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/gauge/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/gauge/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/gauge/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/gauge/panelcfg.gen.ts"
       },
       "machineName": "gaugepanelcfg",
       "maturity": "experimental",
@@ -521,12 +501,11 @@
     },
     "geomappanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -543,12 +522,11 @@
     },
     "gettingstartedpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -565,12 +543,11 @@
     },
     "googlecloudmonitoringdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -587,12 +564,11 @@
     },
     "googlecloudmonitoringdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -609,12 +585,11 @@
     },
     "grafanadataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -631,12 +606,11 @@
     },
     "grafanadatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -653,12 +627,11 @@
     },
     "graphitedataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -675,12 +648,11 @@
     },
     "graphitedatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -697,12 +669,11 @@
     },
     "grapholdpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -719,20 +690,17 @@
     },
     "histogrampanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/grafana-bi-squad"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/histogrampanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/histogrampanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/histogram/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/histogram/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/histogram/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/histogram/panelcfg.gen.ts"
       },
       "machineName": "histogrampanelcfg",
       "maturity": "experimental",
@@ -743,12 +711,11 @@
     },
     "iconpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -765,12 +732,11 @@
     },
     "jaegerdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -787,12 +753,11 @@
     },
     "jaegerdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -807,40 +772,13 @@
       "pluralName": "JaegerDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
-    "librarypanel": {
-      "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
-      "currentVersion": [
-        0,
-        0
-      ],
-      "grafanaMaturityCount": 10,
-      "lineageIsGroup": false,
-      "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/librarypanel/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/librarypanel",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/librarypanel/librarypanel_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/librarypanel/x/librarypanel_types.gen.ts"
-      },
-      "machineName": "librarypanel",
-      "maturity": "experimental",
-      "name": "LibraryPanel",
-      "pluralMachineName": "librarypanels",
-      "pluralName": "LibraryPanels"
-    },
     "livepanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -857,12 +795,11 @@
     },
     "logspanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -879,12 +816,11 @@
     },
     "lokidataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -901,12 +837,11 @@
     },
     "lokidatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -923,12 +858,11 @@
     },
     "microsoftsqlserverdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -945,12 +879,11 @@
     },
     "microsoftsqlserverdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -967,12 +900,11 @@
     },
     "mysqldataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -989,12 +921,11 @@
     },
     "mysqldatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1011,20 +942,17 @@
     },
     "newspanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/newspanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/newspanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/news/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/news/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/news/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/news/panelcfg.gen.ts"
       },
       "machineName": "newspanelcfg",
       "maturity": "experimental",
@@ -1035,23 +963,20 @@
     },
     "nodegraphpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/observability-traces-and-profiling"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/nodegraphpanelcfg/schema-reference",
+        "docs": "n/a",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/nodeGraph/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/nodeGraph/panelcfg.gen.ts"
+        "schema": "n/a",
+        "ts": "n/a"
       },
       "machineName": "nodegraphpanelcfg",
-      "maturity": "experimental",
+      "maturity": "planned",
       "name": "NodeGraphPanelCfg",
       "pluralMachineName": "nodegraphpanelcfgs",
       "pluralName": "NodeGraphPanelCfgs",
@@ -1059,12 +984,11 @@
     },
     "parcadataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1081,12 +1005,11 @@
     },
     "parcadatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1103,12 +1026,11 @@
     },
     "phlaredataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1125,12 +1047,11 @@
     },
     "phlaredatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1147,20 +1068,17 @@
     },
     "piechartpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/grafana-bi-squad"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/piechartpanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/piechartpanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/piechart/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/piechart/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/piechart/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/piechart/panelcfg.gen.ts"
       },
       "machineName": "piechartpanelcfg",
       "maturity": "experimental",
@@ -1171,23 +1089,22 @@
     },
     "playlist": {
       "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "playlist.core.grafana.com",
+        "scope": "Namespaced"
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "A playlist is a series of dashboards that is automatically rotated in the browser, on a configurable interval.",
       "lineageIsGroup": false,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/playlist/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/playlist",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/playlist/playlist_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/playlist/x/playlist_types.gen.ts"
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/core/playlist/schema-reference",
+        "go": "https:/github.com/grafana/grafana/tree/main/pkg/kinds/playlist",
+        "schema": "https:/github.com/grafana/grafana/tree/main/kinds/playlist/playlist_kind.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/playlist/x/playlist_types.gen.ts"
       },
       "machineName": "playlist",
       "maturity": "merged",
@@ -1197,12 +1114,11 @@
     },
     "postgresqldataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1219,12 +1135,11 @@
     },
     "postgresqldatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1239,40 +1154,13 @@
       "pluralName": "PostgreSQLDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
-    "preferences": {
-      "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
-      "currentVersion": [
-        0,
-        0
-      ],
-      "grafanaMaturityCount": 0,
-      "lineageIsGroup": false,
-      "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/preferences/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/preferences",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/preferences/preferences_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/preferences/x/preferences_types.gen.ts"
-      },
-      "machineName": "preferences",
-      "maturity": "merged",
-      "name": "Preferences",
-      "pluralMachineName": "preferencess",
-      "pluralName": "Preferencess"
-    },
     "prometheusdataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1289,12 +1177,11 @@
     },
     "prometheusdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1309,40 +1196,18 @@
       "pluralName": "PrometheusDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
-    "publicdashboard": {
-      "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
-      "currentVersion": [
-        0,
-        0
-      ],
-      "grafanaMaturityCount": 0,
-      "lineageIsGroup": false,
-      "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/publicdashboard/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/publicdashboard",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/publicdashboard/publicdashboard_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/publicdashboard/x/publicdashboard_types.gen.ts"
-      },
-      "machineName": "publicdashboard",
-      "maturity": "merged",
-      "name": "PublicDashboard",
-      "pluralMachineName": "publicdashboards",
-      "pluralName": "PublicDashboards"
-    },
     "query": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1358,12 +1223,16 @@
     },
     "queryhistory": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1379,70 +1248,42 @@
     },
     "serviceaccount": {
       "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 9,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/serviceaccount/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/serviceaccount",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/serviceaccount/serviceaccount_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/serviceaccount/x/serviceaccount_types.gen.ts"
+        "docs": "n/a",
+        "go": "n/a",
+        "schema": "n/a",
+        "ts": "n/a"
       },
       "machineName": "serviceaccount",
-      "maturity": "merged",
+      "maturity": "planned",
       "name": "ServiceAccount",
       "pluralMachineName": "serviceaccounts",
       "pluralName": "ServiceAccounts"
     },
-    "statetimelinepanelcfg": {
-      "category": "composable",
-      "codeowners": [
-        "grafana/grafana-bi-squad"
-      ],
-      "currentVersion": [
-        0,
-        0
-      ],
-      "grafanaMaturityCount": 0,
-      "lineageIsGroup": true,
-      "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/statetimelinepanelcfg/schema-reference",
-        "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/state-timeline/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/state-timeline/panelcfg.gen.ts"
-      },
-      "machineName": "statetimelinepanelcfg",
-      "maturity": "experimental",
-      "name": "StateTimelinePanelCfg",
-      "pluralMachineName": "statetimelinepanelcfgs",
-      "pluralName": "StateTimelinePanelCfgs",
-      "schemaInterface": "PanelCfg"
-    },
     "statpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/statpanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/statpanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/stat/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/stat/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/stat/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/stat/panelcfg.gen.ts"
       },
       "machineName": "statpanelcfg",
       "maturity": "experimental",
@@ -1451,38 +1292,13 @@
       "pluralName": "StatPanelCfgs",
       "schemaInterface": "PanelCfg"
     },
-    "statushistorypanelcfg": {
-      "category": "composable",
-      "codeowners": [
-        "grafana/grafana-bi-squad"
-      ],
-      "currentVersion": [
-        0,
-        0
-      ],
-      "grafanaMaturityCount": 0,
-      "lineageIsGroup": true,
-      "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/statushistorypanelcfg/schema-reference",
-        "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/status-history/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/status-history/panelcfg.gen.ts"
-      },
-      "machineName": "statushistorypanelcfg",
-      "maturity": "experimental",
-      "name": "StatusHistoryPanelCfg",
-      "pluralMachineName": "statushistorypanelcfgs",
-      "pluralName": "StatusHistoryPanelCfgs",
-      "schemaInterface": "PanelCfg"
-    },
     "tableoldpanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1499,23 +1315,22 @@
     },
     "team": {
       "category": "core",
-      "codeowners": [
-        "grafana/grafana-as-code",
-        "grafana/grafana-bi-squad",
-        "grafana/plugins-platform-frontend",
-        "grafana/user-essentials"
-      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "team.core.grafana.com",
+        "scope": "Namespaced"
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 7,
+      "description": "A team is a named grouping of Grafana users to which access control rules may be assigned.",
       "lineageIsGroup": false,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/team/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/team",
-        "schema": "https://github.com/grafana/grafana/tree/main/kinds/team/team_kind.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/team/x/team_types.gen.ts"
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/core/team/schema-reference",
+        "go": "https:/github.com/grafana/grafana/tree/main/pkg/kinds/team",
+        "schema": "https:/github.com/grafana/grafana/tree/main/kinds/team/team_kind.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/team/x/team_types.gen.ts"
       },
       "machineName": "team",
       "maturity": "merged",
@@ -1525,23 +1340,20 @@
     },
     "tempodataquery": {
       "category": "composable",
-      "codeowners": [
-        "grafana/observability-traces-and-profiling"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/tempodataquery/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/tsdb/tempo/kinds/dataquery/types_dataquery_gen.go",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/datasource/tempo/dataquery.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/datasource/tempo/dataquery.gen.ts"
+        "docs": "n/a",
+        "go": "n/a",
+        "schema": "n/a",
+        "ts": "n/a"
       },
       "machineName": "tempodataquery",
-      "maturity": "experimental",
+      "maturity": "planned",
       "name": "TempoDataQuery",
       "pluralMachineName": "tempodataquerys",
       "pluralName": "TempoDataQuerys",
@@ -1549,12 +1361,11 @@
     },
     "tempodatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1569,38 +1380,34 @@
       "pluralName": "TempoDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
-    "testdatadataquery": {
+    "testdatadbdataquery": {
       "category": "composable",
-      "codeowners": [
-        "grafana/plugins-platform-frontend"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/testdatadataquery/schema-reference",
-        "go": "https://github.com/grafana/grafana/tree/main/pkg/tsdb/testdata/kinds/dataquery/types_dataquery_gen.go",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/datasource/testdata/dataquery.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/datasource/testdata/dataquery.gen.ts"
+        "docs": "n/a",
+        "go": "n/a",
+        "schema": "n/a",
+        "ts": "n/a"
       },
-      "machineName": "testdatadataquery",
-      "maturity": "experimental",
-      "name": "TestDataDataQuery",
-      "pluralMachineName": "testdatadataquerys",
-      "pluralName": "TestDataDataQuerys",
+      "machineName": "testdatadbdataquery",
+      "maturity": "planned",
+      "name": "TestDataDBDataQuery",
+      "pluralMachineName": "testdatadbdataquerys",
+      "pluralName": "TestDataDBDataQuerys",
       "schemaInterface": "DataQuery"
     },
-    "testdatadatasourcecfg": {
+    "testdatadbdatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1608,29 +1415,26 @@
         "schema": "n/a",
         "ts": "n/a"
       },
-      "machineName": "testdatadatasourcecfg",
+      "machineName": "testdatadbdatasourcecfg",
       "maturity": "planned",
-      "name": "TestDataDataSourceCfg",
-      "pluralMachineName": "testdatadatasourcecfgs",
-      "pluralName": "TestDataDataSourceCfgs",
+      "name": "TestDataDBDataSourceCfg",
+      "pluralMachineName": "testdatadbdatasourcecfgs",
+      "pluralName": "TestDataDBDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
     "textpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/user-essentials"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/textpanelcfg/schema-reference",
+        "docs": "https:/grafana.com/docs/grafana/next/developers/kinds/composable/textpanelcfg/schema-reference",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/text/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/text/panelcfg.gen.ts"
+        "schema": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/text/panelcfg.cue",
+        "ts": "https:/github.com/grafana/grafana/tree/main/public/app/plugins/panel/text/panelcfg.gen.ts"
       },
       "machineName": "textpanelcfg",
       "maturity": "experimental",
@@ -1641,12 +1445,16 @@
     },
     "thumb": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1662,12 +1470,11 @@
     },
     "tracespanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1684,12 +1491,16 @@
     },
     "user": {
       "category": "core",
-      "codeowners": [],
+      "crd": {
+        "dummySchema": false,
+        "group": "",
+        "scope": ""
+      },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1705,12 +1516,11 @@
     },
     "welcomepanelcfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1727,23 +1537,20 @@
     },
     "xychartpanelcfg": {
       "category": "composable",
-      "codeowners": [
-        "grafana/grafana-bi-squad"
-      ],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
-        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/composable/xychartpanelcfg/schema-reference",
+        "docs": "n/a",
         "go": "n/a",
-        "schema": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/xychart/panelcfg.cue",
-        "ts": "https://github.com/grafana/grafana/tree/main/public/app/plugins/panel/xychart/panelcfg.gen.ts"
+        "schema": "n/a",
+        "ts": "n/a"
       },
       "machineName": "xychartpanelcfg",
-      "maturity": "experimental",
+      "maturity": "planned",
       "name": "XYChartPanelCfg",
       "pluralMachineName": "xychartpanelcfgs",
       "pluralName": "XYChartPanelCfgs",
@@ -1751,12 +1558,11 @@
     },
     "zipkindataquery": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": false,
       "links": {
         "docs": "n/a",
@@ -1773,12 +1579,11 @@
     },
     "zipkindatasourcecfg": {
       "category": "composable",
-      "codeowners": [],
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "",
       "lineageIsGroup": true,
       "links": {
         "docs": "n/a",
@@ -1850,14 +1655,12 @@
           "postgresqldatasourcecfg",
           "prometheusdataquery",
           "prometheusdatasourcecfg",
-          "statetimelinepanelcfg",
           "statpanelcfg",
-          "statushistorypanelcfg",
           "tableoldpanelcfg",
           "tempodataquery",
           "tempodatasourcecfg",
-          "testdatadataquery",
-          "testdatadatasourcecfg",
+          "testdatadbdataquery",
+          "testdatadbdatasourcecfg",
           "textpanelcfg",
           "tracespanelcfg",
           "welcomepanelcfg",
@@ -1865,7 +1668,7 @@
           "zipkindataquery",
           "zipkindatasourcecfg"
         ],
-        "count": 65
+        "count": 63
       },
       "core": {
         "name": "core",
@@ -1874,10 +1677,7 @@
           "dashboard",
           "datasource",
           "folder",
-          "librarypanel",
           "playlist",
-          "preferences",
-          "publicdashboard",
           "query",
           "queryhistory",
           "serviceaccount",
@@ -1885,7 +1685,7 @@
           "thumb",
           "user"
         ],
-        "count": 14
+        "count": 11
       }
     },
     "maturity": {
@@ -1899,19 +1699,12 @@
           "dashboardlistpanelcfg",
           "gaugepanelcfg",
           "histogrampanelcfg",
-          "librarypanel",
           "newspanelcfg",
-          "nodegraphpanelcfg",
           "piechartpanelcfg",
-          "statetimelinepanelcfg",
           "statpanelcfg",
-          "statushistorypanelcfg",
-          "tempodataquery",
-          "testdatadataquery",
-          "textpanelcfg",
-          "xychartpanelcfg"
+          "textpanelcfg"
         ],
-        "count": 18
+        "count": 11
       },
       "mature": {
         "name": "mature",
@@ -1921,18 +1714,15 @@
       "merged": {
         "name": "merged",
         "items": [
-          "alertgroupspanelcfg",
           "playlist",
-          "preferences",
-          "publicdashboard",
-          "serviceaccount",
           "team"
         ],
-        "count": 6
+        "count": 2
       },
       "planned": {
         "name": "planned",
         "items": [
+          "alertgroupspanelcfg",
           "alertlistpanelcfg",
           "alertmanagerdataquery",
           "alertmanagerdatasourcecfg",
@@ -1969,6 +1759,7 @@
           "microsoftsqlserverdatasourcecfg",
           "mysqldataquery",
           "mysqldatasourcecfg",
+          "nodegraphpanelcfg",
           "parcadataquery",
           "parcadatasourcecfg",
           "phlaredataquery",
@@ -1979,17 +1770,21 @@
           "prometheusdatasourcecfg",
           "query",
           "queryhistory",
+          "serviceaccount",
           "tableoldpanelcfg",
+          "tempodataquery",
           "tempodatasourcecfg",
-          "testdatadatasourcecfg",
+          "testdatadbdataquery",
+          "testdatadbdatasourcecfg",
           "thumb",
           "tracespanelcfg",
           "user",
           "welcomepanelcfg",
+          "xychartpanelcfg",
           "zipkindataquery",
           "zipkindatasourcecfg"
         ],
-        "count": 55
+        "count": 61
       },
       "stable": {
         "name": "stable",

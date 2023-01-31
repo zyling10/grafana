@@ -9,7 +9,7 @@ var (
 	ErrValueNotExist = errors.New("cue value does not exist")
 
 	// ErrValueNotAKind indicates that a provided CUE value is not any variety of
-	// Kind. This is almost always a user error - they oops'd and provided the
+	// Interface. This is almost always a user error - they oops'd and provided the
 	// wrong path, file, etc.
 	ErrValueNotAKind = errors.New("not a kind")
 

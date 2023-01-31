@@ -39,20 +39,20 @@ func (gen *genTSVeneerIndex) JennyName() string {
 	return "TSVeneerIndexJenny"
 }
 
-func (gen *genTSVeneerIndex) Generate(decls ...*DefForGen) (*codejen.File, error) {
+func (gen *genTSVeneerIndex) Generate(decls ...*DeclForGen) (*codejen.File, error) {
 	tsf := new(ast.File)
-	for _, def := range decls {
-		sch := def.Lineage().Latest()
+	for _, decl := range decls {
+		sch := decl.Lineage().Latest()
 		f, err := typescript.GenerateTypes(sch, &typescript.TypeConfig{
-			RootName: def.Properties.Common().Name,
-			Group:    def.Properties.Common().LineageIsGroup,
+			RootName: decl.Properties.Common().Name,
+			Group:    decl.Properties.Common().LineageIsGroup,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("%s: %w", def.Properties.Common().Name, err)
+			return nil, fmt.Errorf("%s: %w", decl.Properties.Common().Name, err)
 		}
-		elems, err := gen.extractTSIndexVeneerElements(def, f)
+		elems, err := gen.extractTSIndexVeneerElements(decl, f)
 		if err != nil {
-			return nil, fmt.Errorf("%s: %w", def.Properties.Common().Name, err)
+			return nil, fmt.Errorf("%s: %w", decl.Properties.Common().Name, err)
 		}
 		tsf.Nodes = append(tsf.Nodes, elems...)
 	}
@@ -60,9 +60,9 @@ func (gen *genTSVeneerIndex) Generate(decls ...*DefForGen) (*codejen.File, error
 	return codejen.NewFile(filepath.Join(gen.dir, "index.gen.ts"), []byte(tsf.String()), gen), nil
 }
 
-func (gen *genTSVeneerIndex) extractTSIndexVeneerElements(def *DefForGen, tf *ast.File) ([]ast.Decl, error) {
-	lin := def.Lineage()
-	comm := def.Properties.Common()
+func (gen *genTSVeneerIndex) extractTSIndexVeneerElements(decl *DeclForGen, tf *ast.File) ([]ast.Decl, error) {
+	lin := decl.Lineage()
+	comm := decl.Properties.Common()
 
 	// Check the root, then walk the tree
 	rootv := lin.Latest().Underlying()
@@ -90,7 +90,7 @@ func (gen *genTSVeneerIndex) extractTSIndexVeneerElements(def *DefForGen, tf *as
 				name = sels[0].String()
 			}
 
-			// Search the generated TS AST for the type and default def nodes
+			// Search the generated TS AST for the type and default decl nodes
 			pair := findDeclNode(name, tf)
 			if pair.T == nil {
 				// No generated type for this item, skip it
@@ -139,7 +139,7 @@ func (gen *genTSVeneerIndex) extractTSIndexVeneerElements(def *DefForGen, tf *as
 	}
 
 	vpath := fmt.Sprintf("v%v", thema.LatestVersion(lin)[0])
-	if def.Properties.Common().Maturity.Less(kindsys.MaturityStable) {
+	if decl.Properties.Common().Maturity.Less(kindsys.MaturityStable) {
 		vpath = "x"
 	}
 
@@ -190,7 +190,7 @@ func (gen *genTSVeneerIndex) extractTSIndexVeneerElements(def *DefForGen, tf *as
 		})
 	}
 
-	// TODO emit a def in the index.gen.ts that ensures any custom veneer types are "compatible" with current version raw types
+	// TODO emit a decl in the index.gen.ts that ensures any custom veneer types are "compatible" with current version raw types
 	return ret, nil
 }
 
@@ -205,13 +205,13 @@ type tsVeneerAttr struct {
 
 func findDeclNode(name string, tf *ast.File) declPair {
 	var p declPair
-	for _, def := range tf.Nodes {
+	for _, decl := range tf.Nodes {
 		// Peer through export keywords
-		if ex, is := def.(ast.ExportKeyword); is {
-			def = ex.Decl
+		if ex, is := decl.(ast.ExportKeyword); is {
+			decl = ex.Decl
 		}
 
-		switch x := def.(type) {
+		switch x := decl.(type) {
 		case ast.TypeDecl:
 			if x.Name.Name == name {
 				p.T = &x.Name

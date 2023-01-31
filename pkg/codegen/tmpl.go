@@ -35,12 +35,16 @@ type (
 		MainGenerator string
 		Using         []codejen.NamedJenny
 		From          string
+		Leader        string
 	}
 	tvars_kind_registry struct {
-		// Header tvars_autogen_header
 		PackageName       string
 		KindPackagePrefix string
-		Kinds             []*DefForGen
+		Kinds             []*DeclForGen
+	}
+	tvars_kind_registry_backend struct {
+		BackendKindPackagePrefix string
+		Kinds                    []*DeclForGen
 	}
 	tvars_coremodel_imports struct {
 		PackageName string

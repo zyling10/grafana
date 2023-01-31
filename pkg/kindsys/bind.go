@@ -7,42 +7,42 @@ import (
 var _ Composable = genericComposable{}
 
 type genericComposable struct {
-	def Def[ComposableProperties]
-	lin thema.Lineage
+	decl Decl[ComposableProperties]
+	lin  thema.Lineage
 }
 
 func (k genericComposable) Props() SomeKindProperties {
-	return k.def.Properties
+	return k.decl.Properties
 }
 
 func (k genericComposable) Name() string {
-	return k.def.Properties.Name
+	return k.decl.Properties.Name
 }
 
 func (k genericComposable) MachineName() string {
-	return k.def.Properties.MachineName
+	return k.decl.Properties.MachineName
 }
 
 func (k genericComposable) Maturity() Maturity {
-	return k.def.Properties.Maturity
+	return k.decl.Properties.Maturity
 }
 
-func (k genericComposable) Def() Def[ComposableProperties] {
-	return k.def
+func (k genericComposable) Decl() Decl[ComposableProperties] {
+	return k.decl
 }
 
 func (k genericComposable) Lineage() thema.Lineage {
 	return k.lin
 }
 
-func BindComposable(rt *thema.Runtime, decl Def[ComposableProperties], opts ...thema.BindOption) (Composable, error) {
+func BindComposable(rt *thema.Runtime, decl Decl[ComposableProperties], opts ...thema.BindOption) (Composable, error) {
 	lin, err := decl.Some().BindKindLineage(rt, opts...)
 	if err != nil {
 		return nil, err
 	}
 
 	return genericComposable{
-		def: decl,
-		lin: lin,
+		decl: decl,
+		lin:  lin,
 	}, nil
 }

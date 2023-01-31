@@ -45,16 +45,16 @@ func (m Maturity) String() string {
 	return string(m)
 }
 
-// Kind describes a Grafana kind object: a Go representation of the definition of
+// Interface describes a Grafana kind object: a Go representation of the definition of
 // one of Grafana's categories of kinds.
-type Kind interface {
+type Interface interface {
 	// Props returns a [kindsys.SomeKindProps], representing the properties
 	// of the kind as declared in the .cue source. The underlying type is
 	// determined by the category of kind.
 	//
 	// This method is largely for convenience, as all actual kind categories are
 	// expected to implement one of the other interfaces, each of which contain
-	// a Def() method through which these same properties are accessible.
+	// a Decl() method through which these same properties are accessible.
 	Props() SomeKindProperties
 
 	// TODO docs
@@ -71,22 +71,22 @@ type Kind interface {
 }
 
 type Core interface {
-	Kind
+	Interface
 
 	// TODO docs
-	Def() Def[CoreProperties]
+	Decl() Decl[CoreProperties]
 }
 
 type Custom interface {
-	Kind
+	Interface
 
 	// TODO docs
-	Def() Def[CustomProperties]
+	Decl() Decl[CustomProperties]
 }
 
 type Composable interface {
-	Kind
+	Interface
 
 	// TODO docs
-	Def() Def[ComposableProperties]
+	Decl() Decl[ComposableProperties]
 }
