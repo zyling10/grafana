@@ -49,6 +49,8 @@ export class GrafanaJavascriptAgentBackend
       instrumentations.push(new WebVitalsInstrumentation());
     }
 
+    console.log({ instrumentations });
+
     // initialize GrafanaJavascriptAgent so it can set up its hooks and start collecting errors
     const grafanaJavaScriptAgentOptions: BrowserConfig = {
       globalObjectKey: options.globalObjectKey || 'faro',

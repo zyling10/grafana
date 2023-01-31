@@ -31,6 +31,7 @@ import {
 import { FILTER_FOR_OPERATOR, FILTER_OUT_OPERATOR } from '@grafana/ui/src/components/Table/types';
 import appEvents from 'app/core/app_events';
 import { FadeIn } from 'app/core/components/Animations/FadeIn';
+import { InstrumentationDevTools } from 'app/core/components/InstrumentationDevTools';
 import { supportedFeatures } from 'app/core/history/richHistoryStorageProvider';
 import { MIXED_DATASOURCE_NAME } from 'app/plugins/datasource/mixed/MixedDataSource';
 import { getNodeGraphDataFrames } from 'app/plugins/panel/nodeGraph/utils';
@@ -490,6 +491,8 @@ export class Explore extends React.PureComponent<Props, ExploreState> {
               />
               <ResponseErrorContainer exploreId={exploreId} />
             </PanelContainer>
+
+            <InstrumentationDevTools />
             <AutoSizer onResize={this.onResize} disableHeight>
               {({ width }) => {
                 if (width === 0) {
