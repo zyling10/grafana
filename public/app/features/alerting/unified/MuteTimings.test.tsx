@@ -109,7 +109,7 @@ describe('Mute timings', () => {
 
   it('creates a new mute timing', async () => {
     disableRBAC();
-    await renderMuteTimings();
+    renderMuteTimings();
 
     await waitFor(() => expect(mocks.api.fetchAlertManagerConfig).toHaveBeenCalled());
     expect(ui.nameField.get()).toBeInTheDocument();
@@ -150,9 +150,7 @@ describe('Mute timings', () => {
   });
 
   it('prepoluates the form when editing a mute timing', async () => {
-    await renderMuteTimings(
-      '/alerting/routes/mute-timing/edit' + `?muteName=${encodeURIComponent(muteTimeInterval.name)}`
-    );
+    renderMuteTimings('/alerting/routes/mute-timing/edit' + `?muteName=${encodeURIComponent(muteTimeInterval.name)}`);
 
     await waitFor(() => expect(mocks.api.fetchAlertManagerConfig).toHaveBeenCalled());
     expect(ui.nameField.get()).toBeInTheDocument();
@@ -215,7 +213,7 @@ describe('Mute timings', () => {
   });
 
   it('form is invalid with duplicate mute timing name', async () => {
-    await renderMuteTimings();
+    renderMuteTimings();
 
     await waitFor(() => expect(mocks.api.fetchAlertManagerConfig).toHaveBeenCalled());
     await waitFor(() => expect(ui.nameField.get()).toBeInTheDocument());
@@ -231,9 +229,7 @@ describe('Mute timings', () => {
   });
 
   it('replaces mute timings in routes when the mute timing name is changed', async () => {
-    await renderMuteTimings(
-      '/alerting/routes/mute-timing/edit' + `?muteName=${encodeURIComponent(muteTimeInterval.name)}`
-    );
+    renderMuteTimings('/alerting/routes/mute-timing/edit' + `?muteName=${encodeURIComponent(muteTimeInterval.name)}`);
 
     await waitFor(() => expect(mocks.api.fetchAlertManagerConfig).toHaveBeenCalled());
     expect(ui.nameField.get()).toBeInTheDocument();

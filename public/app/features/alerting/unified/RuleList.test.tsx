@@ -218,7 +218,7 @@ describe('RuleList', () => {
 
     mocks.api.fetchRulerRules.mockRejectedValue({ status: 500, data: { message: 'Server error' } });
 
-    await renderRuleList();
+    renderRuleList();
 
     await waitFor(() => expect(mocks.api.fetchRules).toHaveBeenCalledTimes(4));
     const groups = await ui.ruleGroup.findAll();
@@ -317,7 +317,7 @@ describe('RuleList', () => {
       }
     });
 
-    await renderRuleList();
+    renderRuleList();
 
     const groups = await ui.ruleGroup.findAll();
     expect(groups).toHaveLength(2);
@@ -487,7 +487,7 @@ describe('RuleList', () => {
       }
     });
 
-    await renderRuleList();
+    renderRuleList();
     const groups = await ui.ruleGroup.findAll();
     expect(groups).toHaveLength(2);
 
@@ -552,7 +552,7 @@ describe('RuleList', () => {
         mocks.api.setRulerRuleGroup.mockResolvedValue();
         mocks.api.deleteNamespace.mockResolvedValue();
 
-        await renderRuleList();
+        renderRuleList();
 
         expect(await ui.rulesFilterInput.find()).toHaveValue('');
 
@@ -561,12 +561,8 @@ describe('RuleList', () => {
 
         // open edit dialog
         await userEvent.click(ui.editCloudGroupIcon.get(groups[0]));
-        await expect(screen.getByRole('textbox', { hidden: true, name: /namespace/i })).toHaveDisplayValue(
-          'namespace1'
-        );
-        await expect(screen.getByRole('textbox', { name: 'Evaluation group', exact: true })).toHaveDisplayValue(
-          'group1'
-        );
+        expect(screen.getByRole('textbox', { hidden: true, name: /namespace/i })).toHaveDisplayValue('namespace1');
+        expect(screen.getByRole('textbox', { name: 'Evaluation group', exact: true })).toHaveDisplayValue('group1');
         await fn();
       });
     }

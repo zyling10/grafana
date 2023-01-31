@@ -26,7 +26,7 @@ const renderReceieversTable = async (receivers: Receiver[], notifiers: NotifierD
   };
 
   const store = configureStore();
-  await store.dispatch(fetchGrafanaNotifiersAction.fulfilled(notifiers, 'initial'));
+  store.dispatch(fetchGrafanaNotifiersAction.fulfilled(notifiers, 'initial'));
 
   return render(
     <TestProvider store={store}>
