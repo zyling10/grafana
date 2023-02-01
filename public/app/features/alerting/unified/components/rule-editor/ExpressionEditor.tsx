@@ -16,15 +16,9 @@ export interface ExpressionEditorProps {
   value?: string;
   onChange: (value: string) => void;
   dataSourceName: string; // will be a prometheus or loki datasource
-  showPreviewAlertsButton: boolean;
 }
 
-export const ExpressionEditor: FC<ExpressionEditorProps> = ({
-  value,
-  onChange,
-  dataSourceName,
-  showPreviewAlertsButton = true,
-}) => {
+export const ExpressionEditor: FC<ExpressionEditorProps> = ({ value, onChange, dataSourceName }) => {
   const styles = useStyles2(getStyles);
 
   const { mapToValue, mapToQuery } = useQueryMappers(dataSourceName);
@@ -83,7 +77,7 @@ export const ExpressionEditor: FC<ExpressionEditorProps> = ({
           datasource={dataSource}
         />
       </DataSourcePluginContextProvider>
-      {showPreviewAlertsButton && (
+      {
         <div className={styles.preview}>
           <Button
             type="button"
@@ -99,7 +93,7 @@ export const ExpressionEditor: FC<ExpressionEditorProps> = ({
           )}
           {previewHasAlerts && <CloudAlertPreview preview={previewDataFrame} />}
         </div>
-      )}
+      }
     </>
   );
 };

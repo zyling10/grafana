@@ -1,11 +1,14 @@
+import { noop } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useAsync } from 'react-use';
 
-import { LoadingState, PanelData } from '@grafana/data';
+import { CoreApp, LoadingState, PanelData } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Stack } from '@grafana/experimental';
-import { config } from '@grafana/runtime';
+import { config, getDataSourceSrv } from '@grafana/runtime';
 import { Alert, Button, Field, InputControl, Tooltip } from '@grafana/ui';
+import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { isExpressionQuery } from 'app/features/expressions/guards';
 import { AlertQuery } from 'app/types/unified-alerting-dto';
 
@@ -61,7 +64,8 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
   const isCloudAlertRuleType = type === RuleFormType.cloudAlerting;
   const isRecordingRuleType = type === RuleFormType.cloudRecording;
 
-  const showCloudExpressionEditor = (isRecordingRuleType || isCloudAlertRuleType) && dataSourceName;
+  const showCloudExpressionEditor = isCloudAlertRuleType && dataSourceName;
+  const showRecordingRuleEditor = isRecordingRuleType && dataSourceName;
 
   const cancelQueries = useCallback(() => {
     runner.current.cancel();
@@ -180,19 +184,13 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
     <RuleEditorSection stepNo={2} title="Set a query and alert condition">
       <AlertType editingExistingRule={editingExistingRule} />
 
-      {/* This is the PromQL Editor for Cloud rules and recording rules */}
+      {/* This is the PromQL Editor for Cloud rules */}
       {showCloudExpressionEditor && (
         <Field error={errors.expression?.message} invalid={!!errors.expression?.message}>
           <InputControl
             name="expression"
             render={({ field: { ref, ...field } }) => {
-              return (
-                <ExpressionEditor
-                  {...field}
-                  dataSourceName={dataSourceName}
-                  showPreviewAlertsButton={!isRecordingRuleType}
-                />
-              );
+              return <ExpressionEditor {...field} dataSourceName={dataSourceName} />;
             }}
             control={control}
             rules={{
@@ -201,6 +199,9 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
           />
         </Field>
       )}
+
+      {/* This is the editor for recording rules */}
+      {showRecordingRuleEditor && <CloudRecordingRuleEditor query={queries[0]} />}
 
       {/* This is the editor for Grafana managed rules */}
       {isGrafanaManagedType && (
@@ -284,5 +285,44 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
         </Stack>
       )}
     </RuleEditorSection>
+  );
+};
+
+interface CloudRecordingRuleEditorProps {
+  query: AlertQuery;
+}
+
+const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({ query }) => {
+  const dataSourceSrv = getDataSourceSrv();
+  const dataSourceIdentifier = query.datasourceUid;
+
+  const fetchDsSettings = useAsync(() => dataSourceSrv.get(dataSourceIdentifier), [dataSourceIdentifier]);
+
+  if (fetchDsSettings.error) {
+    console.error(fetchDsSettings.error);
+    return <Alert title={'Something went wrong'}>{fetchDsSettings.error}</Alert>;
+  }
+
+  if (!fetchDsSettings.value) {
+    return null;
+  }
+
+  const Editor = fetchDsSettings.value.components?.QueryEditor;
+
+  return (
+    // @ts-ignore
+    <Editor
+      key={fetchDsSettings.value.name}
+      query={query}
+      datasource={fetchDsSettings.value}
+      onChange={noop}
+      onRunQuery={noop}
+      onAddQuery={noop}
+      data={{}}
+      range={getTimeSrv().timeRange()}
+      queries={[]}
+      app={CoreApp.UnifiedAlerting}
+      history={history}
+    />
   );
 };
