@@ -1,57 +1,118 @@
 import { sanitizeUrl as braintreeSanitizeUrl } from '@braintree/sanitize-url';
-import * as xss from 'xss';
-
-const XSSWL = Object.keys(xss.whiteList).reduce<xss.IWhiteList>((acc, element) => {
-  acc[element] = xss.whiteList[element]?.concat(['class', 'style']);
-  return acc;
-}, {});
-
-const sanitizeXSS = new xss.FilterXSS({
-  whiteList: XSSWL,
-});
-
-const sanitizeTextPanelWhitelist = new xss.FilterXSS({
-  whiteList: XSSWL,
-  css: {
-    whiteList: {
-      ...xss.getDefaultCSSWhiteList(),
-      'flex-direction': true,
-      'flex-wrap': true,
-      'flex-basis': true,
-      'flex-grow': true,
-      'flex-shrink': true,
-      'flex-flow': true,
-      gap: true,
-      order: true,
-      'justify-content': true,
-      'justify-items': true,
-      'justify-self': true,
-      'align-items': true,
-      'align-content': true,
-      'align-self': true,
-    },
-  },
-});
+import DOMPurify from 'dompurify';
 
 /**
- * Returns string safe from XSS attacks.
- *
- * Even though we allow the style-attribute, there's still default filtering applied to it
- * Info: https://github.com/leizongmin/js-xss#customize-css-filter
- * Whitelist: https://github.com/leizongmin/js-css-filter/blob/master/lib/default.js
+ * Returns string safe from XSS attacks using DOMPurify.
  */
-export function sanitize(unsanitizedString: string): string {
-  try {
-    return sanitizeXSS.process(unsanitizedString);
-  } catch (error) {
-    console.error('String could not be sanitized', unsanitizedString);
-    return unsanitizedString;
-  }
-}
 
-export function sanitizeTextPanelContent(unsanitizedString: string): string {
+export function sanitize(unsanitizedString: string): string {
+  DOMPurify.setConfig({
+    SANITIZE_NAMED_PROPS: true,
+    ALLOWED_ATTR: [
+      'style',
+      'class',
+      'align',
+      'alt',
+      'autoplay',
+      'border',
+      'color',
+      'colspan',
+      'controls',
+      'coords',
+      'crossorigin',
+      'datetime',
+      'dir',
+      'face',
+      'height',
+      'href',
+      'loop',
+      'muted',
+      'open',
+      'playsinline',
+      'poster',
+      'preload',
+      'rowspan',
+      'shape',
+      'size',
+      'span',
+      'src',
+      'target',
+      'title',
+      'valign',
+      'width',
+    ],
+    ALLOWED_TAGS: [
+      'a',
+      'abbr',
+      'address',
+      'area',
+      'article',
+      'aside',
+      'audio',
+      'b',
+      'bdi',
+      'bdo',
+      'big',
+      'blockquote',
+      'br',
+      'caption',
+      'center',
+      'cite',
+      'code',
+      'col',
+      'colgroup',
+      'dd',
+      'del',
+      'details',
+      'div',
+      'dl',
+      'dt',
+      'em',
+      'figcaption',
+      'figure',
+      'font',
+      'footer',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'header',
+      'hr',
+      'i',
+      'img',
+      'ins',
+      'li',
+      'mark',
+      'nav',
+      'ol',
+      'p',
+      'pre',
+      's',
+      'section',
+      'small',
+      'span',
+      'sub',
+      'summary',
+      'sup',
+      'strong',
+      'strike',
+      'table',
+      'tbody',
+      'td',
+      'tfoot',
+      'th',
+      'thead',
+      'tr',
+      'tt',
+      'u',
+      'ul',
+      'video',
+    ],
+  });
   try {
-    return sanitizeTextPanelWhitelist.process(unsanitizedString);
+    return DOMPurify.sanitize(unsanitizedString);
   } catch (error) {
     console.error('String could not be sanitized', unsanitizedString);
     return 'Text string could not be sanitized';

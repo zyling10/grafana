@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 
-import { sanitize, sanitizeTextPanelContent } from './sanitize';
+import { sanitize } from './sanitize';
 
 let hasInitialized = false;
 
@@ -51,5 +51,5 @@ export function renderTextPanelMarkdown(str?: string, options?: RenderMarkdownOp
     return html;
   }
 
-  return sanitizeTextPanelContent(html);
+  return sanitize(html);
 }

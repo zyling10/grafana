@@ -74,7 +74,7 @@ function processContent(options: PanelOptions, interpolate: InterpolateFunction,
       break; // nothing
     case TextMode.HTML:
       if (!disableSanitizeHtml) {
-        content = textUtil.sanitizeTextPanelContent(content);
+        content = textUtil.sanitize(content);
       }
       break;
     case TextMode.Markdown:
