@@ -654,7 +654,7 @@ export class PanelStateWrapper extends PureComponent<Props, State> {
       menu = (
         <div data-testid="panel-dropdown">
           <PanelHeaderMenuWrapper
-            style={{ top: 0 }}
+            style={{ top: 'inherit', left: 'inherit' }}
             panel={panel}
             dashboard={dashboard}
             loadingState={data.state}

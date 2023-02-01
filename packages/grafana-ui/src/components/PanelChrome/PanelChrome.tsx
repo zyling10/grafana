@@ -145,7 +145,7 @@ export function PanelChrome({
 
         <div className={styles.rightAligned}>
           {menu && (
-            <Dropdown overlay={menu} placement="bottom">
+            <Dropdown overlay={menu} placement="bottom-end">
               <ToolbarButton
                 aria-label={`Menu for panel with ${title ? `title ${title}` : 'no title'}`}
                 title="Menu"
