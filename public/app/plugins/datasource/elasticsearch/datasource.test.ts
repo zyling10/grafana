@@ -26,7 +26,7 @@ import { TemplateSrv } from 'app/features/templating/template_srv';
 
 import { createFetchResponse } from '../../../../test/helpers/createFetchResponse';
 
-import { Filters } from './components/QueryEditor/BucketAggregationsEditor/aggregations';
+import { Filters } from './types';
 import { ElasticDatasource, enhanceDataFrame } from './datasource';
 import { createElasticDatasource } from './mocks';
 import { ElasticsearchOptions, ElasticsearchQuery } from './types';
@@ -332,7 +332,7 @@ describe('ElasticDatasource', () => {
             timeField: '@timestamp',
           },
         ],
-      } as DataQueryRequest<ElasticsearchQuery>;
+      } as unknown as DataQueryRequest<ElasticsearchQuery>;
 
       const queryBuilderSpy = jest.spyOn(ds.queryBuilder, 'getLogsQuery');
       let response: DataQueryResponse = { data: [] };
