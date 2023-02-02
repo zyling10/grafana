@@ -1,7 +1,7 @@
 import { SyntaxNode } from '@lezer/common';
-import { escapeRegExp } from 'lodash';
+import { escapeRegExp, result } from 'lodash';
 
-import { DataQueryResponse, dateTime, DurationUnit, TimeRange } from '@grafana/data';
+import { CircularDataFrame, DataQueryResponse, dateTime, DurationUnit, FieldType, TimeRange } from '@grafana/data';
 import {
   parser,
   LineFilter,
@@ -337,7 +337,31 @@ export function requestSupportsPartitioning(queries: LokiQuery[]) {
   return true;
 }
 
+// In this hacky code, merge responses doesnt merge anything it's just creating circulardataframes
 export function mergeResponses(currentResult: DataQueryResponse | null, newResult: DataQueryResponse) {
+  newResult.data = newResult.data.map((frame) => {
+    const circularFrame = new CircularDataFrame({
+      append: 'tail',
+      capacity: 1000,
+    });
+
+    circularFrame.refId = frame.refId;
+    circularFrame.addField({ name: 'Time', type: FieldType.time, config: { interval: 500 } });
+    circularFrame.addField({ name: 'Value', type: FieldType.number });
+
+    for (let i = 0; i < frame.fields[0].values.length; i++) {
+      const data = {
+        [frame.fields[0].name]: frame.fields[0].values.buffer[i],
+        [frame.fields[1].name]: frame.fields[1].values.buffer[i],
+      };
+      circularFrame.add(data);
+      circularFrame.meta = frame.meta;
+      circularFrame.name = frame.name;
+    }
+
+    return circularFrame.toJSON();
+  });
+
   if (!currentResult) {
     return newResult;
   }

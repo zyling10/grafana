@@ -303,6 +303,24 @@ export class LokiDatasource
     const partition = partitionTimeRange(request.range);
     partition.reverse(); // Most recent to oldest data
 
+    return merge(
+      ...partition.map((range) => {
+        const requestId = `${request.requestId}_${partition.indexOf(range)}`;
+
+        return super.query({ ...request, range, requestId }).pipe(
+          // in case of an empty query, this is somehow run twice. `share()` is no workaround here as the observable is generated from `of()`.
+          map((response) => {
+            response.state = LoadingState.Streaming;
+
+            return mergeResponses(
+              null,
+              transformBackendResult(response, request.targets, this.instanceSettings.jsonData.derivedFields ?? [])
+            );
+          })
+        );
+      })
+    );
+
     const response = new Observable<DataQueryResponse>((subscriber) => {
       let mergedResponse: DataQueryResponse | null;
       let pendingQueries = partition.length;
@@ -327,14 +345,14 @@ export class LokiDatasource
           .subscribe({
             next: (response) => {
               pendingQueries -= 1;
-              response.state = pendingQueries > 0 ? LoadingState.Loading : LoadingState.Done;
+              response.state = pendingQueries > 0 ? LoadingState.Streaming : LoadingState.Done;
 
               subscriber.next(response);
             },
             error: (error) => {
               console.error(error);
 
-              // If we request fails, we consider the full request as failed.
+              // If a request fails, we consider the full request as failed.
               subscriber.next({
                 state: LoadingState.Done,
                 error: undefined,
