@@ -37,6 +37,7 @@ const (
 	Loki            = "loki"
 	OpenTSDB        = "opentsdb"
 	Prometheus      = "prometheus"
+	Mimir           = "mimir"
 	Tempo           = "tempo"
 	TestData        = "testdata"
 	PostgreSQL      = "postgres"
@@ -77,6 +78,7 @@ func ProvideCoreRegistry(am *azuremonitor.Service, cw *cloudwatch.CloudWatchServ
 		Loki:            asBackendPlugin(lk),
 		OpenTSDB:        asBackendPlugin(otsdb),
 		Prometheus:      asBackendPlugin(pr),
+		Mimir:           asBackendPlugin(pr), // Mimir is an alias for Prometheus
 		Tempo:           asBackendPlugin(t),
 		TestData:        asBackendPlugin(td),
 		PostgreSQL:      asBackendPlugin(pg),

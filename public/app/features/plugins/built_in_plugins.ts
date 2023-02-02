@@ -25,6 +25,8 @@ const postgresPlugin = async () =>
   await import(/* webpackChunkName: "postgresPlugin" */ 'app/plugins/datasource/postgres/module');
 const prometheusPlugin = async () =>
   await import(/* webpackChunkName: "prometheusPlugin" */ 'app/plugins/datasource/prometheus/module');
+const mimirPlugin = async () =>
+  await import(/* webpackChunkName: "mimirPlugin" */ 'app/plugins/datasource/mimir/module');
 const mssqlPlugin = async () =>
   await import(/* webpackChunkName: "mssqlPlugin" */ 'app/plugins/datasource/mssql/module');
 const testDataDSPlugin = async () =>
@@ -98,6 +100,7 @@ const builtInPlugins: any = {
   'app/plugins/datasource/postgres/module': postgresPlugin,
   'app/plugins/datasource/mssql/module': mssqlPlugin,
   'app/plugins/datasource/prometheus/module': prometheusPlugin,
+  'app/plugins/datasource/mimir/module': mimirPlugin,
   'app/plugins/datasource/testdata/module': testDataDSPlugin,
   'app/plugins/datasource/cloud-monitoring/module': cloudMonitoringPlugin,
   'app/plugins/datasource/grafana-azure-monitor-datasource/module': azureMonitorPlugin,

@@ -674,6 +674,50 @@
       "pluralName": "GrafanaDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
+    "grafanamimirdataquery": {
+      "category": "composable",
+      "codeowners": [],
+      "currentVersion": [
+        0,
+        0
+      ],
+      "grafanaMaturityCount": 0,
+      "lineageIsGroup": false,
+      "links": {
+        "docs": "n/a",
+        "go": "n/a",
+        "schema": "n/a",
+        "ts": "n/a"
+      },
+      "machineName": "grafanamimirdataquery",
+      "maturity": "planned",
+      "name": "GrafanaMimirDataQuery",
+      "pluralMachineName": "grafanamimirdataquerys",
+      "pluralName": "GrafanaMimirDataQuerys",
+      "schemaInterface": "DataQuery"
+    },
+    "grafanamimirdatasourcecfg": {
+      "category": "composable",
+      "codeowners": [],
+      "currentVersion": [
+        0,
+        0
+      ],
+      "grafanaMaturityCount": 0,
+      "lineageIsGroup": true,
+      "links": {
+        "docs": "n/a",
+        "go": "n/a",
+        "schema": "n/a",
+        "ts": "n/a"
+      },
+      "machineName": "grafanamimirdatasourcecfg",
+      "maturity": "planned",
+      "name": "GrafanaMimirDataSourceCfg",
+      "pluralMachineName": "grafanamimirdatasourcecfgs",
+      "pluralName": "GrafanaMimirDataSourceCfgs",
+      "schemaInterface": "DataSourceCfg"
+    },
     "graphitedataquery": {
       "category": "composable",
       "codeowners": [],
@@ -1907,6 +1951,8 @@
           "googlecloudmonitoringdatasourcecfg",
           "grafanadataquery",
           "grafanadatasourcecfg",
+          "grafanamimirdataquery",
+          "grafanamimirdatasourcecfg",
           "graphitedataquery",
           "graphitedatasourcecfg",
           "grapholdpanelcfg",
@@ -1948,7 +1994,7 @@
           "zipkindataquery",
           "zipkindatasourcecfg"
         ],
-        "count": 65
+        "count": 67
       },
       "core": {
         "name": "core",
@@ -2040,6 +2086,8 @@
           "googlecloudmonitoringdatasourcecfg",
           "grafanadataquery",
           "grafanadatasourcecfg",
+          "grafanamimirdataquery",
+          "grafanamimirdatasourcecfg",
           "graphitedataquery",
           "graphitedatasourcecfg",
           "grapholdpanelcfg",
@@ -2072,7 +2120,7 @@
           "zipkindataquery",
           "zipkindatasourcecfg"
         ],
-        "count": 52
+        "count": 54
       },
       "stable": {
         "name": "stable",
