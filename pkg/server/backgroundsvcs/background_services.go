@@ -9,6 +9,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/usagestats/statscollector"
 	"github.com/grafana/grafana/pkg/plugins/manager/process"
 	"github.com/grafana/grafana/pkg/registry"
+	k8sservice "github.com/grafana/grafana/pkg/server/k8s/service"
 	"github.com/grafana/grafana/pkg/services/alerting"
 	"github.com/grafana/grafana/pkg/services/auth"
 	"github.com/grafana/grafana/pkg/services/cleanup"
@@ -48,7 +49,7 @@ func ProvideBackgroundServiceRegistry(
 	thumbnailsService thumbs.Service, StorageService store.StorageService, searchService searchV2.SearchService, entityEventsService store.EntityEventsService,
 	saService *samanager.ServiceAccountsService, authInfoService *authinfoservice.Implementation,
 	grpcServerProvider grpcserver.Provider, secretMigrationProvider secretsMigrations.SecretMigrationProvider, loginAttemptService *loginattemptimpl.Service,
-	bundleService *supportbundlesimpl.Service,
+	bundleService *supportbundlesimpl.Service, k8s *k8sservice.Service,
 	// Need to make sure these are initialized, is there a better place to put them?
 	_ dashboardsnapshots.Service, _ *alerting.AlertNotificationService,
 	_ serviceaccounts.Service, _ *guardian.Provider,
@@ -85,6 +86,7 @@ func ProvideBackgroundServiceRegistry(
 		secretMigrationProvider,
 		loginAttemptService,
 		bundleService,
+		k8s,
 	)
 }
 

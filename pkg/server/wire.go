@@ -6,6 +6,7 @@ package server
 import (
 	"github.com/google/wire"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
+	k8sservice "github.com/grafana/grafana/pkg/server/k8s/service"
 
 	"github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/api/avatar"
@@ -38,7 +39,6 @@ import (
 	"github.com/grafana/grafana/pkg/services/annotations/annotationsimpl"
 	"github.com/grafana/grafana/pkg/services/apikey/apikeyimpl"
 	"github.com/grafana/grafana/pkg/services/auth/jwt"
-	"github.com/grafana/grafana/pkg/services/authn"
 	"github.com/grafana/grafana/pkg/services/authn/authnimpl"
 	"github.com/grafana/grafana/pkg/services/cleanup"
 	"github.com/grafana/grafana/pkg/services/comments"
@@ -357,7 +357,8 @@ var wireBasicSet = wire.NewSet(
 	tagimpl.ProvideService,
 	wire.Bind(new(tag.Service), new(*tagimpl.Service)),
 	authnimpl.ProvideService,
-	wire.Bind(new(authn.Service), new(*authnimpl.Service)),
+	k8sservice.ProvideService,
+	//wire.Bind(new(authn.Service), new(*authnimpl.Service)),
 	k8saccess.ProvideK8SAccess,
 	supportbundlesimpl.ProvideService,
 	wire.Bind(new(supportbundles.Service), new(*supportbundlesimpl.Service)),

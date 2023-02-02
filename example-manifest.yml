@@ -1,0 +1,6 @@
+apiVersion: core.embedded-grafana.dev/v1alpha1
+kind: Manifest
+metadata:
+  name: second-manifest
+spec:
+  message: "hello-world2"

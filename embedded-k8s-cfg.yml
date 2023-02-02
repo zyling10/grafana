@@ -1,0 +1,23 @@
+apiVersion: v1
+clusters:
+- cluster:
+    insecure-skip-tls-verify: true
+    server: https://localhost:9444
+  name: embedded-k8s
+contexts:
+- context:
+    cluster: embedded-k8s
+    user: embedded-k8s
+  name: embedded-k8s
+- context:
+    cluster: kind-kind
+    user: kind-kind
+  name: kind-kind
+current-context: embedded-k8s
+kind: Config
+preferences: {}
+users:
+- name: embedded-k8s
+  user:
+    client-certificate: ./data/k8s/certs/embedded-k8s.crt
+    client-key: ./data/k8s/certs/embedded-k8s.key

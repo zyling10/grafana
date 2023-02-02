@@ -54,7 +54,8 @@ func ProvideService(
 	authInfoService login.AuthInfoService, renderService rendering.Service,
 	features *featuremgmt.FeatureManager, oauthTokenService oauthtoken.OAuthTokenService,
 	socialService social.Service,
-) *Service {
+) authn.Service {
+
 	s := &Service{
 		log:            log.New("authn.service"),
 		cfg:            cfg,
