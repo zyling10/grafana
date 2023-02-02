@@ -70,9 +70,7 @@ describe('TextPanel', () => {
 
     setup(props);
 
-    expect(screen.getByTestId('TextPanel-converted-content').innerHTML).toEqual(
-      '&lt;form&gt;<p>Form tags are sanitized.</p>&lt;/form&gt;\n&lt;script&gt;Script tags are sanitized.&lt;/script&gt;'
-    );
+    expect(screen.getByTestId('TextPanel-converted-content').innerHTML).toEqual('<p>Form tags are sanitized.</p>\n');
   });
 
   it('sanitizes content in markdown mode', () => {
@@ -85,9 +83,7 @@ describe('TextPanel', () => {
 
     setup(props);
 
-    expect(screen.getByTestId('TextPanel-converted-content').innerHTML).toEqual(
-      '&lt;form&gt;<p>Form tags are sanitized.</p>&lt;/form&gt;\n&lt;script&gt;Script tags are sanitized.&lt;/script&gt;'
-    );
+    expect(screen.getByTestId('TextPanel-converted-content').innerHTML).toEqual('<p>Form tags are sanitized.</p>\n');
   });
 
   it('converts content to markdown when in markdown mode', async () => {
