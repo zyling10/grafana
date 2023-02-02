@@ -133,6 +133,10 @@ export function sanitizeTextPanelContent(unsanitizedString: string): string {
   }
 }
 
+export function sanitizeSVGContent(unsanitizedString: string): string {
+  return DOMPurify.sanitize(unsanitizedString, { USE_PROFILES: { svg: true, svgFilters: true } });
+}
+
 export function sanitizeUrl(url: string): string {
   return braintreeSanitizeUrl(url);
 }
