@@ -1642,6 +1642,38 @@
       "pluralName": "TempoDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
+    "test": {
+      "category": "core",
+      "codeowners": [
+        "grafana/grafana-as-code",
+        "grafana/grafana-bi-squad",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "test.core.grafana.com",
+        "scope": "Namespaced"
+      },
+      "currentVersion": [
+        0,
+        0
+      ],
+      "description": "A team is a named grouping of Grafana users to which access control rules may be assigned.",
+      "grafanaMaturityCount": 0,
+      "lineageIsGroup": false,
+      "links": {
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/test/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/test",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/test/test_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/test/x/test_types.gen.ts"
+      },
+      "machineName": "test",
+      "maturity": "merged",
+      "name": "Test",
+      "pluralMachineName": "tests",
+      "pluralName": "Tests"
+    },
     "testdatadataquery": {
       "category": "composable",
       "codeowners": [
@@ -1965,10 +1997,11 @@
           "queryhistory",
           "serviceaccount",
           "team",
+          "test",
           "thumb",
           "user"
         ],
-        "count": 14
+        "count": 15
       }
     },
     "maturity": {
@@ -2012,9 +2045,10 @@
           "preferences",
           "publicdashboard",
           "serviceaccount",
-          "team"
+          "team",
+          "test"
         ],
-        "count": 7
+        "count": 8
       },
       "planned": {
         "name": "planned",

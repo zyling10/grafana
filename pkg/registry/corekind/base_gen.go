@@ -19,6 +19,7 @@ import (
 	"github.com/grafana/grafana/pkg/kinds/publicdashboard"
 	"github.com/grafana/grafana/pkg/kinds/serviceaccount"
 	"github.com/grafana/grafana/pkg/kinds/team"
+	"github.com/grafana/grafana/pkg/kinds/test"
 	"github.com/grafana/grafana/pkg/kindsys"
 	"github.com/grafana/thema"
 )
@@ -47,6 +48,7 @@ type Base struct {
 	publicdashboard *publicdashboard.Kind
 	serviceaccount  *serviceaccount.Kind
 	team            *team.Kind
+	test            *test.Kind
 }
 
 // type guards
@@ -58,6 +60,7 @@ var (
 	_ kindsys.Core = &publicdashboard.Kind{}
 	_ kindsys.Core = &serviceaccount.Kind{}
 	_ kindsys.Core = &team.Kind{}
+	_ kindsys.Core = &test.Kind{}
 )
 
 // Dashboard returns the [kindsys.Interface] implementation for the dashboard kind.
@@ -93,6 +96,11 @@ func (b *Base) ServiceAccount() *serviceaccount.Kind {
 // Team returns the [kindsys.Interface] implementation for the team kind.
 func (b *Base) Team() *team.Kind {
 	return b.team
+}
+
+// Test returns the [kindsys.Interface] implementation for the test kind.
+func (b *Base) Test() *test.Kind {
+	return b.test
 }
 
 func doNewBase(rt *thema.Runtime) *Base {
@@ -140,6 +148,12 @@ func doNewBase(rt *thema.Runtime) *Base {
 		panic(fmt.Sprintf("error while initializing the team Kind: %s", err))
 	}
 	reg.all = append(reg.all, reg.team)
+
+	reg.test, err = test.NewKind(rt)
+	if err != nil {
+		panic(fmt.Sprintf("error while initializing the test Kind: %s", err))
+	}
+	reg.all = append(reg.all, reg.test)
 
 	return reg
 }

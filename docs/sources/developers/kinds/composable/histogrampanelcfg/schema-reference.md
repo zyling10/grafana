@@ -82,26 +82,6 @@ TODO docs
 |------------|---------------------------------------|----------|-------------|
 | `hideFrom` | [HideSeriesConfig](#hideseriesconfig) | No       | TODO docs   |
 
-### HideSeriesConfig
-
-TODO docs
-
-| Property  | Type    | Required | Description |
-|-----------|---------|----------|-------------|
-| `legend`  | boolean | **Yes**  |             |
-| `tooltip` | boolean | **Yes**  |             |
-| `viz`     | boolean | **Yes**  |             |
-
-### ScaleDistributionConfig
-
-TODO docs
-
-| Property          | Type   | Required | Description                                                              |
-|-------------------|--------|----------|--------------------------------------------------------------------------|
-| `type`            | string | **Yes**  | TODO docs<br/>Possible values are: `linear`, `log`, `ordinal`, `symlog`. |
-| `linearThreshold` | number | No       |                                                                          |
-| `log`             | number | No       |                                                                          |
-
 ### PanelOptions
 
 It extends [OptionsWithLegend](#optionswithlegend) and [OptionsWithTooltip](#optionswithtooltip).
@@ -170,14 +150,5 @@ TODO docs
 | `sortBy`      | string   | No       |                                                                                                                                         |
 | `sortDesc`    | boolean  | No       |                                                                                                                                         |
 | `width`       | number   | No       |                                                                                                                                         |
-
-### VizTooltipOptions
-
-TODO docs
-
-| Property | Type   | Required | Description                                                   |
-|----------|--------|----------|---------------------------------------------------------------|
-| `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
-| `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
 
 

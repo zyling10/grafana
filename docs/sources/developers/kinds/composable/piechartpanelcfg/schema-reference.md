@@ -155,33 +155,6 @@ TODO docs
 | `limit`  | number   | No       | if showing all values limit                                   |
 | `values` | boolean  | No       | If true show each row value                                   |
 
-### VizTextDisplayOptions
-
-TODO docs
-
-| Property    | Type   | Required | Description              |
-|-------------|--------|----------|--------------------------|
-| `titleSize` | number | No       | Explicit title text size |
-| `valueSize` | number | No       | Explicit value text size |
-
-### VizTextDisplayOptions
-
-TODO docs
-
-| Property    | Type   | Required | Description              |
-|-------------|--------|----------|--------------------------|
-| `titleSize` | number | No       | Explicit title text size |
-| `valueSize` | number | No       | Explicit value text size |
-
-### VizTooltipOptions
-
-TODO docs
-
-| Property | Type   | Required | Description                                                   |
-|----------|--------|----------|---------------------------------------------------------------|
-| `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
-| `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
-
 ### PieChartLegendOptions
 
 It extends [VizLegendOptions](#vizlegendoptions).

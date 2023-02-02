@@ -8,6 +8,7 @@ import (
 	"io"
 	"path"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"text/template"
@@ -322,42 +323,114 @@ func resolveInSchemaReference(ref string, root *simplejson.Json) (*schema, error
 	return &sch, nil
 }
 
+type mdSection struct {
+	title       string
+	extends     string
+	description string
+	rows        [][]string
+}
+
+func (md mdSection) sortRows() {
+	// Sort by the required column, then by the name column.
+	sort.Slice(md.rows, func(i, j int) bool {
+		if md.rows[i][2] < md.rows[j][2] {
+			return true
+		}
+		if md.rows[i][2] > md.rows[j][2] {
+			return false
+		}
+		return md.rows[i][0] < md.rows[j][0]
+	})
+}
+
+func (md mdSection) write(w io.Writer) {
+	if md.title != "" {
+		fmt.Fprintf(w, fmt.Sprintf("### %s\n", strings.Title(md.title)))
+		fmt.Fprintln(w)
+	}
+
+	if md.description != "" {
+		fmt.Fprintln(w, md.description)
+		fmt.Fprintln(w)
+
+	}
+
+	if md.extends != "" {
+		fmt.Fprintln(w, md.extends)
+		fmt.Fprintln(w)
+	}
+
+	table := tablewriter.NewWriter(w)
+	table.SetHeader([]string{"Property", "Type", "Required", "Description"})
+	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetCenterSeparator("|")
+	table.SetAutoFormatHeaders(false)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAutoWrapText(false)
+	table.AppendBulk(md.rows)
+	table.Render()
+	fmt.Fprintln(w)
+}
+
 // Markdown returns the Markdown representation of the schema.
 //
 // The level argument can be used to offset the heading levels. This can be
 // useful if you want to add the schema under a subheading.
-func (s schema) Markdown(level int) string {
+func (s *schema) Markdown(level int) string {
 	if level < 1 {
 		level = 1
 	}
 
 	buf := new(bytes.Buffer)
 
-	if s.Title != "" && s.AdditionalProperties == nil {
-		fmt.Fprintf(buf, "### %s\n", strings.Title(s.Title))
-		fmt.Fprintln(buf)
-	}
+	sections := []mdSection{}
+	s.toSections(&sections)
 
-	if s.Description != "" {
-		fmt.Fprintln(buf, s.Description)
-		fmt.Fprintln(buf)
-	}
-
-	if len(s.extends) > 0 {
-		fmt.Fprintln(buf, makeExtends(s.extends))
-		fmt.Fprintln(buf)
-	}
-
-	printProperties(buf, &s)
-
-	// Add padding.
-	fmt.Fprintln(buf)
-
-	for _, obj := range findDefinitions(&s) {
-		fmt.Fprint(buf, obj.Markdown(level+1))
+	for _, v := range sections {
+		v.sortRows()
+		v.write(buf)
 	}
 
 	return buf.String()
+}
+
+func (s *schema) toSections(sections *[]mdSection) {
+	if sections == nil {
+		return
+	}
+
+	md := mdSection{}
+
+	if s.AdditionalProperties == nil {
+		md.title = s.Title
+	}
+	md.description = s.Description
+
+	if len(s.extends) > 0 {
+		md.extends = makeExtends(s.extends)
+	}
+	md.rows = makeRows(s)
+
+	if !exists(sections, md) {
+		*sections = append(*sections, md)
+	}
+
+	for _, sch := range findDefinitions(s) {
+		sch.toSections(sections)
+	}
+}
+
+func exists(sl *[]mdSection, elem mdSection) bool {
+	if sl == nil {
+		return false
+	}
+
+	for _, s := range *sl {
+		if reflect.DeepEqual(s, elem) {
+			return true
+		}
+	}
+	return false
 }
 
 func makeExtends(from []string) string {
@@ -429,15 +502,7 @@ func findDefinitions(s *schema) []*schema {
 	return objs
 }
 
-func printProperties(w io.Writer, s *schema) {
-	table := tablewriter.NewWriter(w)
-	table.SetHeader([]string{"Property", "Type", "Required", "Description"})
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetCenterSeparator("|")
-	table.SetAutoFormatHeaders(false)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAutoWrapText(false)
-
+func makeRows(s *schema) [][]string {
 	// Buffer all property rows so that we can sort them before printing them.
 	rows := make([][]string, 0, len(s.Properties))
 
@@ -477,19 +542,7 @@ func printProperties(w io.Writer, s *schema) {
 		rows = append(rows, []string{fmt.Sprintf("`%s`", key), typeStr, required, formatForTable(desc)})
 	}
 
-	// Sort by the required column, then by the name column.
-	sort.Slice(rows, func(i, j int) bool {
-		if rows[i][2] < rows[j][2] {
-			return true
-		}
-		if rows[i][2] > rows[j][2] {
-			return false
-		}
-		return rows[i][0] < rows[j][0]
-	})
-
-	table.AppendBulk(rows)
-	table.Render()
+	return rows
 }
 
 func propTypeStr(propName string, propValue *schema) string {

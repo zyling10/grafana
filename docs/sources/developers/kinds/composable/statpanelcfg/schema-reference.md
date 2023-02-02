@@ -82,22 +82,4 @@ TODO docs
 | `limit`  | number   | No       | if showing all values limit                                   |
 | `values` | boolean  | No       | If true show each row value                                   |
 
-### VizTextDisplayOptions
-
-TODO docs
-
-| Property    | Type   | Required | Description              |
-|-------------|--------|----------|--------------------------|
-| `titleSize` | number | No       | Explicit title text size |
-| `valueSize` | number | No       | Explicit value text size |
-
-### VizTextDisplayOptions
-
-TODO docs
-
-| Property    | Type   | Required | Description              |
-|-------------|--------|----------|--------------------------|
-| `titleSize` | number | No       | Explicit title text size |
-| `valueSize` | number | No       | Explicit value text size |
-
 
