@@ -1,4 +1,3 @@
-import { noop } from 'lodash';
 import React, { FC, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useAsync } from 'react-use';
@@ -8,18 +7,20 @@ import { selectors } from '@grafana/e2e-selectors';
 import { Stack } from '@grafana/experimental';
 import { config, getDataSourceSrv } from '@grafana/runtime';
 import { Alert, Button, Field, InputControl, Tooltip } from '@grafana/ui';
-import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { isExpressionQuery } from 'app/features/expressions/guards';
 import { AlertQuery } from 'app/types/unified-alerting-dto';
 
 import { AlertingQueryRunner } from '../../../state/AlertingQueryRunner';
 import { RuleFormType, RuleFormValues } from '../../../types/rule-form';
+import { TABLE, TIMESERIES } from '../../../utils/constants';
 import { getDefaultOrFirstCompatibleDataSource } from '../../../utils/datasource';
+import { SupportedPanelPlugins } from '../../PanelPluginsButtonGroup';
 import { ExpressionEditor } from '../ExpressionEditor';
 import { ExpressionsEditor } from '../ExpressionsEditor';
 import { QueryEditor } from '../QueryEditor';
 import { RuleEditorSection } from '../RuleEditorSection';
-import { errorFromSeries, refIdExists } from '../util';
+import { VizWrapper } from '../VizWrapper';
+import { errorFromSeries, getThresholdsForQueries, refIdExists } from '../util';
 
 import { AlertType } from './AlertType';
 import {
@@ -201,7 +202,15 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
       )}
 
       {/* This is the editor for recording rules */}
-      {showRecordingRuleEditor && <CloudRecordingRuleEditor query={queries[0]} />}
+      {showRecordingRuleEditor && (
+        <CloudRecordingRuleEditor
+          onChangeQueries={onChangeQueries}
+          runQueries={runQueries}
+          query={queries[0]}
+          dataSourceName={dataSourceName!}
+          panelData={panelData}
+        />
+      )}
 
       {/* This is the editor for Grafana managed rules */}
       {isGrafanaManagedType && (
@@ -290,13 +299,25 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
 
 interface CloudRecordingRuleEditorProps {
   query: AlertQuery;
+  dataSourceName: string;
+  onChangeQueries: (updatedQueries: AlertQuery[]) => void;
+  runQueries: () => void;
+  panelData: Record<string, PanelData>;
 }
 
-const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({ query }) => {
+const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({
+  onChangeQueries,
+  runQueries,
+  dataSourceName,
+  query,
+  panelData,
+}) => {
   const dataSourceSrv = getDataSourceSrv();
-  const dataSourceIdentifier = query.datasourceUid;
 
-  const fetchDsSettings = useAsync(() => dataSourceSrv.get(dataSourceIdentifier), [dataSourceIdentifier]);
+  const fetchDsSettings = useAsync(() => dataSourceSrv.get(dataSourceName), [dataSourceName]);
+  const isExpression = isExpressionQuery(query.model);
+
+  const [pluginId, changePluginId] = useState<SupportedPanelPlugins>(isExpression ? TABLE : TIMESERIES);
 
   if (fetchDsSettings.error) {
     console.error(fetchDsSettings.error);
@@ -309,20 +330,35 @@ const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({ query }) 
 
   const Editor = fetchDsSettings.value.components?.QueryEditor;
 
+  const queries = [query];
+
+  const thresholdByRefId = getThresholdsForQueries([...queries, ...[]]);
+
+  const data: PanelData = panelData?.[query.refId] ?? {
+    series: [],
+    state: LoadingState.NotStarted,
+  };
+
   return (
-    // @ts-ignore
-    <Editor
-      key={fetchDsSettings.value.name}
-      query={query}
-      datasource={fetchDsSettings.value}
-      onChange={noop}
-      onRunQuery={noop}
-      onAddQuery={noop}
-      data={{}}
-      range={getTimeSrv().timeRange()}
-      queries={[]}
-      app={CoreApp.UnifiedAlerting}
-      history={history}
-    />
+    <>
+      {/* @ts-ignore */}
+      <Editor
+        query={query}
+        queries={queries}
+        app={CoreApp.UnifiedAlerting}
+        onChange={(query: AlertQuery) => onChangeQueries([query])}
+        onRunQuery={runQueries}
+        datasource={fetchDsSettings.value}
+      />
+      {data && (
+        <VizWrapper
+          data={data}
+          currentPanel={pluginId}
+          thresholds={thresholdByRefId[query.refId]?.config}
+          thresholdsType={thresholdByRefId[query.refId]?.mode}
+          changePanel={changePluginId}
+        />
+      )}
+    </>
   );
 };
