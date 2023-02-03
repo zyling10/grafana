@@ -595,7 +595,7 @@ steps:
     paths:
       include:
       - pkg/tsdb/azuremonitor/**
-      - public/app/plugins/datasource/grafana-azure-monitor-datasource/**
+      - public/app/plugins/datasource/azuremonitor/**
       - e2e/cloud-plugins-suite/azure-monitor.spec.ts
     repo:
     - grafana/grafana
@@ -1451,7 +1451,7 @@ steps:
     paths:
       include:
       - pkg/tsdb/azuremonitor/**
-      - public/app/plugins/datasource/grafana-azure-monitor-datasource/**
+      - public/app/plugins/datasource/azuremonitor/**
       - e2e/cloud-plugins-suite/azure-monitor.spec.ts
     repo:
     - grafana/grafana
@@ -6551,8 +6551,3 @@ get:
   path: secret/data/common/aws-marketplace
 kind: secret
 name: aws_secret_access_key
----
-kind: signature
-hmac: 0296dba0ce97a0397b18982ddb4ee46ba55d1027c204dcc18303959389bc67ed
-
-...
