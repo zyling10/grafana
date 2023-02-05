@@ -91,7 +91,17 @@ TODO docs
 |------------|---------------------------------------|----------|-------------|
 | `hideFrom` | [HideSeriesConfig](#hideseriesconfig) | No       | TODO docs   |
 
-### ScaleDistributionConfig
+### HideSeriesConfig7
+
+TODO docs
+
+| Property  | Type    | Required | Description |
+|-----------|---------|----------|-------------|
+| `legend`  | boolean | **Yes**  |             |
+| `tooltip` | boolean | **Yes**  |             |
+| `viz`     | boolean | **Yes**  |             |
+
+### ScaleDistributionConfig8
 
 TODO docs
 
@@ -181,7 +191,7 @@ TODO docs
 | `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
 | `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
 
-### VizLegendOptions
+### VizLegendOptions16
 
 TODO docs
 
@@ -197,7 +207,7 @@ TODO docs
 | `sortDesc`    | boolean  | No       |                                                                                                                                         |
 | `width`       | number   | No       |                                                                                                                                         |
 
-### VizTextDisplayOptions
+### VizTextDisplayOptions17
 
 TODO docs
 

@@ -411,26 +411,36 @@ func (s *schema) toSections(sections *[]mdSection) {
 	}
 	md.rows = makeRows(s)
 
-	if !exists(sections, md) {
-		*sections = append(*sections, md)
-	}
+	appendSectionIfNotExists(md, sections)
 
 	for _, sch := range findDefinitions(s) {
 		sch.toSections(sections)
 	}
 }
 
-func exists(sl *[]mdSection, elem mdSection) bool {
-	if sl == nil {
-		return false
+func appendSectionIfNotExists(md mdSection, sections *[]mdSection) {
+	if sections != nil && len(*sections) == 0 {
+		*sections = append(*sections, md)
+		return
 	}
 
-	for _, s := range *sl {
-		if reflect.DeepEqual(s, elem) {
-			return true
+	titleExists := false
+	for _, section := range *sections {
+		if strings.Contains(section.title, md.title) {
+			titleExists = true
+			// no need to append an exact duplicate of the section
+			if reflect.DeepEqual(md.rows, section.rows) && md.extends == section.extends && md.description == section.description {
+				return
+			}
 		}
 	}
-	return false
+
+	// if there are different sections with the same title, generate a new title
+	if titleExists {
+		md.title += fmt.Sprintf("%d", len(*sections))
+	}
+
+	*sections = append(*sections, md)
 }
 
 func makeExtends(from []string) string {

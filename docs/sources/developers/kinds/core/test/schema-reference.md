@@ -46,7 +46,7 @@ A team is a named grouping of Grafana users to which access control rules may be
 | `fullName`  | string | **Yes**  |             |
 | `shortName` | string | **Yes**  |             |
 
-### Name
+### Name5
 
 | Property    | Type   | Required | Description |
 |-------------|--------|----------|-------------|

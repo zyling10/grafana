@@ -109,7 +109,7 @@ TODO docs
 | `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
 | `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
 
-### VizLegendOptions
+### VizLegendOptions10
 
 TODO docs
 

@@ -121,13 +121,6 @@ It extends [BaseDimensionConfig](#basedimensionconfig).
 | `fixed`  |        | **Yes**  |             |
 | `field`  | string | No       |             |
 
-### BaseDimensionConfig
-
-| Property | Type   | Required | Description |
-|----------|--------|----------|-------------|
-| `fixed`  |        | **Yes**  |             |
-| `field`  | string | No       |             |
-
 ### HideSeriesConfig
 
 TODO docs
@@ -209,18 +202,7 @@ TODO docs
 | `axisWidth`         | number                                              | No       |                                                                                        |
 | `scaleDistribution` | [ScaleDistributionConfig](#scaledistributionconfig) | No       | TODO docs                                                                              |
 
-### ColorDimensionConfig
-
-This is actually an empty interface used mainly for naming?
-
-It extends [BaseDimensionConfig](#basedimensionconfig).
-
-| Property | Type   | Required | Description                                                    |
-|----------|--------|----------|----------------------------------------------------------------|
-| `fixed`  |        | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
-| `field`  | string | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
-
-### HideSeriesConfig
+### HideSeriesConfig15
 
 TODO docs
 
@@ -238,7 +220,17 @@ TODO docs
 |------------|---------------------------------------|----------|-------------|
 | `hideFrom` | [HideSeriesConfig](#hideseriesconfig) | No       | TODO docs   |
 
-### ScaleDimensionConfig
+### HideSeriesConfig17
+
+TODO docs
+
+| Property  | Type    | Required | Description |
+|-----------|---------|----------|-------------|
+| `legend`  | boolean | **Yes**  |             |
+| `tooltip` | boolean | **Yes**  |             |
+| `viz`     | boolean | **Yes**  |             |
+
+### ScaleDimensionConfig18
 
 It extends [BaseDimensionConfig](#basedimensionconfig).
 
@@ -259,21 +251,21 @@ It extends [BaseDimensionConfig](#basedimensionconfig).
 | `mode`   | string | **Yes**  | Possible values are: `fixed`, `field`, `template`.             |
 | `field`  | string | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 
-### VizLegendOptions
+### BaseDimensionConfig20
+
+| Property | Type   | Required | Description |
+|----------|--------|----------|-------------|
+| `fixed`  |        | **Yes**  |             |
+| `field`  | string | No       |             |
+
+### VizTooltipOptions21
 
 TODO docs
 
-| Property      | Type     | Required | Description                                                                                                                             |
-|---------------|----------|----------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `calcs`       | string[] | **Yes**  |                                                                                                                                         |
-| `displayMode` | string   | **Yes**  | TODO docs<br/>Note: "hidden" needs to remain as an option for plugins compatibility<br/>Possible values are: `list`, `table`, `hidden`. |
-| `placement`   | string   | **Yes**  | TODO docs<br/>Possible values are: `bottom`, `right`.                                                                                   |
-| `showLegend`  | boolean  | **Yes**  |                                                                                                                                         |
-| `asTable`     | boolean  | No       |                                                                                                                                         |
-| `isVisible`   | boolean  | No       |                                                                                                                                         |
-| `sortBy`      | string   | No       |                                                                                                                                         |
-| `sortDesc`    | boolean  | No       |                                                                                                                                         |
-| `width`       | number   | No       |                                                                                                                                         |
+| Property | Type   | Required | Description                                                   |
+|----------|--------|----------|---------------------------------------------------------------|
+| `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
+| `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
 
 ### XYDimensionConfig
 
@@ -283,7 +275,7 @@ TODO docs
 | `exclude` | string[] | No       |             |
 | `x`       | string   | No       |             |
 
-### ScatterFieldConfig
+### ScatterFieldConfig23
 
 It extends [HideableFieldConfig](#hideablefieldconfig) and [AxisConfig](#axisconfig).
 
@@ -308,7 +300,7 @@ It extends [HideableFieldConfig](#hideablefieldconfig) and [AxisConfig](#axiscon
 | `scaleDistribution` | [ScaleDistributionConfig](#scaledistributionconfig) | No       | *(Inherited from [AxisConfig](#axisconfig))*<br/>TODO docs                                                                              |
 | `show`              | string                                              | No       | Possible values are: `points`, `lines`, `points+lines`.                                                                                 |
 
-### AxisConfig
+### AxisConfig24
 
 TODO docs
 
@@ -324,27 +316,38 @@ TODO docs
 | `axisWidth`         | number                                              | No       |                                                                                        |
 | `scaleDistribution` | [ScaleDistributionConfig](#scaledistributionconfig) | No       | TODO docs                                                                              |
 
-### ScaleDistributionConfig
+### ColorDimensionConfig25
 
-TODO docs
-
-| Property          | Type   | Required | Description                                                              |
-|-------------------|--------|----------|--------------------------------------------------------------------------|
-| `type`            | string | **Yes**  | TODO docs<br/>Possible values are: `linear`, `log`, `ordinal`, `symlog`. |
-| `linearThreshold` | number | No       |                                                                          |
-| `log`             | number | No       |                                                                          |
-
-### TextDimensionConfig
+This is actually an empty interface used mainly for naming?
 
 It extends [BaseDimensionConfig](#basedimensionconfig).
 
 | Property | Type   | Required | Description                                                    |
 |----------|--------|----------|----------------------------------------------------------------|
 | `fixed`  |        | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
-| `mode`   | string | **Yes**  | Possible values are: `fixed`, `field`, `template`.             |
 | `field`  | string | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 
-### ScatterSeriesConfig
+### LineStyle26
+
+TODO docs
+
+| Property | Type     | Required | Description                                            |
+|----------|----------|----------|--------------------------------------------------------|
+| `dash`   | number[] | No       |                                                        |
+| `fill`   | string   | No       | Possible values are: `solid`, `dash`, `dot`, `square`. |
+
+### ScaleDimensionConfig27
+
+It extends [BaseDimensionConfig](#basedimensionconfig).
+
+| Property | Type    | Required | Description                                                    |
+|----------|---------|----------|----------------------------------------------------------------|
+| `fixed`  |         | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
+| `max`    | integer | **Yes**  |                                                                |
+| `min`    | integer | **Yes**  |                                                                |
+| `field`  | string  | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
+
+### ScatterSeriesConfig28
 
 It extends [ScatterFieldConfig](#scatterfieldconfig).
 
@@ -372,7 +375,7 @@ It extends [ScatterFieldConfig](#scatterfieldconfig).
 | `x`                 | string                                              | No       |                                                                                                                                                         |
 | `y`                 | string                                              | No       |                                                                                                                                                         |
 
-### ScaleDimensionConfig
+### ScaleDimensionConfig29
 
 It extends [BaseDimensionConfig](#basedimensionconfig).
 
@@ -383,7 +386,7 @@ It extends [BaseDimensionConfig](#basedimensionconfig).
 | `min`    | integer | **Yes**  |                                                                |
 | `field`  | string  | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 
-### ScatterFieldConfig
+### ScatterFieldConfig30
 
 It extends [HideableFieldConfig](#hideablefieldconfig) and [AxisConfig](#axisconfig).
 
@@ -408,7 +411,7 @@ It extends [HideableFieldConfig](#hideablefieldconfig) and [AxisConfig](#axiscon
 | `scaleDistribution` | [ScaleDistributionConfig](#scaledistributionconfig) | No       | *(Inherited from [AxisConfig](#axisconfig))*<br/>TODO docs                                                                              |
 | `show`              | string                                              | No       | Possible values are: `points`, `lines`, `points+lines`.                                                                                 |
 
-### AxisConfig
+### AxisConfig31
 
 TODO docs
 
@@ -424,7 +427,17 @@ TODO docs
 | `axisWidth`         | number                                              | No       |                                                                                        |
 | `scaleDistribution` | [ScaleDistributionConfig](#scaledistributionconfig) | No       | TODO docs                                                                              |
 
-### XYDimensionConfig
+### ScaleDistributionConfig32
+
+TODO docs
+
+| Property          | Type   | Required | Description                                                              |
+|-------------------|--------|----------|--------------------------------------------------------------------------|
+| `type`            | string | **Yes**  | TODO docs<br/>Possible values are: `linear`, `log`, `ordinal`, `symlog`. |
+| `linearThreshold` | number | No       |                                                                          |
+| `log`             | number | No       |                                                                          |
+
+### XYDimensionConfig33
 
 | Property  | Type     | Required | Description |
 |-----------|----------|----------|-------------|

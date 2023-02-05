@@ -144,7 +144,7 @@ TODO docs
 | `titleSize` | number | No       | Explicit title text size |
 | `valueSize` | number | No       | Explicit value text size |
 
-### ReduceDataOptions
+### ReduceDataOptions12
 
 TODO docs
 
@@ -155,7 +155,7 @@ TODO docs
 | `limit`  | number   | No       | if showing all values limit                                   |
 | `values` | boolean  | No       | If true show each row value                                   |
 
-### PieChartLegendOptions
+### PieChartLegendOptions13
 
 It extends [VizLegendOptions](#vizlegendoptions).
 
@@ -172,7 +172,7 @@ It extends [VizLegendOptions](#vizlegendoptions).
 | `sortDesc`    | boolean  | No       | *(Inherited from [VizLegendOptions](#vizlegendoptions))*                                                                                                                                             |
 | `width`       | number   | No       | *(Inherited from [VizLegendOptions](#vizlegendoptions))*                                                                                                                                             |
 
-### VizLegendOptions
+### VizLegendOptions14
 
 TODO docs
 

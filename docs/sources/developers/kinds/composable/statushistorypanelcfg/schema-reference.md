@@ -108,7 +108,7 @@ TODO docs
 | `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
 | `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
 
-### VizLegendOptions
+### VizLegendOptions10
 
 TODO docs
 
@@ -123,14 +123,5 @@ TODO docs
 | `sortBy`      | string   | No       |                                                                                                                                         |
 | `sortDesc`    | boolean  | No       |                                                                                                                                         |
 | `width`       | number   | No       |                                                                                                                                         |
-
-### VizTooltipOptions
-
-TODO docs
-
-| Property | Type   | Required | Description                                                   |
-|----------|--------|----------|---------------------------------------------------------------|
-| `mode`   | string | **Yes**  | TODO docs<br/>Possible values are: `single`, `multi`, `none`. |
-| `sort`   | string | **Yes**  | TODO docs<br/>Possible values are: `asc`, `desc`, `none`.     |
 
 

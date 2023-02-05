@@ -42,7 +42,7 @@ title: NodeGraphPanelCfg kind
 | `mainStatUnit`      | string                    | No       | Unit for the main stat to override what ever is set in the data frame.                  |
 | `secondaryStatUnit` | string                    | No       | Unit for the secondary stat to override what ever is set in the data frame.             |
 
-### ArcOption
+### ArcOption4
 
 | Property | Type   | Required | Description                                                                                         |
 |----------|--------|----------|-----------------------------------------------------------------------------------------------------|
@@ -55,13 +55,5 @@ title: NodeGraphPanelCfg kind
 |----------|-----------------------------|----------|-------------|
 | `edges`  | [EdgeOptions](#edgeoptions) | No       |             |
 | `nodes`  | [NodeOptions](#nodeoptions) | No       |             |
-
-### NodeOptions
-
-| Property            | Type                      | Required | Description                                                                             |
-|---------------------|---------------------------|----------|-----------------------------------------------------------------------------------------|
-| `arcs`              | [ArcOption](#arcoption)[] | No       | Define which fields are shown as part of the node arc (colored circle around the node). |
-| `mainStatUnit`      | string                    | No       | Unit for the main stat to override what ever is set in the data frame.                  |
-| `secondaryStatUnit` | string                    | No       | Unit for the secondary stat to override what ever is set in the data frame.             |
 
 
