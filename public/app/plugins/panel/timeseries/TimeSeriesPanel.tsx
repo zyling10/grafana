@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 
 import { Field, PanelProps } from '@grafana/data';
 import { PanelDataErrorView } from '@grafana/runtime';
-import { TooltipDisplayMode } from '@grafana/schema';
-import { KeyboardPlugin, TimeSeries, TooltipPlugin, usePanelContext, ZoomPlugin } from '@grafana/ui';
+import { BigValueTextMode, TooltipDisplayMode } from '@grafana/schema';
+import { KeyboardPlugin, TimeSeries, TooltipPlugin, usePanelContext, ZoomPlugin, BigValue } from '@grafana/ui';
 import { config } from 'app/core/config';
 import { getFieldLinksForExplore } from 'app/features/explore/utils/links';
 
@@ -13,6 +13,7 @@ import { ContextMenuPlugin } from './plugins/ContextMenuPlugin';
 import { ExemplarsPlugin, getVisibleLabels } from './plugins/ExemplarsPlugin';
 import { OutsideRangePlugin } from './plugins/OutsideRangePlugin';
 import { ThresholdControlsPlugin } from './plugins/ThresholdControlsPlugin';
+import { getStatInfo } from './stats';
 import { TimeSeriesOptions } from './types';
 import { getTimezones, prepareGraphableFields, regenerateLinksSupplier } from './utils';
 
@@ -39,6 +40,10 @@ export const TimeSeriesPanel = ({
 
   const frames = useMemo(() => prepareGraphableFields(data.series, config.theme2, timeRange), [data, timeRange]);
   const timezones = useMemo(() => getTimezones(options.timezone, timeZone), [options.timezone, timeZone]);
+  const stats = useMemo(
+    () => getStatInfo(frames, fieldConfig, replaceVariables, timeZone, width),
+    [frames, fieldConfig, replaceVariables, timeZone, width]
+  );
 
   if (!frames) {
     return (
@@ -54,7 +59,7 @@ export const TimeSeriesPanel = ({
 
   const enableAnnotationCreation = Boolean(canAddAnnotations && canAddAnnotations());
 
-  return (
+  const renderTimeSeries = () => (
     <TimeSeries
       frames={frames}
       structureRev={data.structureRev}
@@ -156,4 +161,33 @@ export const TimeSeriesPanel = ({
       }}
     </TimeSeries>
   );
+
+  if (stats) {
+    width = width - stats.width;
+    const opts = stats.options;
+    const statheight = height / stats.fields.length;
+    return (
+      <div>
+        <div style={{ position: 'absolute', left: width + 10, height, width: stats.width }}>
+          {stats.fields.map((value, idx) => (
+            <BigValue
+              key={`${idx}/${value.colIndex}`}
+              value={value.display}
+              colorMode={opts.colorMode}
+              graphMode={opts.graphMode}
+              justifyMode={opts.justifyMode}
+              textMode={BigValueTextMode.Auto}
+              text={opts.text}
+              width={stats.width}
+              height={statheight}
+              theme={config.theme2}
+            />
+          ))}
+        </div>
+        {renderTimeSeries()}
+      </div>
+    );
+  }
+
+  return renderTimeSeries();
 };
