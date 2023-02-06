@@ -2,6 +2,7 @@ import { Story, Meta } from '@storybook/react';
 import React from 'react';
 
 import { withCenteredStory } from '../../utils/storybook/withCenteredStory';
+import { WeekStartPicker } from '../DateTimePickers/WeekStartPicker';
 import { Input } from '../Input/Input';
 
 import { AutoSaveField } from './AutoSaveField';
@@ -57,9 +58,14 @@ AutoSaveFieldError.args = {
 };
 
 export const AutoSaveFieldSuccess: Story = (args) => (
-  <AutoSaveField onFinishChange={getSuccess} {...args}>
-    <Input />
-  </AutoSaveField>
+  <div>
+    <AutoSaveField onFinishChange={getSuccess} {...args}>
+      <Input />
+    </AutoSaveField>
+    <AutoSaveField onFinishChange={getSuccess} {...args}>
+      <WeekStartPicker />
+    </AutoSaveField>
+  </div>
 );
 AutoSaveFieldSuccess.args = {
   label: 'With success',
