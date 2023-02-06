@@ -8,7 +8,7 @@ describe('Markdown wrapper', () => {
 
   it('should sanitize by default', () => {
     const str = renderMarkdown('<script>alert()</script>');
-    expect(str).toBe('');
+    expect(str).toBe('&lt;script&gt;alert()&lt;&#47;script&gt;');
   });
 
   it('should sanitize content in text panel by default', () => {

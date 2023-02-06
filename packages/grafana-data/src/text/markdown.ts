@@ -37,7 +37,7 @@ export function renderMarkdown(str?: string, options?: RenderMarkdownOptions): s
     return html;
   }
 
-  return sanitize(html);
+  return sanitizeTextPanelContent(html);
 }
 
 export function renderTextPanelMarkdown(str?: string, options?: RenderMarkdownOptions): string {
@@ -51,5 +51,5 @@ export function renderTextPanelMarkdown(str?: string, options?: RenderMarkdownOp
     return html;
   }
 
-  return sanitizeTextPanelContent(html);
+  return sanitize(html);
 }
