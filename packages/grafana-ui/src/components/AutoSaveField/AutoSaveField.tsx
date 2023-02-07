@@ -24,7 +24,7 @@ export interface Props extends FieldProps {
 
 const SHOW_SUCCESS_DURATION = 2 * 1000;
 
-type GenericProps<T> = Props & { children: (onChange: (newValue: T) => void) => React.ReactElement };
+type GenericProps<T> = Omit<Props, 'children'> & { children: (onChange: (newValue: T) => void) => React.ReactElement };
 
 export function AutoSaveField<T = string>(props: GenericProps<T>) {
   const {
