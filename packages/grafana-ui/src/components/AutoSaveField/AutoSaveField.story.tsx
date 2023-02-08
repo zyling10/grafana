@@ -1,12 +1,12 @@
-import { useArgs } from '@storybook/client-api';
 import { Story, Meta } from '@storybook/react';
 import React, { useState } from 'react';
 
 import { withCenteredStory } from '../../utils/storybook/withCenteredStory';
-import { WeekStartPicker } from '../DateTimePickers/WeekStartPicker';
 import { Checkbox } from '../Forms/Checkbox';
 import { RadioButtonGroup } from '../Forms/RadioButtonGroup/RadioButtonGroup';
 import { Input } from '../Input/Input';
+import { Select } from '../Select/Select';
+import { TextArea } from '../TextArea/TextArea';
 
 import { AutoSaveField } from './AutoSaveField';
 import mdx from './AutoSaveField.mdx';
@@ -44,7 +44,6 @@ const meta: Meta = {
     saveErrorMessage: 'This is a custom error message',
     label: 'Custom label',
     required: false,
-    themeOptions: '',
   },
 };
 
@@ -60,33 +59,35 @@ const getError = () => {
     reject();
   });
 };
+const themeOptions = [
+  { value: '', label: 'Default' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+  { value: 'system', label: 'System' },
+];
 
 export const AutoSaveFieldError: Story = (args) => {
-  const themeOptions = [
-    { value: '', label: 'Default' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'light', label: 'Light' },
-    { value: 'system', label: 'System' },
-  ];
   const [selected, setSelected] = useState('');
-  const [autoFit, setAutofit] = useState(false);
+  const [checkBoxTest, setCheckBoxTest] = useState(false);
+  const [textAreaValue, setTextAreaValue] = useState('');
 
   return (
     <div>
       <AutoSaveField onFinishChange={getError} {...args}>
         {(onChange) => <Input onChange={(e) => onChange(e.currentTarget.value)} />}
       </AutoSaveField>
-      <AutoSaveField onFinishChange={getError} label={'WeekStartPicker as child'}>
+      <AutoSaveField onFinishChange={getError} label={'Select as child'} {...args}>
         {(onChange) => (
-          <WeekStartPicker
+          <Select
+            options={themeOptions}
             value={args.weekPickerValue}
-            onChange={(weekPickerValue) => {
-              onChange(weekPickerValue);
+            onChange={(v) => {
+              onChange(v.value);
             }}
           />
         )}
       </AutoSaveField>
-      <AutoSaveField onFinishChange={getError} label={'UI Theme'}>
+      <AutoSaveField onFinishChange={getError} label={'RadioButtonGroup as a child'} {...args}>
         {(onChange) => (
           <RadioButtonGroup
             options={themeOptions}
@@ -98,17 +99,29 @@ export const AutoSaveFieldError: Story = (args) => {
           />
         )}
       </AutoSaveField>
-      <AutoSaveField onFinishChange={getSuccess} label={'Checkbox'}>
+      <AutoSaveField onFinishChange={getError} label={'Checkbox as a child'} {...args}>
         {(onChange) => (
           <Checkbox
-            label="Autofit"
-            description="Panel heights will be adjusted to fit screen size"
-            name="autofix"
-            value={autoFit}
+            label="Checkbox test"
+            description="This should trigger an error message"
+            name="checkbox-test"
+            value={checkBoxTest}
             onChange={(e) => {
               const value = e.currentTarget.checked.toString();
               onChange(value);
-              setAutofit(e.currentTarget.checked);
+              setCheckBoxTest(e.currentTarget.checked);
+            }}
+          />
+        )}
+      </AutoSaveField>
+      <AutoSaveField onFinishChange={getError} label={'TextArea as a child'} {...args}>
+        {(onChange) => (
+          <TextArea
+            value={textAreaValue}
+            onChange={(e) => {
+              const value = e.currentTarget.value;
+              onChange(value);
+              setTextAreaValue(e.currentTarget.value);
             }}
           />
         )}
@@ -122,51 +135,60 @@ AutoSaveFieldError.args = {
 };
 
 export const AutoSaveFieldSuccess: Story = (args) => {
-  const themeOptions = [
-    { value: '', label: 'Default' },
-    { value: 'dark', label: 'Dark' },
-    { value: 'light', label: 'Light' },
-    { value: 'system', label: 'System' },
-  ];
-  const [autoFit, setAutofit] = useState(false);
-
+  const [selected, setSelected] = useState('');
+  const [checkBoxTest, setCheckBoxTest] = useState(false);
+  const [textAreaValue, setTextAreaValue] = useState('');
   return (
     <div>
       <AutoSaveField onFinishChange={getSuccess} {...args}>
         {(onChange) => <Input onChange={(e) => onChange(e.currentTarget.value)} />}
       </AutoSaveField>
-      <AutoSaveField onFinishChange={getSuccess} label="WeekStartPicker as child">
+      <AutoSaveField onFinishChange={getSuccess} label="Select as child">
         {(onChange) => (
-          <WeekStartPicker
+          <Select
+            options={themeOptions}
             value={args.weekPickerValue}
-            onChange={(newValue) => {
-              onChange(newValue);
+            onChange={(v) => {
+              onChange(v.value);
             }}
           />
         )}
       </AutoSaveField>
-      <AutoSaveField onFinishChange={getSuccess} label={'UI Theme'}>
+      <AutoSaveField onFinishChange={getSuccess} label={'RadioButtonGroup as a child'}>
         {(onChange) => (
           <RadioButtonGroup
             options={themeOptions}
-            value={args.themeOptions}
-            onChange={(newTheme) => {
-              onChange(newTheme);
+            value={selected}
+            onChange={(themeOption) => {
+              setSelected(themeOption);
+              onChange(themeOption);
             }}
           />
         )}
       </AutoSaveField>
-      <AutoSaveField onFinishChange={getSuccess} label={'Checkbox'}>
+      <AutoSaveField onFinishChange={getSuccess} label={'Checkbox as a child'}>
         {(onChange) => (
           <Checkbox
-            label="Autofit"
-            description="Panel heights will be adjusted to fit screen size"
-            name="autofix"
-            value={autoFit}
+            label="Checkbox test"
+            description="This should show the 'Saved!' toast"
+            name="checkbox-test"
+            value={checkBoxTest}
             onChange={(e) => {
               const value = e.currentTarget.checked.toString();
               onChange(value);
-              setAutofit(e.currentTarget.checked);
+              setCheckBoxTest(e.currentTarget.checked);
+            }}
+          />
+        )}
+      </AutoSaveField>
+      <AutoSaveField onFinishChange={getSuccess} label={'TextArea as a child'}>
+        {(onChange) => (
+          <TextArea
+            value={textAreaValue}
+            onChange={(e) => {
+              const value = e.currentTarget.value;
+              onChange(value);
+              setTextAreaValue(e.currentTarget.value);
             }}
           />
         )}
