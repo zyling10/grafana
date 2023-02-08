@@ -20,9 +20,9 @@ import {
   FeatureBadge,
   AutoSaveField,
   TextArea,
-  AsyncSelect,
   Checkbox,
   Switch,
+  Input,
 } from '@grafana/ui';
 import { DashboardPicker } from 'app/core/components/Select/DashboardPicker';
 import { t, Trans } from 'app/core/internationalization';
@@ -177,17 +177,34 @@ export class SharedPreferences extends PureComponent<Props, State> {
         <FieldSet label={'Testing AutoSaveField'} disabled={disabled}>
           <AutoSaveField
             label={
-              <Label htmlFor="home-dashboard-select">
-                <span className={styles.labelText}>
-                  <Trans i18nKey="shared-preferences.fields.home-dashboard-label">Select test</Trans>
-                </span>
+              <Label htmlFor="edit-user-profile-language">
+                <span className={styles.labelText}>Input test: write &apos;en-EN&apos; or &apos;es-EN&apos;</span>
               </Label>
             }
-            data-testid="User preferences home dashboard drop down"
             onFinishChange={this.onSubmitFormAutoSave}
           >
             {(onChange) => (
-              <AsyncSelect
+              <Input
+                id="edit-user-profile-language"
+                placeholder={t('user-profile.fields.name-label', 'Language')}
+                value={language}
+                onChange={(v) => {
+                  onChange(v.currentTarget.value);
+                  this.onLanguageChanged(v.currentTarget.value);
+                }}
+              />
+            )}
+          </AutoSaveField>
+          <AutoSaveField
+            label={
+              <Label htmlFor="home-dashboard-select-test">
+                <span className={styles.labelText}>Select test</span>
+              </Label>
+            }
+            onFinishChange={this.onSubmitFormAutoSave}
+          >
+            {(onChange) => (
+              <Select
                 loadOptions={this.getDashboards}
                 value={homeDashboardUID}
                 onChange={(v) => {
@@ -197,19 +214,17 @@ export class SharedPreferences extends PureComponent<Props, State> {
                 }}
                 defaultOptions={true}
                 isClearable={true}
-                placeholder={t('shared-preferences.fields.home-dashboard-placeholder', 'Default dashboard')}
-                inputId="home-dashboard-select"
+                placeholder="Default dashboard"
+                inputId="home-dashboard-select-test"
               />
             )}
           </AutoSaveField>
-          <AutoSaveField
-            label={t('shared-preferences.fields.theme-label', 'Test RadioButtonGroup')}
-            onFinishChange={this.onSubmitForm}
-          >
+          <AutoSaveField label="Test RadioButtonGroup" onFinishChange={this.onSubmitFormAutoSave}>
             {(onChange) => (
               <RadioButtonGroup
                 options={this.themeOptions}
                 value={currentThemeOption}
+                fullWidth
                 onChange={(v) => {
                   onChange(v);
                   this.onThemeChanged(v);
@@ -217,11 +232,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
               />
             )}
           </AutoSaveField>
-          <AutoSaveField
-            label={t('shared-preferences.fields.week-start-label', 'Test TextArea')}
-            data-testid={selectors.components.WeekStartPicker.containerV2}
-            onFinishChange={this.onSubmitFormAutoSave}
-          >
+          <AutoSaveField label="Test TextArea" onFinishChange={this.onSubmitFormAutoSave}>
             {(onChange) => (
               <TextArea
                 aria-label="message"
@@ -236,11 +247,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
               />
             )}
           </AutoSaveField>
-          <AutoSaveField
-            label={t('shared-preferences.fields.week-start-label', 'Test Checkbox')}
-            data-testid={selectors.components.WeekStartPicker.containerV2}
-            onFinishChange={this.onSubmitFormAutoSave}
-          >
+          <AutoSaveField label="Test Checkbox" onFinishChange={this.onSubmitFormAutoSave}>
             {(onChange) => {
               const isCheckedDefault = theme === '';
               const isCheckedDark = theme === 'dark';
@@ -284,11 +291,7 @@ export class SharedPreferences extends PureComponent<Props, State> {
               );
             }}
           </AutoSaveField>
-          <AutoSaveField
-            label={t('shared-preferences.fields.week-start-label', 'Test Switch: dark = on | light = off')}
-            data-testid={selectors.components.WeekStartPicker.containerV2}
-            onFinishChange={this.onSubmitFormAutoSave}
-          >
+          <AutoSaveField label="Test Switch: dark = on | light = off" onFinishChange={this.onSubmitFormAutoSave}>
             {(onChange) => (
               <Switch
                 value={theme === 'dark' ? true : false}
