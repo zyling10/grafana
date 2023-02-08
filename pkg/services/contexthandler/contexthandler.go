@@ -405,6 +405,9 @@ func (h *ContextHandler) initContextWithAPIKey(reqContext *models.ReqContext) bo
 }
 
 func (h *ContextHandler) initContextWithBasicAuth(reqContext *models.ReqContext, orgID int64) bool {
+	if strings.Contains(reqContext.Req.RequestURI, "oauth2") {
+		return false
+	}
 	if h.features.IsEnabled(featuremgmt.FlagAuthnService) {
 		identity, ok, err := h.authnService.Authenticate(reqContext.Req.Context(), authn.ClientBasic, &authn.Request{HTTPRequest: reqContext.Req})
 		if !ok {
