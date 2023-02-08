@@ -103,5 +103,9 @@ function PanelTitleLink({ title, link }: { title: string; link: UrlLinkDef }) {
   // TODO only include query params that are specified in UrlLinkDef definition
   const url = urlUtil.renderUrl(link.path, queryParms);
 
-  return <a href={url}>{title}</a>;
+  return (
+    <a href={url} title={`Go to drilldown view`}>
+      {title}
+    </a>
+  );
 }
