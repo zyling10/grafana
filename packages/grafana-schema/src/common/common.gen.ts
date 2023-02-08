@@ -583,6 +583,7 @@ export interface Labels {}
  * modes are deprecated in favor of new cell subOptions
  */
 export enum TableCellDisplayMode {
+  AreaChart = 'area-chart',
   Auto = 'auto',
   BasicGauge = 'basic',
   ColorBackground = 'color-background',
@@ -650,6 +651,14 @@ export interface TableBarGaugeCellOptions {
 }
 
 /**
+ * Area chart cell options
+ */
+export interface TableAreaChartCellOptions extends GraphFieldConfig {
+  color?: string;
+  type: TableCellDisplayMode.AreaChart;
+}
+
+/**
  * Colored background cell options
  */
 export interface TableColoredBackgroundCellOptions {
@@ -661,7 +670,7 @@ export interface TableColoredBackgroundCellOptions {
  * Table cell options. Each cell has a display mode
  * and other potential options for that display.
  */
-export type TableCellOptions = (TableAutoCellOptions | TableBarGaugeCellOptions | TableColoredBackgroundCellOptions | TableColorTextCellOptions | TableImageCellOptions | TableJsonViewCellOptions);
+export type TableCellOptions = (TableAutoCellOptions | TableAreaChartCellOptions | TableBarGaugeCellOptions | TableColoredBackgroundCellOptions | TableColorTextCellOptions | TableImageCellOptions | TableJsonViewCellOptions);
 
 /**
  * Use UTC/GMT timezone
