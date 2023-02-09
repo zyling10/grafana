@@ -34,6 +34,7 @@ export function AutoSaveField<T = string>(props: GenericProps<T>) {
     saveErrorMessage = 'Error saving this value',
     error,
     children,
+    disabled,
     ...restProps
   } = props;
 
@@ -105,9 +106,16 @@ export function AutoSaveField<T = string>(props: GenericProps<T>) {
           },
         })} */}
         <div ref={inputRef}>
-          {children((newValue) => {
-            lodashDebounce(newValue);
-          })}
+          {React.cloneElement(
+            children((newValue) => {
+              lodashDebounce(newValue);
+            }),
+            {
+              loading: loading || fieldState.isLoading,
+              invalid: invalid || fieldState.showError,
+              disabled,
+            }
+          )}
         </div>
       </Field>
       {fieldState.showSuccess && (
