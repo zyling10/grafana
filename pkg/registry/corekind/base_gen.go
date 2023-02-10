@@ -12,14 +12,7 @@ package corekind
 import (
 	"fmt"
 
-	"github.com/grafana/grafana/pkg/kinds/dashboard"
 	"github.com/grafana/grafana/pkg/kinds/enum"
-	"github.com/grafana/grafana/pkg/kinds/librarypanel"
-	"github.com/grafana/grafana/pkg/kinds/playlist"
-	"github.com/grafana/grafana/pkg/kinds/preferences"
-	"github.com/grafana/grafana/pkg/kinds/publicdashboard"
-	"github.com/grafana/grafana/pkg/kinds/serviceaccount"
-	"github.com/grafana/grafana/pkg/kinds/team"
 	"github.com/grafana/grafana/pkg/kindsys"
 	"github.com/grafana/thema"
 )
@@ -40,120 +33,29 @@ import (
 // a generic HTTP middleware for validating request bodies expected to contain some
 // kind-schematized type.
 type Base struct {
-	all             []kindsys.Core
-	dashboard       *dashboard.Kind
-	enum            *enum.Kind
-	librarypanel    *librarypanel.Kind
-	playlist        *playlist.Kind
-	preferences     *preferences.Kind
-	publicdashboard *publicdashboard.Kind
-	serviceaccount  *serviceaccount.Kind
-	team            *team.Kind
+	all  []kindsys.Core
+	enum *enum.Kind
 }
 
 // type guards
 var (
-	_ kindsys.Core = &dashboard.Kind{}
 	_ kindsys.Core = &enum.Kind{}
-	_ kindsys.Core = &librarypanel.Kind{}
-	_ kindsys.Core = &playlist.Kind{}
-	_ kindsys.Core = &preferences.Kind{}
-	_ kindsys.Core = &publicdashboard.Kind{}
-	_ kindsys.Core = &serviceaccount.Kind{}
-	_ kindsys.Core = &team.Kind{}
 )
-
-// Dashboard returns the [kindsys.Interface] implementation for the dashboard kind.
-func (b *Base) Dashboard() *dashboard.Kind {
-	return b.dashboard
-}
 
 // Enum returns the [kindsys.Interface] implementation for the enum kind.
 func (b *Base) Enum() *enum.Kind {
 	return b.enum
 }
 
-// LibraryPanel returns the [kindsys.Interface] implementation for the librarypanel kind.
-func (b *Base) LibraryPanel() *librarypanel.Kind {
-	return b.librarypanel
-}
-
-// Playlist returns the [kindsys.Interface] implementation for the playlist kind.
-func (b *Base) Playlist() *playlist.Kind {
-	return b.playlist
-}
-
-// Preferences returns the [kindsys.Interface] implementation for the preferences kind.
-func (b *Base) Preferences() *preferences.Kind {
-	return b.preferences
-}
-
-// PublicDashboard returns the [kindsys.Interface] implementation for the publicdashboard kind.
-func (b *Base) PublicDashboard() *publicdashboard.Kind {
-	return b.publicdashboard
-}
-
-// ServiceAccount returns the [kindsys.Interface] implementation for the serviceaccount kind.
-func (b *Base) ServiceAccount() *serviceaccount.Kind {
-	return b.serviceaccount
-}
-
-// Team returns the [kindsys.Interface] implementation for the team kind.
-func (b *Base) Team() *team.Kind {
-	return b.team
-}
-
 func doNewBase(rt *thema.Runtime) *Base {
 	var err error
 	reg := &Base{}
-
-	reg.dashboard, err = dashboard.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the dashboard Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.dashboard)
 
 	reg.enum, err = enum.NewKind(rt)
 	if err != nil {
 		panic(fmt.Sprintf("error while initializing the enum Kind: %s", err))
 	}
 	reg.all = append(reg.all, reg.enum)
-
-	reg.librarypanel, err = librarypanel.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the librarypanel Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.librarypanel)
-
-	reg.playlist, err = playlist.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the playlist Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.playlist)
-
-	reg.preferences, err = preferences.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the preferences Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.preferences)
-
-	reg.publicdashboard, err = publicdashboard.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the publicdashboard Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.publicdashboard)
-
-	reg.serviceaccount, err = serviceaccount.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the serviceaccount Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.serviceaccount)
-
-	reg.team, err = team.NewKind(rt)
-	if err != nil {
-		panic(fmt.Sprintf("error while initializing the team Kind: %s", err))
-	}
-	reg.all = append(reg.all, reg.team)
 
 	return reg
 }

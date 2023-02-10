@@ -11,7 +11,7 @@ lineage: seqs: [
 		schemas: [
 			// v0.0
 			{
-				panels?: [...(#Panel | #GraphPanel | #HeatmapPanel)]
+				somePanels?: [...(#Panel | #GraphPanel | #HeatmapPanel)]
 
 				// Dashboard panels. Panels are canonically defined inline
 				// because they share a version timeline with the dashboard

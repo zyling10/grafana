@@ -136,6 +136,7 @@ type schema struct {
 	Enum                 []Any              `json:"enum"`
 	Default              any                `json:"default"`
 	AllOf                []*schema          `json:"allOf"`
+	OneOf                []*schema          `json:"oneOf"`
 	AdditionalProperties *schema            `json:"additionalProperties"`
 	extends              []string           `json:"-"`
 	inheritedFrom        string             `json:"-"`
@@ -198,7 +199,8 @@ func newSchema(b []byte, kindName string) (*schema, error) {
 		return nil, err
 	}
 
-	return resolveSchema(data[kindName], root)
+	sch, err := resolveSchema(data[kindName], root)
+	return sch, err
 }
 
 // resolveSchema recursively resolves schemas.
@@ -244,6 +246,16 @@ func resolveSchema(schem *schema, root *simplejson.Json) (*schema, error) {
 			if len(tmp.Title) > 0 {
 				schem.extends = append(schem.extends, tmp.Title)
 			}
+		}
+	}
+
+	if len(schem.OneOf) > 0 {
+		for idx, child := range schem.OneOf {
+			tmp, err := resolveSubSchema(schem, child, root)
+			if err != nil {
+				return nil, err
+			}
+			schem.OneOf[idx] = tmp
 		}
 	}
 
@@ -479,6 +491,20 @@ func findDefinitions(s *schema) []*schema {
 		}
 	}
 
+	for _, child := range s.OneOf {
+		if child.Type.HasType(PropertyTypeObject) {
+			objs = append(objs, child)
+		}
+
+		if child.Type.HasType(PropertyTypeArray) {
+			if child.Items != nil {
+				if child.Items.Type.HasType(PropertyTypeObject) {
+					objs = append(objs, child.Items)
+				}
+			}
+		}
+	}
+
 	// Sort the object schemas.
 	sort.Slice(objs, func(i, j int) bool {
 		return objs[i].Title < objs[j].Title
@@ -491,10 +517,14 @@ func makeRows(s *schema) [][]string {
 	// Buffer all property rows so that we can sort them before printing them.
 	rows := make([][]string, 0, len(s.Properties))
 
+	var typeStr string
+	if len(s.OneOf) > 0 {
+		typeStr = handleEnum(s)
+	}
+
 	for key, p := range s.Properties {
 		alias := propTypeAlias(p)
 
-		var typeStr string
 		if alias != "" {
 			typeStr = alias
 		} else {
@@ -614,7 +644,20 @@ func constraintDescr(prop *schema) string {
 	return ""
 }
 
+func handleEnum(propValue *schema) string {
+	var variants []string
+	for _, v := range propValue.OneOf {
+		variants = append(variants, v.Title)
+	}
+
+	return strings.Join(variants, " | ")
+}
+
 func propTypeStr(propName string, propValue *schema) string {
+	if len(propValue.OneOf) > 0 {
+		return handleEnum(propValue)
+	}
+
 	// If the property has AdditionalProperties, it is most likely a map type
 	if propValue.AdditionalProperties != nil {
 		mapValue := renderMapType(propValue.AdditionalProperties)
@@ -630,12 +673,16 @@ func propTypeStr(propName string, propValue *schema) string {
 			propType = append(propType, fmt.Sprintf("[%s](#%s)", name, anchor))
 		case PropertyTypeArray:
 			if propValue.Items != nil {
-				for _, pi := range propValue.Items.Type {
-					if pi == PropertyTypeObject {
-						name, anchor := propNameAndAnchor(propName, propValue.Items.Title)
-						propType = append(propType, fmt.Sprintf("[%s](#%s)[]", name, anchor))
-					} else {
-						propType = append(propType, fmt.Sprintf("%s[]", pi))
+				if len(propValue.Items.OneOf) > 0 {
+					propType = append(propType, handleEnum(propValue.Items))
+				} else {
+					for _, pi := range propValue.Items.Type {
+						if pi == PropertyTypeObject {
+							name, anchor := propNameAndAnchor(propName, propValue.Items.Title)
+							propType = append(propType, fmt.Sprintf("[%s](#%s)[]", name, anchor))
+						} else {
+							propType = append(propType, fmt.Sprintf("%s[]", pi))
+						}
 					}
 				}
 			} else {

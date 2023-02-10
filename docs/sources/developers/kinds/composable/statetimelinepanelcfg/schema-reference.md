@@ -58,7 +58,7 @@ It extends [OptionsWithLegend](#optionswithlegend) and [OptionsWithTooltip](#opt
 | `tooltip`     | [VizTooltipOptions](#viztooltipoptions) | **Yes**  | *(Inherited from [OptionsWithTooltip](#optionswithtooltip))*<br/>TODO docs                                      |
 | `alignValue`  | string                                  | No       | Controls the value alignment in the TimelineChart component<br/>Possible values are: `center`, `left`, `right`. |
 | `mergeValues` | boolean                                 | No       | Merge equal consecutive values Default: `true`.                                                                 |
-| `timezone`    | string[]                                | No       | *(Inherited from [OptionsWithTimezones](#optionswithtimezones))*                                                |
+| `timezone`    |  |                                      | No       | *(Inherited from [OptionsWithTimezones](#optionswithtimezones))*                                                |
 
 ### OptionsWithLegend
 
@@ -88,9 +88,9 @@ TODO docs
 
 TODO docs
 
-| Property   | Type     | Required | Description |
-|------------|----------|----------|-------------|
-| `timezone` | string[] | No       |             |
+| Property   | Type | Required | Description |
+|------------|------|----------|-------------|
+| `timezone` |  |   | No       |             |
 
 ### OptionsWithTooltip
 

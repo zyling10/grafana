@@ -78,9 +78,9 @@ export interface HeatmapPanel {
 }
 
 export interface Enum {
-  panels?: Array<(Panel | GraphPanel | HeatmapPanel)>;
+  somePanels?: Array<(Panel | GraphPanel | HeatmapPanel)>;
 }
 
 export const defaultEnum: Partial<Enum> = {
-  panels: [],
+  somePanels: [],
 };

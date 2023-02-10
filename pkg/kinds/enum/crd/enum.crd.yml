@@ -22,7 +22,7 @@ spec:
                 properties:
                     spec:
                         properties:
-                            panels:
+                            somePanels:
                                 items:
                                     oneOf:
                                         - properties:

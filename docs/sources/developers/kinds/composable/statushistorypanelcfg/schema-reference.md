@@ -57,7 +57,7 @@ It extends [OptionsWithLegend](#optionswithlegend) and [OptionsWithTooltip](#opt
 | `showValue` | string                                  | **Yes**  | TODO docs<br/>Possible values are: `auto`, `never`, `always`.              |
 | `tooltip`   | [VizTooltipOptions](#viztooltipoptions) | **Yes**  | *(Inherited from [OptionsWithTooltip](#optionswithtooltip))*<br/>TODO docs |
 | `colWidth`  | number                                  | No       | Controls the column width Default: `0.9`.                                  |
-| `timezone`  | string[]                                | No       | *(Inherited from [OptionsWithTimezones](#optionswithtimezones))*           |
+| `timezone`  |  |                                      | No       | *(Inherited from [OptionsWithTimezones](#optionswithtimezones))*           |
 
 ### OptionsWithLegend
 
@@ -87,9 +87,9 @@ TODO docs
 
 TODO docs
 
-| Property   | Type     | Required | Description |
-|------------|----------|----------|-------------|
-| `timezone` | string[] | No       |             |
+| Property   | Type | Required | Description |
+|------------|------|----------|-------------|
+| `timezone` |  |   | No       |             |
 
 ### OptionsWithTooltip
 

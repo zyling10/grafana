@@ -28,7 +28,7 @@ type DashboardLink struct {
 
 // Enum defines model for Enum.
 type Enum struct {
-	Panels *[]interface{} `json:"panels,omitempty"`
+	SomePanels *[]interface{} `json:"somePanels,omitempty"`
 }
 
 // Support for legacy graph and heatmap panels.

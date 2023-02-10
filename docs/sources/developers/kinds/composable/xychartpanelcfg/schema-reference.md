@@ -111,14 +111,14 @@ It extends [BaseDimensionConfig](#basedimensionconfig).
 
 | Property | Type   | Required | Description                                                    |
 |----------|--------|----------|----------------------------------------------------------------|
-| `fixed`  |        | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
+| `fixed`  |  |     | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 | `field`  | string | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 
 ### BaseDimensionConfig
 
 | Property | Type   | Required | Description |
 |----------|--------|----------|-------------|
-| `fixed`  |        | **Yes**  |             |
+| `fixed`  |  |     | **Yes**  |             |
 | `field`  | string | No       |             |
 
 ### HideSeriesConfig
@@ -146,7 +146,7 @@ It extends [BaseDimensionConfig](#basedimensionconfig).
 
 | Property | Type    | Required | Description                                                    |
 |----------|---------|----------|----------------------------------------------------------------|
-| `fixed`  |         | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
+| `fixed`  |  |      | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 | `max`    | integer | **Yes**  |                                                                |
 | `min`    | integer | **Yes**  |                                                                |
 | `field`  | string  | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
@@ -216,7 +216,7 @@ It extends [BaseDimensionConfig](#basedimensionconfig).
 
 | Property | Type   | Required | Description                                                    |
 |----------|--------|----------|----------------------------------------------------------------|
-| `fixed`  |        | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
+| `fixed`  |  |     | **Yes**  | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 | `mode`   | string | **Yes**  | Possible values are: `fixed`, `field`, `template`.             |
 | `field`  | string | No       | *(Inherited from [BaseDimensionConfig](#basedimensionconfig))* |
 
