@@ -13,7 +13,14 @@ import (
 	"encoding/json"
 	"fmt"
 
+	dashboard "github.com/grafana/grafana/pkg/kinds/dashboard/crd"
 	enum "github.com/grafana/grafana/pkg/kinds/enum/crd"
+	librarypanel "github.com/grafana/grafana/pkg/kinds/librarypanel/crd"
+	playlist "github.com/grafana/grafana/pkg/kinds/playlist/crd"
+	preferences "github.com/grafana/grafana/pkg/kinds/preferences/crd"
+	publicdashboard "github.com/grafana/grafana/pkg/kinds/publicdashboard/crd"
+	serviceaccount "github.com/grafana/grafana/pkg/kinds/serviceaccount/crd"
+	team "github.com/grafana/grafana/pkg/kinds/team/crd"
 	"github.com/grafana/grafana/pkg/kindsys/k8ssys"
 	"github.com/grafana/grafana/pkg/registry/corekind"
 	"gopkg.in/yaml.v3"
@@ -30,12 +37,47 @@ import (
 // that are needed are known to the caller. Prefer All() when performing operations
 // generically across all kinds.
 type Registry struct {
-	all [1]k8ssys.Kind
+	all [8]k8ssys.Kind
+}
+
+// Dashboard returns the [k8ssys.Kind] instance for the Dashboard kind.
+func (r *Registry) Dashboard() k8ssys.Kind {
+	return r.all[0]
 }
 
 // Enum returns the [k8ssys.Kind] instance for the Enum kind.
 func (r *Registry) Enum() k8ssys.Kind {
-	return r.all[0]
+	return r.all[1]
+}
+
+// LibraryPanel returns the [k8ssys.Kind] instance for the LibraryPanel kind.
+func (r *Registry) LibraryPanel() k8ssys.Kind {
+	return r.all[2]
+}
+
+// Playlist returns the [k8ssys.Kind] instance for the Playlist kind.
+func (r *Registry) Playlist() k8ssys.Kind {
+	return r.all[3]
+}
+
+// Preferences returns the [k8ssys.Kind] instance for the Preferences kind.
+func (r *Registry) Preferences() k8ssys.Kind {
+	return r.all[4]
+}
+
+// PublicDashboard returns the [k8ssys.Kind] instance for the PublicDashboard kind.
+func (r *Registry) PublicDashboard() k8ssys.Kind {
+	return r.all[5]
+}
+
+// ServiceAccount returns the [k8ssys.Kind] instance for the ServiceAccount kind.
+func (r *Registry) ServiceAccount() k8ssys.Kind {
+	return r.all[6]
+}
+
+// Team returns the [k8ssys.Kind] instance for the Team kind.
+func (r *Registry) Team() k8ssys.Kind {
+	return r.all[7]
 }
 
 func doNewRegistry(breg *corekind.Base) *Registry {
@@ -45,17 +87,38 @@ func doNewRegistry(breg *corekind.Base) *Registry {
 	reg := &Registry{}
 
 	kk = k8ssys.Kind{
+		GrafanaKind: breg.Dashboard(),
+		Object:      &dashboard.Dashboard{},
+		ObjectList:  &dashboard.DashboardList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map0 := make(map[string]any)
+	err = yaml.Unmarshal(dashboard.CRDYaml, map0)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for Dashboard failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map0)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for Dashboard: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for Dashboard: %s", err))
+	}
+	reg.all[0] = kk
+
+	kk = k8ssys.Kind{
 		GrafanaKind: breg.Enum(),
 		Object:      &enum.Enum{},
 		ObjectList:  &enum.EnumList{},
 	}
 	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
-	map0 := make(map[string]any)
-	err = yaml.Unmarshal(enum.CRDYaml, map0)
+	map1 := make(map[string]any)
+	err = yaml.Unmarshal(enum.CRDYaml, map1)
 	if err != nil {
 		panic(fmt.Sprintf("generated CRD YAML for Enum failed to unmarshal: %s", err))
 	}
-	b, err = json.Marshal(map0)
+	b, err = json.Marshal(map1)
 	if err != nil {
 		panic(fmt.Sprintf("could not re-marshal CRD JSON for Enum: %s", err))
 	}
@@ -63,7 +126,133 @@ func doNewRegistry(breg *corekind.Base) *Registry {
 	if err != nil {
 		panic(fmt.Sprintf("could not unmarshal CRD JSON for Enum: %s", err))
 	}
-	reg.all[0] = kk
+	reg.all[1] = kk
+
+	kk = k8ssys.Kind{
+		GrafanaKind: breg.LibraryPanel(),
+		Object:      &librarypanel.LibraryPanel{},
+		ObjectList:  &librarypanel.LibraryPanelList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map2 := make(map[string]any)
+	err = yaml.Unmarshal(librarypanel.CRDYaml, map2)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for LibraryPanel failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map2)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for LibraryPanel: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for LibraryPanel: %s", err))
+	}
+	reg.all[2] = kk
+
+	kk = k8ssys.Kind{
+		GrafanaKind: breg.Playlist(),
+		Object:      &playlist.Playlist{},
+		ObjectList:  &playlist.PlaylistList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map3 := make(map[string]any)
+	err = yaml.Unmarshal(playlist.CRDYaml, map3)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for Playlist failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map3)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for Playlist: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for Playlist: %s", err))
+	}
+	reg.all[3] = kk
+
+	kk = k8ssys.Kind{
+		GrafanaKind: breg.Preferences(),
+		Object:      &preferences.Preferences{},
+		ObjectList:  &preferences.PreferencesList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map4 := make(map[string]any)
+	err = yaml.Unmarshal(preferences.CRDYaml, map4)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for Preferences failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map4)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for Preferences: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for Preferences: %s", err))
+	}
+	reg.all[4] = kk
+
+	kk = k8ssys.Kind{
+		GrafanaKind: breg.PublicDashboard(),
+		Object:      &publicdashboard.PublicDashboard{},
+		ObjectList:  &publicdashboard.PublicDashboardList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map5 := make(map[string]any)
+	err = yaml.Unmarshal(publicdashboard.CRDYaml, map5)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for PublicDashboard failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map5)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for PublicDashboard: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for PublicDashboard: %s", err))
+	}
+	reg.all[5] = kk
+
+	kk = k8ssys.Kind{
+		GrafanaKind: breg.ServiceAccount(),
+		Object:      &serviceaccount.ServiceAccount{},
+		ObjectList:  &serviceaccount.ServiceAccountList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map6 := make(map[string]any)
+	err = yaml.Unmarshal(serviceaccount.CRDYaml, map6)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for ServiceAccount failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map6)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for ServiceAccount: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for ServiceAccount: %s", err))
+	}
+	reg.all[6] = kk
+
+	kk = k8ssys.Kind{
+		GrafanaKind: breg.Team(),
+		Object:      &team.Team{},
+		ObjectList:  &team.TeamList{},
+	}
+	// TODO Having the committed form on disk in YAML is worth doing this for now...but fix this silliness
+	map7 := make(map[string]any)
+	err = yaml.Unmarshal(team.CRDYaml, map7)
+	if err != nil {
+		panic(fmt.Sprintf("generated CRD YAML for Team failed to unmarshal: %s", err))
+	}
+	b, err = json.Marshal(map7)
+	if err != nil {
+		panic(fmt.Sprintf("could not re-marshal CRD JSON for Team: %s", err))
+	}
+	err = json.Unmarshal(b, &kk.Schema)
+	if err != nil {
+		panic(fmt.Sprintf("could not unmarshal CRD JSON for Team: %s", err))
+	}
+	reg.all[7] = kk
 
 	return reg
 }

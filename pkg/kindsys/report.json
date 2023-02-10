@@ -281,26 +281,32 @@
     },
     "dashboard": {
       "category": "core",
-      "codeowners": [],
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
       "crd": {
-        "dummySchema": false,
-        "group": "",
-        "scope": ""
+        "dummySchema": true,
+        "group": "dashboard.core.grafana.com",
+        "scope": "Namespaced"
       },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "A Grafana dashboard.",
+      "grafanaMaturityCount": 139,
       "lineageIsGroup": false,
       "links": {
-        "docs": "n/a",
-        "go": "n/a",
-        "schema": "n/a",
-        "ts": "n/a"
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/dashboard/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/dashboard",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/dashboard/dashboard_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/dashboard/x/dashboard_types.gen.ts"
       },
       "machineName": "dashboard",
-      "maturity": "planned",
+      "maturity": "experimental",
       "name": "Dashboard",
       "pluralMachineName": "dashboards",
       "pluralName": "Dashboards"
@@ -863,6 +869,38 @@
       "pluralName": "JaegerDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
+    "librarypanel": {
+      "category": "core",
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "librarypanel.core.grafana.com",
+        "scope": "Namespaced"
+      },
+      "currentVersion": [
+        0,
+        0
+      ],
+      "description": "A standalone panel",
+      "grafanaMaturityCount": 10,
+      "lineageIsGroup": false,
+      "links": {
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/librarypanel/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/librarypanel",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/librarypanel/librarypanel_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/librarypanel/x/librarypanel_types.gen.ts"
+      },
+      "machineName": "librarypanel",
+      "maturity": "experimental",
+      "name": "LibraryPanel",
+      "pluralMachineName": "librarypanels",
+      "pluralName": "LibraryPanels"
+    },
     "livepanelcfg": {
       "category": "composable",
       "codeowners": [],
@@ -1207,26 +1245,32 @@
     },
     "playlist": {
       "category": "core",
-      "codeowners": [],
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
       "crd": {
         "dummySchema": false,
-        "group": "",
-        "scope": ""
+        "group": "playlist.core.grafana.com",
+        "scope": "Namespaced"
       },
       "currentVersion": [
         0,
         0
       ],
+      "description": "A playlist is a series of dashboards that is automatically rotated in the browser, on a configurable interval.",
       "grafanaMaturityCount": 0,
       "lineageIsGroup": false,
       "links": {
-        "docs": "n/a",
-        "go": "n/a",
-        "schema": "n/a",
-        "ts": "n/a"
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/playlist/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/playlist",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/playlist/playlist_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/playlist/x/playlist_types.gen.ts"
       },
       "machineName": "playlist",
-      "maturity": "planned",
+      "maturity": "merged",
       "name": "Playlist",
       "pluralMachineName": "playlists",
       "pluralName": "Playlists"
@@ -1275,6 +1319,38 @@
       "pluralName": "PostgreSQLDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
     },
+    "preferences": {
+      "category": "core",
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "preferences.core.grafana.com",
+        "scope": "Namespaced"
+      },
+      "currentVersion": [
+        0,
+        0
+      ],
+      "description": "The user or team frontend preferences",
+      "grafanaMaturityCount": 0,
+      "lineageIsGroup": false,
+      "links": {
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/preferences/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/preferences",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/preferences/preferences_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/preferences/x/preferences_types.gen.ts"
+      },
+      "machineName": "preferences",
+      "maturity": "merged",
+      "name": "Preferences",
+      "pluralMachineName": "preferencess",
+      "pluralName": "Preferencess"
+    },
     "prometheusdataquery": {
       "category": "composable",
       "codeowners": [],
@@ -1318,6 +1394,38 @@
       "pluralMachineName": "prometheusdatasourcecfgs",
       "pluralName": "PrometheusDataSourceCfgs",
       "schemaInterface": "DataSourceCfg"
+    },
+    "publicdashboard": {
+      "category": "core",
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
+      "crd": {
+        "dummySchema": false,
+        "group": "publicdashboard.core.grafana.com",
+        "scope": "Namespaced"
+      },
+      "currentVersion": [
+        0,
+        0
+      ],
+      "description": "Public dashboard configuration",
+      "grafanaMaturityCount": 0,
+      "lineageIsGroup": false,
+      "links": {
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/publicdashboard/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/publicdashboard",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/publicdashboard/publicdashboard_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/publicdashboard/x/publicdashboard_types.gen.ts"
+      },
+      "machineName": "publicdashboard",
+      "maturity": "merged",
+      "name": "PublicDashboard",
+      "pluralMachineName": "publicdashboards",
+      "pluralName": "PublicDashboards"
     },
     "query": {
       "category": "core",
@@ -1373,26 +1481,32 @@
     },
     "serviceaccount": {
       "category": "core",
-      "codeowners": [],
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
       "crd": {
         "dummySchema": false,
-        "group": "",
-        "scope": ""
+        "group": "serviceaccount.core.grafana.com",
+        "scope": "Namespaced"
       },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "system account",
+      "grafanaMaturityCount": 9,
       "lineageIsGroup": false,
       "links": {
-        "docs": "n/a",
-        "go": "n/a",
-        "schema": "n/a",
-        "ts": "n/a"
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/serviceaccount/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/serviceaccount",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/serviceaccount/serviceaccount_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/serviceaccount/x/serviceaccount_types.gen.ts"
       },
       "machineName": "serviceaccount",
-      "maturity": "planned",
+      "maturity": "merged",
       "name": "ServiceAccount",
       "pluralMachineName": "serviceaccounts",
       "pluralName": "ServiceAccounts"
@@ -1493,26 +1607,32 @@
     },
     "team": {
       "category": "core",
-      "codeowners": [],
+      "codeowners": [
+        "grafana/dataviz-squad",
+        "grafana/grafana-as-code",
+        "grafana/plugins-platform-frontend",
+        "grafana/user-essentials"
+      ],
       "crd": {
         "dummySchema": false,
-        "group": "",
-        "scope": ""
+        "group": "team.core.grafana.com",
+        "scope": "Namespaced"
       },
       "currentVersion": [
         0,
         0
       ],
-      "grafanaMaturityCount": 0,
+      "description": "A team is a named grouping of Grafana users to which access control rules may be assigned.",
+      "grafanaMaturityCount": 7,
       "lineageIsGroup": false,
       "links": {
-        "docs": "n/a",
-        "go": "n/a",
-        "schema": "n/a",
-        "ts": "n/a"
+        "docs": "https://grafana.com/docs/grafana/next/developers/kinds/core/team/schema-reference",
+        "go": "https://github.com/grafana/grafana/tree/main/pkg/kinds/team",
+        "schema": "https://github.com/grafana/grafana/tree/main/kinds/team/team_kind.cue",
+        "ts": "https://github.com/grafana/grafana/tree/main/packages/grafana-schema/src/raw/team/x/team_types.gen.ts"
       },
       "machineName": "team",
-      "maturity": "planned",
+      "maturity": "merged",
       "name": "Team",
       "pluralMachineName": "teams",
       "pluralName": "Teams"
@@ -1879,7 +1999,10 @@
           "datasource",
           "enum",
           "folder",
+          "librarypanel",
           "playlist",
+          "preferences",
+          "publicdashboard",
           "query",
           "queryhistory",
           "serviceaccount",
@@ -1887,7 +2010,7 @@
           "thumb",
           "user"
         ],
-        "count": 12
+        "count": 15
       }
     },
     "maturity": {
@@ -1897,12 +2020,14 @@
           "annotationslistpanelcfg",
           "barchartpanelcfg",
           "bargaugepanelcfg",
+          "dashboard",
           "dashboardlistpanelcfg",
           "debugpanelcfg",
           "elasticsearchdataquery",
           "gaugepanelcfg",
           "geomappanelcfg",
           "histogrampanelcfg",
+          "librarypanel",
           "lokidataquery",
           "newspanelcfg",
           "nodegraphpanelcfg",
@@ -1917,7 +2042,7 @@
           "textpanelcfg",
           "xychartpanelcfg"
         ],
-        "count": 22
+        "count": 24
       },
       "mature": {
         "name": "mature",
@@ -1930,9 +2055,14 @@
           "alertgroupspanelcfg",
           "azuremonitordataquery",
           "cloudwatchdataquery",
-          "enum"
+          "enum",
+          "playlist",
+          "preferences",
+          "publicdashboard",
+          "serviceaccount",
+          "team"
         ],
-        "count": 4
+        "count": 9
       },
       "planned": {
         "name": "planned",
@@ -1943,7 +2073,6 @@
           "apikey",
           "azuremonitordatasourcecfg",
           "cloudwatchdatasourcecfg",
-          "dashboard",
           "dashboarddataquery",
           "dashboarddatasourcecfg",
           "datasource",
@@ -1970,16 +2099,13 @@
           "mysqldatasourcecfg",
           "parcadatasourcecfg",
           "phlaredatasourcecfg",
-          "playlist",
           "postgresqldataquery",
           "postgresqldatasourcecfg",
           "prometheusdataquery",
           "prometheusdatasourcecfg",
           "query",
           "queryhistory",
-          "serviceaccount",
           "tableoldpanelcfg",
-          "team",
           "tempodatasourcecfg",
           "testdatadatasourcecfg",
           "thumb",
@@ -1989,7 +2115,7 @@
           "zipkindataquery",
           "zipkindatasourcecfg"
         ],
-        "count": 51
+        "count": 47
       },
       "stable": {
         "name": "stable",
