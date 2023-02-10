@@ -13,22 +13,15 @@ title: Enum kind
 
 This is a schema written to test rendering docs for complex disjunctions.
 
-| Property     | Type                              | Required | Description |
-|--------------|-----------------------------------|----------|-------------|
-| `somePanels` | Panel | GraphPanel | HeatmapPanel | No       |             |
+| Property     | Type                    | Required | Description |
+|--------------|-------------------------|----------|-------------|
+| `somePanels` | [object](#somepanels)[] | No       |             |
 
 ### SomePanels
 
-| Property     | Type                              | Required | Description                                                                                                        |
-|--------------|-----------------------------------|----------|--------------------------------------------------------------------------------------------------------------------|
-| `options`    | [object](#options)                | **Yes**  | *(Inherited from [Panel](#panel))*<br/>options is specified by the PanelOptions field in panel<br/>plugin schemas. |
-| `type`       | string                            | **Yes**  | *(Inherited from [HeatmapPanel](#heatmappanel))*<br/>Possible values are: `heatmap`.                               |
-| `datasource` | [object](#datasource)             | No       | *(Inherited from [Panel](#panel))*<br/>Description.                                                                |
-| `id`         | uint32                            | No       | *(Inherited from [Panel](#panel))*                                                                                 |
-| `legend`     | [object](#legend)                 | No       | *(Inherited from [GraphPanel](#graphpanel))*<br/>@deprecated this is part of deprecated graph panel                |
-| `links`      | [DashboardLink](#dashboardlink)[] | No       | *(Inherited from [Panel](#panel))*<br/>Panel links                                                                 |
-| `thresholds` |                                   | No       | *(Inherited from [Panel](#panel))*<br/>TODO docs - seems to be an old field from old dashboard alerts?             |
-| `title`      | string                            | No       | *(Inherited from [Panel](#panel))*<br/>Panel title.                                                                |
+| Property | Type | Required | Description                                                                                          |
+|----------|------|----------|------------------------------------------------------------------------------------------------------|
+| `object` |      | No       | Possible types are: `[Panel](#Panel)`, `[GraphPanel](#GraphPanel)`, `[HeatmapPanel](#HeatmapPanel)`. |
 
 ### DashboardLink
 

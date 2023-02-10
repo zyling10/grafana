@@ -519,7 +519,10 @@ func makeRows(s *schema) [][]string {
 
 	var typeStr string
 	if len(s.OneOf) > 0 {
-		typeStr = handleEnum(s)
+		descr := enumDescr(s)
+		// TODO: requires is not set
+		rows = append(rows, []string{fmt.Sprintf("`%s`", "object"), typeStr, "No", formatForTable(descr)})
+		return rows
 	}
 
 	for key, p := range s.Properties {
@@ -644,20 +647,15 @@ func constraintDescr(prop *schema) string {
 	return ""
 }
 
-func handleEnum(propValue *schema) string {
-	var variants []string
+func enumDescr(propValue *schema) string {
+	var vals []string
 	for _, v := range propValue.OneOf {
-		variants = append(variants, v.Title)
+		vals = append(vals, fmt.Sprintf("[%s](#%s)", v.Title, v.Title))
 	}
-
-	return strings.Join(variants, " | ")
+	return "\nPossible types are: `" + strings.Join(vals, "`, `") + "`."
 }
 
 func propTypeStr(propName string, propValue *schema) string {
-	if len(propValue.OneOf) > 0 {
-		return handleEnum(propValue)
-	}
-
 	// If the property has AdditionalProperties, it is most likely a map type
 	if propValue.AdditionalProperties != nil {
 		mapValue := renderMapType(propValue.AdditionalProperties)
@@ -673,16 +671,12 @@ func propTypeStr(propName string, propValue *schema) string {
 			propType = append(propType, fmt.Sprintf("[%s](#%s)", name, anchor))
 		case PropertyTypeArray:
 			if propValue.Items != nil {
-				if len(propValue.Items.OneOf) > 0 {
-					propType = append(propType, handleEnum(propValue.Items))
-				} else {
-					for _, pi := range propValue.Items.Type {
-						if pi == PropertyTypeObject {
-							name, anchor := propNameAndAnchor(propName, propValue.Items.Title)
-							propType = append(propType, fmt.Sprintf("[%s](#%s)[]", name, anchor))
-						} else {
-							propType = append(propType, fmt.Sprintf("%s[]", pi))
-						}
+				for _, pi := range propValue.Items.Type {
+					if pi == PropertyTypeObject {
+						name, anchor := propNameAndAnchor(propName, propValue.Items.Title)
+						propType = append(propType, fmt.Sprintf("[%s](#%s)[]", name, anchor))
+					} else {
+						propType = append(propType, fmt.Sprintf("%s[]", pi))
 					}
 				}
 			} else {
