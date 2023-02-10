@@ -202,21 +202,21 @@ export const DashNav = React.memo<Props>((props) => {
       return [];
     }
 
-    if (canStar) {
-      let desc = isStarred
-        ? t('dashboard.toolbar.unmark-favorite', 'Unmark as favorite')
-        : t('dashboard.toolbar.mark-favorite', 'Mark as favorite');
-      buttons.push(
-        <DashNavButton
-          tooltip={desc}
-          icon={isStarred ? 'favorite' : 'star'}
-          iconType={isStarred ? 'mono' : 'default'}
-          iconSize="lg"
-          onClick={onStarDashboard}
-          key="button-star"
-        />
-      );
-    }
+    // if (canStar) {
+    //   let desc = isStarred
+    //     ? t('dashboard.toolbar.unmark-favorite', 'Unmark as favorite')
+    //     : t('dashboard.toolbar.mark-favorite', 'Mark as favorite');
+    //   buttons.push(
+    //     <DashNavButton
+    //       tooltip={desc}
+    //       icon={isStarred ? 'favorite' : 'star'}
+    //       iconType={isStarred ? 'mono' : 'default'}
+    //       iconSize="lg"
+    //       onClick={onStarDashboard}
+    //       key="button-star"
+    //     />
+    //   );
+    // }
 
     if (canShare) {
       buttons.push(
@@ -409,7 +409,7 @@ export const DashNav = React.memo<Props>((props) => {
           <>
             {renderLeftActions()}
             <NavToolbarSeparator leftActionsSeparator />
-            <ToolbarButtonRow alignment="right">{renderRightActions()}</ToolbarButtonRow>
+            {/* <ToolbarButtonRow alignment="right">{renderRightActions()}</ToolbarButtonRow> */}
           </>
         }
       />

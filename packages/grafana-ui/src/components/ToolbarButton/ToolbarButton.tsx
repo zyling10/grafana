@@ -57,6 +57,7 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
       iconOnly,
       'aria-label': ariaLabel,
       isHighlighted,
+      onClick,
       ...rest
     },
     ref
@@ -80,13 +81,15 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
     });
 
     //Avoid showing Tooltip when onTouch unless it is longpress
-    const showTooltip = useRef(false);
-    const isResponsive = (e: React.MouseEvent<HTMLElement>) => {
+    const showTooltipRef = useRef(false);
+    const isResponsive = (ev: React.MouseEvent<HTMLElement>) => {
       if (e.nativeEvent instanceof PointerEvent && e.nativeEvent.pointerType === 'touch') {
-        showTooltip.current = false;
+        showTooltipRef.current = false;
       } else {
-        showTooltip.current = true;
+        showTooltipRef.current = true;
       }
+
+      onClick(ev);
     };
 
     const body = (
@@ -96,7 +99,7 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
         aria-label={getButtonAriaLabel(ariaLabel, tooltip)}
         aria-expanded={isOpen}
         {...rest}
-        onClick={(e) => isResponsive(e)}
+        onClick={(ev) => isResponsive(ev)}
       >
         {renderIcon(icon, iconSize)}
         {imgSrc && <img className={styles.img} src={imgSrc} alt={imgAlt ?? ''} />}
@@ -107,8 +110,12 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
       </button>
     );
 
+    const showTooltip = showTooltipRef.current === true ? false : undefined;
+
+    console.log('ToolbarButton render', { showTooltip, tooltip });
+
     return tooltip ? (
-      <Tooltip content={tooltip} placement="bottom" show={!showTooltip.current ? false : undefined}>
+      <Tooltip content={tooltip} placement="bottom" show={showTooltip}>
         {body}
       </Tooltip>
     ) : (

@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePopperTooltip } from 'react-popper-tooltip';
 
 import { colorManipulator, GrafanaTheme2 } from '@grafana/data';
@@ -22,7 +22,12 @@ export interface TooltipProps {
 }
 
 export const Tooltip = React.memo(({ children, theme, interactive, show, placement, content }: TooltipProps) => {
-  const [controlledVisible, setControlledVisible] = React.useState(show);
+  const [controlledVisible, setControlledVisible] = useState(show);
+
+  useEffect(() => {
+    console.log('Tooltip setControlledVisible', { show, content });
+    setControlledVisible(show);
+  }, [show]);
 
   useEffect(() => {
     if (controlledVisible !== false) {
@@ -40,6 +45,8 @@ export const Tooltip = React.memo(({ children, theme, interactive, show, placeme
     }
   }, [controlledVisible]);
 
+  console.log('Tooltip render', { controlledVisible, content });
+
   const { getArrowProps, getTooltipProps, setTooltipRef, setTriggerRef, visible, update } = usePopperTooltip({
     visible: controlledVisible,
     placement: placement,
@@ -48,7 +55,10 @@ export const Tooltip = React.memo(({ children, theme, interactive, show, placeme
     delayShow: 150,
     offset: [0, 8],
     trigger: ['hover', 'focus'],
-    onVisibleChange: setControlledVisible,
+    onVisibleChange: (newValue) => {
+      console.log('tooltip onVisibleChange', { newValue, content });
+      setControlledVisible(newValue);
+    },
   });
 
   const styles = useStyles2(getStyles);

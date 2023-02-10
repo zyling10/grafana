@@ -88,6 +88,7 @@ export const ToolbarButtonRow = forwardRef<HTMLDivElement, Props>(
               icon="ellipsis-v"
               iconOnly
               narrow
+              isOpen={showOverflowItems}
             />
             {showOverflowItems && (
               <FocusScope contain autoFocus>
