@@ -13,6 +13,7 @@ import (
 	"fmt"
 
 	"github.com/grafana/grafana/pkg/kinds/dashboard"
+	"github.com/grafana/grafana/pkg/kinds/enum"
 	"github.com/grafana/grafana/pkg/kinds/librarypanel"
 	"github.com/grafana/grafana/pkg/kinds/playlist"
 	"github.com/grafana/grafana/pkg/kinds/preferences"
@@ -41,6 +42,7 @@ import (
 type Base struct {
 	all             []kindsys.Core
 	dashboard       *dashboard.Kind
+	enum            *enum.Kind
 	librarypanel    *librarypanel.Kind
 	playlist        *playlist.Kind
 	preferences     *preferences.Kind
@@ -52,6 +54,7 @@ type Base struct {
 // type guards
 var (
 	_ kindsys.Core = &dashboard.Kind{}
+	_ kindsys.Core = &enum.Kind{}
 	_ kindsys.Core = &librarypanel.Kind{}
 	_ kindsys.Core = &playlist.Kind{}
 	_ kindsys.Core = &preferences.Kind{}
@@ -63,6 +66,11 @@ var (
 // Dashboard returns the [kindsys.Interface] implementation for the dashboard kind.
 func (b *Base) Dashboard() *dashboard.Kind {
 	return b.dashboard
+}
+
+// Enum returns the [kindsys.Interface] implementation for the enum kind.
+func (b *Base) Enum() *enum.Kind {
+	return b.enum
 }
 
 // LibraryPanel returns the [kindsys.Interface] implementation for the librarypanel kind.
@@ -104,6 +112,12 @@ func doNewBase(rt *thema.Runtime) *Base {
 		panic(fmt.Sprintf("error while initializing the dashboard Kind: %s", err))
 	}
 	reg.all = append(reg.all, reg.dashboard)
+
+	reg.enum, err = enum.NewKind(rt)
+	if err != nil {
+		panic(fmt.Sprintf("error while initializing the enum Kind: %s", err))
+	}
+	reg.all = append(reg.all, reg.enum)
 
 	reg.librarypanel, err = librarypanel.NewKind(rt)
 	if err != nil {

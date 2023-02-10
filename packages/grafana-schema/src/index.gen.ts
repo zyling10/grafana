@@ -87,6 +87,39 @@ export {
   defaultFieldConfig
 } from './veneer/dashboard.types';
 
+// Raw generated types from Enum kind.
+export type {
+  Enum,
+  DashboardLink,
+  GraphPanel,
+  HeatmapPanel
+} from './raw/enum/x/enum_types.gen';
+
+// Raw generated enums and default consts from enum kind.
+export { defaultEnum } from './raw/enum/x/enum_types.gen';
+
+// The following exported declarations correspond to types in the enum@0.0 kind's
+// schema with attribute @grafana(TSVeneer="type").
+//
+// The handwritten file for these type and default veneers is expected to be at
+// packages/grafana-schema/src/veneer/enum.types.ts.
+// This re-export declaration enforces that the handwritten veneer file exists,
+// and exports all the symbols in the list.
+//
+// TODO generate code such that tsc enforces type compatibility between raw and veneer decls
+export type { Panel } from './veneer/enum.types';
+
+// The following exported declarations correspond to types in the enum@0.0 kind's
+// schema with attribute @grafana(TSVeneer="type").
+//
+// The handwritten file for these type and default veneers is expected to be at
+// packages/grafana-schema/src/veneer/enum.types.ts.
+// This re-export declaration enforces that the handwritten veneer file exists,
+// and exports all the symbols in the list.
+//
+// TODO generate code such that tsc enforces type compatibility between raw and veneer decls
+export { defaultPanel } from './veneer/enum.types';
+
 // Raw generated types from LibraryPanel kind.
 export type {
   LibraryElementDTOMetaUser,
