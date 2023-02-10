@@ -17,6 +17,7 @@ import { queriesWithUpdatedReferences, refIdExists } from '../util';
 
 export interface QueriesAndExpressionsState {
   queries: AlertQuery[];
+  recordingRuleQueries: AlertQuery[];
 }
 
 const findDataSourceFromExpression = (
@@ -30,11 +31,13 @@ const findDataSourceFromExpression = (
 
 const initialState: QueriesAndExpressionsState = {
   queries: [],
+  recordingRuleQueries: [],
 };
 
 export const duplicateQuery = createAction<AlertQuery>('duplicateQuery');
 export const addNewDataQuery = createAction('addNewDataQuery');
 export const setDataQueries = createAction<AlertQuery[]>('setDataQueries');
+export const setRecordingRuleQueries = createAction<AlertQuery[]>('setRecordingRuleQueries');
 
 export const addNewExpression = createAction('addNewExpression');
 export const removeExpression = createAction<string>('removeExpression');
@@ -71,6 +74,9 @@ export const queriesAndExpressionsReducer = createReducer(initialState, (builder
     .addCase(setDataQueries, (state, { payload }) => {
       const expressionQueries = state.queries.filter((query) => isExpressionQuery(query.model));
       state.queries = [...payload, ...expressionQueries];
+    })
+    .addCase(setRecordingRuleQueries, (state, { payload }) => {
+      state.recordingRuleQueries = [...payload];
     })
     .addCase(updateMaxDataPoints, (state, action) => {
       state.queries = state.queries.map((query) => {

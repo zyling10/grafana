@@ -2,22 +2,26 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer, useRef, useStat
 import { useFormContext } from 'react-hook-form';
 import { useAsync } from 'react-use';
 
-import { CoreApp, LoadingState, PanelData } from '@grafana/data';
+import { CoreApp, LoadingState, PanelData, DataSourceInstanceSettings } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Stack } from '@grafana/experimental';
 import { config, getDataSourceSrv } from '@grafana/runtime';
+import { DataSourceJsonData } from '@grafana/schema';
 import { Alert, Button, Field, InputControl, Tooltip } from '@grafana/ui';
 import { isExpressionQuery } from 'app/features/expressions/guards';
 import { AlertQuery } from 'app/types/unified-alerting-dto';
 
+import { useRulesSourcesWithRuler } from '../../../hooks/useRuleSourcesWithRuler';
 import { AlertingQueryRunner } from '../../../state/AlertingQueryRunner';
 import { RuleFormType, RuleFormValues } from '../../../types/rule-form';
 import { TABLE, TIMESERIES } from '../../../utils/constants';
 import { getDefaultOrFirstCompatibleDataSource } from '../../../utils/datasource';
+import { getDefaultRecordingRuleQueries } from '../../../utils/rule-form';
 import { SupportedPanelPlugins } from '../../PanelPluginsButtonGroup';
 import { ExpressionEditor } from '../ExpressionEditor';
 import { ExpressionsEditor } from '../ExpressionsEditor';
 import { QueryEditor } from '../QueryEditor';
+import { newModel } from '../QueryRows';
 import { RuleEditorSection } from '../RuleEditorSection';
 import { VizWrapper } from '../VizWrapper';
 import { errorFromSeries, getThresholdsForQueries, refIdExists } from '../util';
@@ -31,6 +35,7 @@ import {
   removeExpression,
   rewireExpressions,
   setDataQueries,
+  setRecordingRuleQueries,
   updateExpression,
   updateExpressionRefId,
   updateExpressionTimeRange,
@@ -55,9 +60,10 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
 
   const initialState = {
     queries: getValues('queries'),
+    recordingRuleQueries: getValues('recordingRuleQueries'),
     panelData: {},
   };
-  const [{ queries }, dispatch] = useReducer(queriesAndExpressionsReducer, initialState);
+  const [{ queries, recordingRuleQueries }, dispatch] = useReducer(queriesAndExpressionsReducer, initialState);
 
   const [type, condition, dataSourceName] = watch(['type', 'condition', 'dataSourceName']);
 
@@ -76,10 +82,18 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
     runner.current.run(getValues('queries'));
   }, [getValues]);
 
+  const runRecordingRuleQueries = useCallback(() => {
+    runner.current.run(getValues('recordingRuleQueries'));
+  }, [getValues]);
+
   // whenever we update the queries we have to update the form too
   useEffect(() => {
     setValue('queries', queries, { shouldValidate: false });
   }, [queries, runQueries, setValue]);
+
+  useEffect(() => {
+    setValue('recordingRuleQueries', recordingRuleQueries, { shouldValidate: false });
+  }, [recordingRuleQueries, runQueries, setValue]);
 
   // set up the AlertQueryRunner
   useEffect(() => {
@@ -110,6 +124,9 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
 
   const emptyQueries = queries.length === 0;
 
+  const rulesSourcesWithRuler = useRulesSourcesWithRuler();
+  const defaultRulesSource = rulesSourcesWithRuler[0];
+
   useEffect(() => {
     const currentCondition = getValues('condition');
 
@@ -120,6 +137,16 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
     const error = errorFromSeries(panelData[currentCondition]?.series || []);
     onDataChange(error?.message || '');
   }, [panelData, getValues, onDataChange]);
+
+  useEffect(() => {
+    //reset the query visualization when changing alert types
+    setPanelData({});
+
+    if (type === RuleFormType.cloudRecording) {
+      const recordingRule = getDefaultRecordingRuleQueries(defaultRulesSource);
+      dispatch(setRecordingRuleQueries(recordingRule));
+    }
+  }, [type, defaultRulesSource]);
 
   const handleSetCondition = useCallback(
     (refId: string | null) => {
@@ -169,6 +196,10 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
     [queries]
   );
 
+  const onChangeRecordingRuleQueries = useCallback((updatedQueries: AlertQuery[]) => {
+    dispatch(setRecordingRuleQueries(updatedQueries));
+  }, []);
+
   const onDuplicateQuery = useCallback((query: AlertQuery) => {
     dispatch(duplicateQuery(query));
   }, []);
@@ -204,11 +235,12 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
       {/* This is the editor for recording rules */}
       {showRecordingRuleEditor && (
         <CloudRecordingRuleEditor
-          onChangeQueries={onChangeQueries}
-          runQueries={runQueries}
-          query={queries[0]}
-          dataSourceName={dataSourceName!}
+          onChangeQueries={onChangeRecordingRuleQueries}
+          runQueries={runRecordingRuleQueries}
+          queries={recordingRuleQueries}
+          dataSourceName={dataSourceName}
           panelData={panelData}
+          dataSource={defaultRulesSource}
         />
       )}
 
@@ -298,23 +330,26 @@ export const QueryAndExpressionsStep: FC<Props> = ({ editingExistingRule, onData
 };
 
 interface CloudRecordingRuleEditorProps {
-  query: AlertQuery;
+  queries: AlertQuery[];
   dataSourceName: string;
   onChangeQueries: (updatedQueries: AlertQuery[]) => void;
   runQueries: () => void;
   panelData: Record<string, PanelData>;
+  dataSource: DataSourceInstanceSettings<DataSourceJsonData>;
 }
 
 const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({
   onChangeQueries,
   runQueries,
   dataSourceName,
-  query,
+  queries,
   panelData,
+  dataSource,
 }) => {
   const dataSourceSrv = getDataSourceSrv();
-
   const fetchDsSettings = useAsync(() => dataSourceSrv.get(dataSourceName), [dataSourceName]);
+
+  const query = queries[0];
   const isExpression = isExpressionQuery(query.model);
 
   const [pluginId, changePluginId] = useState<SupportedPanelPlugins>(isExpression ? TABLE : TIMESERIES);
@@ -330,13 +365,16 @@ const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({
 
   const Editor = fetchDsSettings.value.components?.QueryEditor;
 
-  const queries = [query];
-
   const thresholdByRefId = getThresholdsForQueries([...queries, ...[]]);
 
   const data: PanelData = panelData?.[query.refId] ?? {
     series: [],
     state: LoadingState.NotStarted,
+  };
+
+  const handleChangedQuery = (query: AlertQuery) => {
+    const newQuery = newModel(query, dataSource);
+    onChangeQueries([newQuery]);
   };
 
   return (
@@ -346,7 +384,7 @@ const CloudRecordingRuleEditor: FC<CloudRecordingRuleEditorProps> = ({
         query={query}
         queries={queries}
         app={CoreApp.UnifiedAlerting}
-        onChange={(query: AlertQuery) => onChangeQueries([query])}
+        onChange={(query: AlertQuery) => handleChangedQuery(query)}
         onRunQuery={runQueries}
         datasource={fetchDsSettings.value}
       />

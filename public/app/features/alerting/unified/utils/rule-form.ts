@@ -7,9 +7,11 @@ import {
   RelativeTimeRange,
   ScopedVars,
   TimeRange,
+  DataSourceInstanceSettings,
 } from '@grafana/data';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { ExpressionDatasourceRef } from '@grafana/runtime/src/utils/DataSourceWithBackend';
+import { DataSourceJsonData } from '@grafana/schema';
 import { getNextRefIdChar } from 'app/core/utils/query';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { ExpressionDatasourceUID } from 'app/features/expressions/ExpressionDatasource';
@@ -57,6 +59,7 @@ export const getDefaultFormValues = (): RuleFormValues => {
     // grafana
     folder: null,
     queries: [],
+    recordingRuleQueries: [],
     condition: '',
     noDataState: GrafanaAlertStateDecision.NoData,
     execErrState: GrafanaAlertStateDecision.Error,
@@ -219,6 +222,28 @@ export const getDefaultQueries = (): AlertQuery[] => {
       },
     },
     ...getDefaultExpressions('B', 'C'),
+  ];
+};
+
+export const getDefaultRecordingRuleQueries = (
+  recordingRuleDatasource: DataSourceInstanceSettings<DataSourceJsonData>
+): AlertQuery[] => {
+  if (!recordingRuleDatasource) {
+    return [];
+  }
+  const relativeTimeRange = getDefaultRelativeTimeRange();
+
+  return [
+    {
+      refId: 'A',
+      datasourceUid: recordingRuleDatasource.uid,
+      queryType: '',
+      relativeTimeRange,
+      model: {
+        refId: 'A',
+        hide: false,
+      },
+    },
   ];
 };
 

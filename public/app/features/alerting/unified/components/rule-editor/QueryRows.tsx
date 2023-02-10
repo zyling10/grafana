@@ -218,7 +218,7 @@ function copyModel(item: AlertQuery, settings: DataSourceInstanceSettings): Omit
   };
 }
 
-function newModel(item: AlertQuery, settings: DataSourceInstanceSettings): Omit<AlertQuery, 'datasource'> {
+export function newModel(item: AlertQuery, settings: DataSourceInstanceSettings): Omit<AlertQuery, 'datasource'> {
   return {
     refId: item.refId,
     relativeTimeRange: item.relativeTimeRange,
