@@ -1,4 +1,4 @@
-import { Subscriber, map, Observable } from 'rxjs';
+import { Subscriber, map, Observable, finalize } from 'rxjs';
 
 import { DataQueryRequest, DataQueryResponse, dateTime, TimeRange } from '@grafana/data';
 import { LoadingState } from '@grafana/schema';
@@ -98,6 +98,7 @@ export function runPartitionedQuery(datasource: LokiDatasource, request: DataQue
     query.resolution ?? 1
   );
   const totalRequests = partition.length;
+  let finalized = false;
 
   const runNextRequest = (subscriber: Subscriber<DataQueryResponse>, requestN: number) => {
     const requestId = `${request.requestId}_${requestN}`;
@@ -126,6 +127,9 @@ export function runPartitionedQuery(datasource: LokiDatasource, request: DataQue
       )
       .subscribe({
         next: (response) => {
+          if (finalized) {
+            return;
+          }
           if (requestN > 1) {
             response.state = LoadingState.Streaming;
             subscriber.next(response);
@@ -142,7 +146,11 @@ export function runPartitionedQuery(datasource: LokiDatasource, request: DataQue
 
   const response = new Observable<DataQueryResponse>((subscriber) => {
     runNextRequest(subscriber, totalRequests);
-  });
+  }).pipe(
+    finalize(() => {
+      console.error('finito');
+    })
+  );
 
   return response;
 }
