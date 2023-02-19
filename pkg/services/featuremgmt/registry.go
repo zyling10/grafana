@@ -372,5 +372,11 @@ var (
 			Description: "Support overriding cookie preferences per user",
 			State:       FeatureStateAlpha,
 		},
+		{
+			Name:         "prometheusMetricEncyclopedia",
+			Description:  "Replace the Prometheus builder editor metric select with a paginated and filterable component",
+			State:        FeatureStateAlpha,
+			FrontendOnly: true,
+		},
 	}
 )
