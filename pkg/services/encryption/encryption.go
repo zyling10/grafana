@@ -3,8 +3,9 @@ package encryption
 import (
 	"context"
 	"crypto/sha256"
-
 	"golang.org/x/crypto/pbkdf2"
+
+	_ "crypto/tls/fipsonly"
 )
 
 const (

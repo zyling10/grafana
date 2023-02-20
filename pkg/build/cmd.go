@@ -151,6 +151,8 @@ func doBuild(binaryName, pkg string, opts BuildOpts) error {
 		return err
 	}
 
+	fmt.Println("ENV: GOEXPERIMENT = ", os.Getenv("GOEXPERIMENT"))
+
 	libcPart := ""
 	if opts.libc != "" {
 		libcPart = fmt.Sprintf("-%s", opts.libc)
@@ -265,6 +267,10 @@ func setBuildEnv(opts BuildOpts) error {
 		if err := os.Setenv("CGO_ENABLED", "1"); err != nil {
 			return err
 		}
+	}
+
+	if err := os.Setenv("GOEXPERIMENT", "boringcrypto"); err != nil {
+		return err
 	}
 
 	if opts.gocc == "" {
