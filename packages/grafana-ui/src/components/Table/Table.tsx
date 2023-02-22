@@ -113,6 +113,7 @@ export const Table = memo((props: Props) => {
       getColumns(addRowNumbersFieldToData(data), width, columnMinWidth, !!subData?.length, footerItems, isCountRowsSet),
     [data, width, columnMinWidth, footerItems, subData, isCountRowsSet]
   );
+  console.log('🚀 ~ file: Table.tsx:116 ~ Table ~ memoizedColumns:', memoizedColumns);
 
   // Internal react table state reducer
   const stateReducer = useTableStateReducer(props);
