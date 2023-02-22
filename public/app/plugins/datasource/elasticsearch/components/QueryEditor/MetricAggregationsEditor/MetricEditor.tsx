@@ -1,9 +1,8 @@
 import { cx } from '@emotion/css';
 import React, { useCallback } from 'react';
-import { satisfies } from 'semver';
 
 import { SelectableValue } from '@grafana/data';
-import { InlineSegmentGroup, Segment, SegmentAsync, useTheme2 } from '@grafana/ui';
+import { InlineSegmentGroup, SegmentAsync, useTheme2 } from '@grafana/ui';
 
 import { useFields } from '../../../hooks/useFields';
 import { useDispatch } from '../../../hooks/useStatelessReducer';
@@ -41,15 +40,15 @@ const isBasicAggregation = (metric: MetricAggregation) => !metricAggregationConf
 
 const getTypeOptions = (
   previousMetrics: MetricAggregation[],
-  esVersion: string
+  isEs7: boolean
 ): Array<SelectableValue<MetricAggregationType>> => {
   // we'll include Pipeline Aggregations only if at least one previous metric is a "Basic" one
   const includePipelineAggregations = previousMetrics.some(isBasicAggregation);
 
   return (
     Object.entries(metricAggregationConfig)
-      // Only showing metrics type supported by the configured version of ES
-      .filter(([_, { versionRange = '*' }]) => satisfies(esVersion, versionRange))
+      // Only showing elastic7-only metrics types if running on elastic7
+      .filter(([_, config]) => (config.es7Only ? isEs7 : true))
       // Filtering out Pipeline Aggregations if there's no basic metric selected before
       .filter(([_, config]) => includePipelineAggregations || !config.isPipelineAgg)
       .map(([key, { label }]) => ({
@@ -65,6 +64,13 @@ export const MetricEditor = ({ value }: Props) => {
   const query = useQuery();
   const dispatch = useDispatch();
   const getFields = useFields(value.type);
+
+  const getTypeOptionsAsync = async (previousMetrics: MetricAggregation[], xpack = false) => {
+    const dbVersion = await datasource.getDatabaseVersion();
+    // if no usable version-number, we assume it's not old-elasticsearch
+    const isEs7 = dbVersion != null ? dbVersion.major === 7 : false;
+    return getTypeOptions(previousMetrics, isEs7);
+  };
 
   const loadOptions = useCallback(async () => {
     const remoteFields = await getFields();
@@ -85,9 +91,9 @@ export const MetricEditor = ({ value }: Props) => {
   return (
     <>
       <InlineSegmentGroup>
-        <Segment
+        <SegmentAsync
           className={cx(styles.color, segmentStyles)}
-          options={getTypeOptions(previousMetrics, datasource.esVersion)}
+          loadOptions={() => getTypeOptionsAsync(previousMetrics, datasource.xpack)}
           onChange={(e) => dispatch(changeMetricType({ id: value.id, type: e.value! }))}
           value={toOption(value)}
         />
