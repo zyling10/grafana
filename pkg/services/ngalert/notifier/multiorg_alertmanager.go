@@ -3,6 +3,8 @@ package notifier
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -17,6 +19,7 @@ import (
 
 	"github.com/grafana/grafana/pkg/infra/kvstore"
 	"github.com/grafana/grafana/pkg/infra/log"
+	apimodels "github.com/grafana/grafana/pkg/services/ngalert/api/tooling/definitions"
 	"github.com/grafana/grafana/pkg/services/ngalert/metrics"
 	"github.com/grafana/grafana/pkg/services/ngalert/models"
 	"github.com/grafana/grafana/pkg/services/ngalert/provisioning"
@@ -31,12 +34,40 @@ var (
 	ErrAlertmanagerNotReady = fmt.Errorf("Alertmanager is not ready yet")
 )
 
+type AlertManager interface {
+	SaveAndApplyDefaultConfig(ctx context.Context) error
+	ApplyConfig(ctx context.Context, dbCfg *models.AlertConfiguration) error
+	StopAndWait()
+	Ready() bool
+	CleanupStore()
+
+	// Configuration
+	SaveAndApplyConfig(ctx context.Context, config *apimodels.PostableUserConfig) error
+	GetStatus() apimodels.GettableStatus
+
+	// Silences
+	CreateSilence(ps *apimodels.PostableSilence) (string, error)
+	DeleteSilence(silenceID string) error
+	GetSilence(silenceID string) (apimodels.GettableSilence, error)
+	ListSilences(filter []string) (apimodels.GettableSilences, error)
+
+	// Alerts
+	GetAlerts(active, silenced, inhibited bool, filter []string, receiver string) (apimodels.GettableAlerts, error)
+	GetAlertGroups(active, silenced, inhibited bool, filter []string, receiver string) (apimodels.AlertGroups, error)
+
+	// Receivers
+	GetReceivers(ctx context.Context) []apimodels.Receiver
+	TestReceivers(ctx context.Context, c apimodels.TestReceiversConfigBodyParams) (*TestReceiversResult, error)
+
+	PutAlerts(postableAlerts apimodels.PostableAlerts) error
+}
+
 type MultiOrgAlertmanager struct {
 	Crypto    Crypto
 	ProvStore provisioning.ProvisioningStore
 
 	alertmanagersMtx sync.RWMutex
-	alertmanagers    map[int64]*Alertmanager
+	alertmanagers    map[int64]AlertManager
 
 	settings *setting.Cfg
 	logger   log.Logger
@@ -65,7 +96,7 @@ func NewMultiOrgAlertmanager(cfg *setting.Cfg, configStore AlertingStore, orgSto
 
 		logger:        l,
 		settings:      cfg,
-		alertmanagers: map[int64]*Alertmanager{},
+		alertmanagers: map[int64]AlertManager{},
 		configStore:   configStore,
 		orgStore:      orgStore,
 		kvStore:       kvStore,
@@ -182,10 +213,19 @@ func (moa *MultiOrgAlertmanager) SyncAlertmanagersForOrgs(ctx context.Context, o
 			// These metrics are not exported by Grafana and are mostly a placeholder.
 			// To export them, we need to translate the metrics from each individual registry and,
 			// then aggregate them on the main registry.
-			m := metrics.NewAlertmanagerMetrics(moa.metrics.GetOrCreateOrgRegistry(orgID))
-			am, err := newAlertmanager(ctx, orgID, moa.settings, moa.configStore, moa.kvStore, moa.peer, moa.decryptFn, moa.ns, m)
-			if err != nil {
-				moa.logger.Error("unable to create Alertmanager for org", "org", orgID, "error", err)
+			am := &MimirGrafanaAlertmanager{
+				client: &http.Client{
+					Timeout: 10 * time.Second,
+				},
+				url: func() *url.URL {
+					u, _ := url.Parse("http://localhost:8031")
+					return u
+				}(),
+				orgID:     orgID,
+				logger:    log.New("alertmanager", "org", orgID),
+				decryptFn: moa.decryptFn,
+				store:     moa.configStore,
+				settings:  &moa.settings.UnifiedAlerting,
 			}
 			moa.alertmanagers[orgID] = am
 			alertmanager = am
@@ -214,7 +254,7 @@ func (moa *MultiOrgAlertmanager) SyncAlertmanagersForOrgs(ctx context.Context, o
 		moa.alertmanagers[orgID] = alertmanager
 	}
 
-	amsToStop := map[int64]*Alertmanager{}
+	amsToStop := map[int64]AlertManager{}
 	for orgId, am := range moa.alertmanagers {
 		if _, exists := orgsFound[orgId]; !exists {
 			amsToStop[orgId] = am
@@ -230,8 +270,7 @@ func (moa *MultiOrgAlertmanager) SyncAlertmanagersForOrgs(ctx context.Context, o
 		moa.logger.Info("stopping Alertmanager", "org", orgID)
 		am.StopAndWait()
 		moa.logger.Info("stopped Alertmanager", "org", orgID)
-		// Cleanup all the remaining resources from this alertmanager.
-		am.fileStore.CleanUp()
+		am.CleanupStore()
 	}
 
 	// We look for orphan directories and remove them. Orphan directories can
@@ -313,7 +352,7 @@ func (moa *MultiOrgAlertmanager) StopAndWait() {
 // AlertmanagerFor returns the Alertmanager instance for the organization provided.
 // When the organization does not have an active Alertmanager, it returns a ErrNoAlertmanagerForOrg.
 // When the Alertmanager of the organization is not ready, it returns a ErrAlertmanagerNotReady.
-func (moa *MultiOrgAlertmanager) AlertmanagerFor(orgID int64) (*Alertmanager, error) {
+func (moa *MultiOrgAlertmanager) AlertmanagerFor(orgID int64) (AlertManager, error) {
 	moa.alertmanagersMtx.RLock()
 	defer moa.alertmanagersMtx.RUnlock()
 

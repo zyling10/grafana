@@ -217,6 +217,11 @@ func (am *Alertmanager) SaveAndApplyConfig(ctx context.Context, cfg *apimodels.P
 	return outerErr
 }
 
+func (am *Alertmanager) CleanupStore() {
+	// Cleanup all the remaining resources from this alertmanager.
+	am.fileStore.CleanUp()
+}
+
 // ApplyConfig applies the configuration to the Alertmanager.
 func (am *Alertmanager) ApplyConfig(ctx context.Context, dbCfg *ngmodels.AlertConfiguration) error {
 	var err error
