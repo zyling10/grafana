@@ -107,7 +107,7 @@ export const AlertRuleForm: FC<Props> = ({ existing, prefill }) => {
     return {
       ...getDefaultFormValues(),
       queries: getDefaultQueries(),
-      recordingRuleQueries: getDefaultRecordingRulesQueries(rulesSourcesWithRuler),
+      recordingRulesQueries: getDefaultRecordingRulesQueries(rulesSourcesWithRuler),
       condition: 'C',
       ...(queryParams['defaults'] ? JSON.parse(queryParams['defaults'] as string) : {}),
       type: RuleFormType.grafana,
