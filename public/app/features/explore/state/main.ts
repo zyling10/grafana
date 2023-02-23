@@ -15,6 +15,7 @@ import { CorrelationData } from '../../correlations/useCorrelations';
 import { TimeSrv } from '../../dashboard/services/TimeSrv';
 
 import { paneReducer } from './explorePane';
+import { abortMap } from './query';
 import { getUrlStateFromPaneState, makeExplorePaneState } from './utils';
 
 //
@@ -130,6 +131,10 @@ export const splitOpen = <T extends DataQuery = DataQuery>(options?: SplitOpenOp
  */
 export function splitClose(itemId: ExploreId): ThunkResult<void> {
   return (dispatch, getState) => {
+    if (abortMap.has(itemId)) {
+      abortMap.get(itemId)?.('Pane closed');
+      abortMap.delete(itemId);
+    }
     dispatch(splitCloseAction({ itemId }));
     dispatch(stateSave());
   };

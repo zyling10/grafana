@@ -1,7 +1,7 @@
 import { AnyAction, createAction, PayloadAction } from '@reduxjs/toolkit';
 import deepEqual from 'fast-deep-equal';
 import { flatten, groupBy, snakeCase } from 'lodash';
-import { combineLatest, identity, Observable, of, SubscriptionLike, Unsubscribable } from 'rxjs';
+import { combineLatest, identity, lastValueFrom, Observable, of, SubscriptionLike, Unsubscribable } from 'rxjs';
 import { mergeMap, throttleTime } from 'rxjs/operators';
 
 import {
@@ -36,7 +36,7 @@ import { CorrelationData } from 'app/features/correlations/useCorrelations';
 import { getTimeZone } from 'app/features/profile/state/selectors';
 import { MIXED_DATASOURCE_NAME } from 'app/plugins/datasource/mixed/MixedDataSource';
 import { store } from 'app/store/store';
-import { ExploreItemState, ExplorePanelData, ThunkDispatch, ThunkResult } from 'app/types';
+import { createAsyncThunk, ExploreItemState, ExplorePanelData, ThunkDispatch, ThunkResult } from 'app/types';
 import { ExploreId, ExploreState, QueryOptions, SupplementaryQueries } from 'app/types/explore';
 
 import { notifyApp } from '../../../core/actions';
@@ -415,14 +415,27 @@ async function handleHistory(
   await dispatch(loadRichHistory(ExploreId.right));
 }
 
-/**
- * Main action to run queries and dispatches sub-actions based on which result viewers are active
- */
+export const abortMap = new Map<ExploreId, (reason?: string) => void>();
+
 export const runQueries = (
   exploreId: ExploreId,
   options?: { replaceUrl?: boolean; preserveCache?: boolean }
 ): ThunkResult<void> => {
   return (dispatch, getState) => {
+    const a = dispatch(runQueriesInternal({ exploreId, options }));
+    abortMap.set(exploreId, a.abort);
+  };
+};
+
+/**
+ * Main action to run queries and dispatches sub-actions based on which result viewers are active
+ */
+const runQueriesInternal = createAsyncThunk(
+  'explore/runQueries',
+  async (
+    { exploreId, options }: { exploreId: ExploreId; options?: { replaceUrl?: boolean; preserveCache?: boolean } },
+    { dispatch, getState, signal }
+  ) => {
     dispatch(updateTime({ exploreId }));
 
     const correlations$ = getCorrelations();
@@ -634,10 +647,14 @@ export const runQueries = (
         }
       }
     }
-
+    signal.addEventListener('abort', () => {
+      newQuerySubscription.unsubscribe();
+    });
     dispatch(queryStoreSubscriptionAction({ exploreId, querySubscription: newQuerySubscription }));
-  };
-};
+
+    await lastValueFrom(newQuerySource);
+  }
+);
 
 /**
  * Checks if after changing the time range the existing data can be used to show supplementary query.
