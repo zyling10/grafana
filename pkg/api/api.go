@@ -454,7 +454,11 @@ func (hs *HTTPServer) registerRoutes() {
 			uidScope := dashboards.ScopeFoldersProvider.GetResourceScopeUID(ac.Parameter(":uid"))
 			folderRoute.Get("/", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionFoldersRead)), routing.Wrap(hs.GetFolders))
 			folderRoute.Get("/id/:id", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionFoldersRead, idScope)), routing.Wrap(hs.GetFolderByID))
-			folderRoute.Post("/", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionFoldersCreate)), routing.Wrap(hs.CreateFolder))
+			folderCreationEvaluator := ac.EvalPermission(dashboards.ActionFoldersCreate)
+			if !hs.Features.IsEnabled(featuremgmt.FlagNestedFolders) {
+				folderCreationEvaluator = ac.EvalPermission(dashboards.ActionFoldersCreate, dashboards.ScopeFoldersProvider.GetResourceScopeUID(ac.RootFolderUID))
+			}
+			folderRoute.Post("/", authorize(reqSignedIn, folderCreationEvaluator), routing.Wrap(hs.CreateFolder))
 
 			folderRoute.Group("/:uid", func(folderUidRoute routing.RouteRegister) {
 				folderUidRoute.Get("/", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionFoldersRead, uidScope)), routing.Wrap(hs.GetFolderByUID))

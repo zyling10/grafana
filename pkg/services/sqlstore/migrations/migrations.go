@@ -105,6 +105,8 @@ func (*OSSMigrations) AddMigration(mg *Migrator) {
 	AddExternalAlertmanagerToDatasourceMigration(mg)
 
 	addFolderMigrations(mg)
+
+	accesscontrol.AddFolderCreationScopeMigration(mg)
 }
 
 func addMigrationLogMigrations(mg *Migrator) {

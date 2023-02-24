@@ -557,6 +557,84 @@ func (m *managedFolderAlertActionsRepeatMigrator) Exec(sess *xorm.Session, mg *m
 	return nil
 }
 
+type FolderCreationScopeMigrator struct {
+	migrator.MigrationBase
+}
+
+const folderCreationScopeMigration = "folder creation scope migration"
+
+/*
+AddFolderCreationScopeMigration updates scopes for permissions with folders:create action - required for nested folders
+*/
+func AddFolderCreationScopeMigration(mg *migrator.Migrator) {
+	mg.AddMigration(folderCreationScopeMigration, &FolderCreationScopeMigrator{})
+}
+
+func (m *FolderCreationScopeMigrator) SQL(dialect migrator.Dialect) string {
+	return CodeMigrationSQL
+}
+
+func (m *FolderCreationScopeMigrator) Exec(sess *xorm.Session, mg *migrator.Migrator) error {
+	// Update existing folders:create permissions - intended for updating permissions from custom roles, as permissions for fixed and basic roles will be overwritten during startup
+	if _, err := sess.Exec("UPDATE permission SET scope=? WHERE action = 'folders:create' AND scope = ''", dashboards.ScopeFoldersProvider.GetResourceScopeUID(ac.RootFolderUID)); err != nil {
+		return err
+	}
+
+	// Update managed permissions
+	var ids []interface{}
+	if err := sess.SQL("SELECT id FROM role WHERE name LIKE 'managed:%'").Find(&ids); err != nil {
+		return err
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+
+	var permissions []ac.Permission
+	if err := sess.SQL("SELECT role_id, action, scope FROM permission WHERE role_id IN(?"+strings.Repeat(" ,?", len(ids)-1)+") AND scope LIKE 'folders:%'", ids...).Find(&permissions); err != nil {
+		return err
+	}
+
+	mapped := make(map[int64]map[string][]ac.Permission, len(ids)-1)
+	for _, p := range permissions {
+		if mapped[p.RoleID] == nil {
+			mapped[p.RoleID] = make(map[string][]ac.Permission)
+		}
+		mapped[p.RoleID][p.Scope] = append(mapped[p.RoleID][p.Scope], p)
+	}
+
+	var toAdd []ac.Permission
+	now := time.Now()
+
+	for id, a := range mapped {
+		for scope, p := range a {
+			if hasFolderAdmin(p) || hasFolderEdit(p) {
+				if !hasAction(dashboards.ActionFoldersCreate, p) {
+					toAdd = append(toAdd, ac.Permission{
+						RoleID:  id,
+						Updated: now,
+						Created: now,
+						Scope:   scope,
+						Action:  dashboards.ActionFoldersCreate,
+					})
+				}
+			}
+		}
+	}
+
+	if len(toAdd) == 0 {
+		return nil
+	}
+
+	err := batch(len(toAdd), batchSize, func(start, end int) error {
+		if _, err := sess.InsertMulti(toAdd[start:end]); err != nil {
+			return err
+		}
+		return nil
+	})
+
+	return err
+}
+
 func hasFolderAdmin(permissions []ac.Permission) bool {
 	return hasActions(folderPermissionTranslation[dashboards.PERMISSION_ADMIN], permissions)
 }

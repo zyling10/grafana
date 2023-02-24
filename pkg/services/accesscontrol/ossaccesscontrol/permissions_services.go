@@ -193,6 +193,7 @@ var FolderViewActions = []string{dashboards.ActionFoldersRead, accesscontrol.Act
 var FolderEditActions = append(FolderViewActions, []string{
 	dashboards.ActionFoldersWrite,
 	dashboards.ActionFoldersDelete,
+	dashboards.ActionFoldersCreate,
 	dashboards.ActionDashboardsCreate,
 	accesscontrol.ActionAlertingRuleCreate,
 	accesscontrol.ActionAlertingRuleUpdate,

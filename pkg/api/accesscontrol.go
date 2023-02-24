@@ -367,7 +367,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 			Description: "Create folders.",
 			Group:       "Folders",
 			Permissions: []ac.Permission{
-				{Action: dashboards.ActionFoldersCreate},
+				{Action: dashboards.ActionFoldersCreate, Scope: dashboards.ScopeFoldersProvider.GetResourceScopeUID(ac.RootFolderUID)},
 			},
 		},
 		Grants: []string{"Editor"},
@@ -396,7 +396,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 			Permissions: ac.ConcatPermissions(
 				foldersReaderRole.Role.Permissions,
 				[]ac.Permission{
-					{Action: dashboards.ActionFoldersCreate},
+					{Action: dashboards.ActionFoldersCreate, Scope: dashboards.ScopeFoldersAll},
 					{Action: dashboards.ActionFoldersWrite, Scope: dashboards.ScopeFoldersAll},
 					{Action: dashboards.ActionFoldersDelete, Scope: dashboards.ScopeFoldersAll},
 					{Action: dashboards.ActionDashboardsWrite, Scope: dashboards.ScopeFoldersAll},
