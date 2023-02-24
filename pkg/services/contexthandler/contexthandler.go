@@ -163,6 +163,7 @@ func (h *ContextHandler) Middleware(next http.Handler) http.Handler {
 		// then test if anonymous access is enabled
 		switch {
 		case h.initContextWithRenderAuth(reqContext):
+		case h.initContextWithExtendedJWT(reqContext, orgID):
 		case h.initContextWithJWT(reqContext, orgID):
 		case h.initContextWithAPIKey(reqContext):
 		case h.initContextWithBasicAuth(reqContext, orgID):

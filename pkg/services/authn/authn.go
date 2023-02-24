@@ -18,14 +18,15 @@ import (
 )
 
 const (
-	ClientAPIKey    = "auth.client.api-key" // #nosec G101
-	ClientAnonymous = "auth.client.anonymous"
-	ClientBasic     = "auth.client.basic"
-	ClientJWT       = "auth.client.jwt"
-	ClientRender    = "auth.client.render"
-	ClientSession   = "auth.client.session"
-	ClientForm      = "auth.client.form"
-	ClientProxy     = "auth.client.proxy"
+	ClientAPIKey      = "auth.client.api-key" // #nosec G101
+	ClientAnonymous   = "auth.client.anonymous"
+	ClientBasic       = "auth.client.basic"
+	ClientJWT         = "auth.client.jwt"
+	ClientExtendedJWT = "auth.client.extended-jwt"
+	ClientRender      = "auth.client.render"
+	ClientSession     = "auth.client.session"
+	ClientForm        = "auth.client.form"
+	ClientProxy       = "auth.client.proxy"
 )
 
 const (
@@ -46,6 +47,9 @@ type ClientParams struct {
 	EnableDisabledUsers bool
 	// LookUpParams are the arguments used to look up the entity in the DB.
 	LookUpParams models.UserLookupParams
+	// SyncPermissionsFromDB is a hint to the auth service that it should sync permissions from the DB
+	// TODO: implement it in a separate PR
+	SyncPermissionsFromDB bool
 }
 
 type PostAuthHookFn func(ctx context.Context, identity *Identity, r *Request) error
@@ -164,6 +168,8 @@ type Identity struct {
 	// ClientParams are hints for the auth service on how to handle the identity.
 	// Set by the authenticating client.
 	ClientParams ClientParams
+
+	Permissions map[int64]map[string][]string
 }
 
 // Role returns the role of the identity in the active organization.
@@ -227,6 +233,7 @@ func (i *Identity) SignedInUser() *user.SignedInUser {
 		HelpFlags1:         i.HelpFlags1,
 		LastSeenAt:         i.LastSeenAt,
 		Teams:              i.Teams,
+		Permissions:        i.Permissions,
 	}
 
 	namespace, id := i.NamespacedID()
@@ -274,5 +281,6 @@ func IdentityFromSignedInUser(id string, usr *user.SignedInUser, params ClientPa
 		LastSeenAt:     usr.LastSeenAt,
 		Teams:          usr.Teams,
 		ClientParams:   params,
+		Permissions:    usr.Permissions,
 	}
 }

@@ -7,6 +7,7 @@ import (
 
 	"go.opentelemetry.io/otel/attribute"
 
+	"github.com/grafana/grafana/pkg/extensions/oauthserver"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/network"
 	"github.com/grafana/grafana/pkg/infra/tracing"
@@ -50,6 +51,7 @@ func ProvideService(
 	loginAttempts loginattempt.Service, quotaService quota.Service,
 	authInfoService login.AuthInfoService, renderService rendering.Service,
 	features *featuremgmt.FeatureManager, oauthTokenService oauthtoken.OAuthTokenService,
+	oauthService oauthserver.OAuth2Service,
 ) *Service {
 	s := &Service{
 		log:            log.New("authn.service"),
@@ -105,6 +107,8 @@ func ProvideService(
 			s.clients[authn.ClientProxy] = proxy
 		}
 	}
+
+	s.clients[authn.ClientExtendedJWT] = clients.ProvideExtendedJWT(userService, cfg, oauthService)
 
 	if s.cfg.JWTAuthEnabled {
 		s.clients[authn.ClientJWT] = clients.ProvideJWT(jwtService, cfg)

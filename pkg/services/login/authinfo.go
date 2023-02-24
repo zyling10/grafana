@@ -22,6 +22,7 @@ const (
 	LDAPAuthModule      = "ldap"
 	AuthProxyAuthModule = "authproxy"
 	JWTModule           = "jwt"
+	ExtendedJWTModule   = "jwt.extended"
 )
 
 func GetAuthProviderLabel(authModule string) string {

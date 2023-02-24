@@ -24,6 +24,30 @@ const (
 	UserNotFound = "User not found"
 )
 
+func (h *ContextHandler) initContextWithExtendedJWT(ctx *models.ReqContext, orgId int64) bool {
+	if h.features.IsEnabled(featuremgmt.FlagAuthnService) {
+		identity, ok, err := h.authnService.Authenticate(ctx.Req.Context(),
+			authn.ClientExtendedJWT,
+			&authn.Request{HTTPRequest: ctx.Req, Resp: ctx.Resp, OrgID: orgId})
+		if !ok {
+			return false
+		}
+
+		newCtx := WithAuthHTTPHeader(ctx.Req.Context(), "Authorization")
+		*ctx.Req = *ctx.Req.WithContext(newCtx)
+
+		if err != nil {
+			ctx.WriteErr(err)
+			return true
+		}
+
+		ctx.SignedInUser = identity.SignedInUser()
+		ctx.IsSignedIn = true
+		return true
+	}
+	return false
+}
+
 func (h *ContextHandler) initContextWithJWT(ctx *models.ReqContext, orgId int64) bool {
 	if h.features.IsEnabled(featuremgmt.FlagAuthnService) {
 		identity, ok, err := h.authnService.Authenticate(ctx.Req.Context(),
