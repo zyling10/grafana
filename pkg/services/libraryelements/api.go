@@ -1,11 +1,13 @@
 package libraryelements
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/api/routing"
+	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/middleware"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/dashboards"
@@ -148,7 +150,15 @@ func (l *LibraryElementService) getAllHandler(c *contextmodel.ReqContext) respon
 	if err != nil {
 		return toLibraryElementError(err, "Failed to get library elements")
 	}
+	logger := log.New("api-library-elements")
 
+	for i := 0; i < len(elementsResult.Elements); i++ {
+		if _, err = json.Marshal(elementsResult.Elements[i].Model); err != nil {
+			logger.Debug("Library panel element %s has model format, it can not be conferted to json", elementsResult.Elements[i].UID)
+			elementsResult.Elements = append(elementsResult.Elements[:i], elementsResult.Elements[i+1:]...)
+			i--
+		}
+	}
 	return response.JSON(http.StatusOK, model.LibraryElementSearchResponse{Result: elementsResult})
 }
 
