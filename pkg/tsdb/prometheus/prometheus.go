@@ -37,6 +37,7 @@ type instance struct {
 }
 
 func ProvideService(httpClientProvider httpclient.Provider, cfg *setting.Cfg, features featuremgmt.FeatureToggles, tracer tracing.Tracer) *Service {
+	plog.Info("ProvideService")
 	plog.Debug("initializing")
 	return &Service{
 		im:       datasource.NewInstanceManager(newInstanceSettings(httpClientProvider, cfg, features, tracer)),
@@ -45,6 +46,7 @@ func ProvideService(httpClientProvider httpclient.Provider, cfg *setting.Cfg, fe
 }
 
 func newInstanceSettings(httpClientProvider httpclient.Provider, cfg *setting.Cfg, features featuremgmt.FeatureToggles, tracer tracing.Tracer) datasource.InstanceFactoryFunc {
+	plog.Info("newInstanceSettings")
 	return func(settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
 		// Creates a http roundTripper.
 		opts, err := client.CreateTransportOptions(settings, cfg, plog)
@@ -77,6 +79,7 @@ func newInstanceSettings(httpClientProvider httpclient.Provider, cfg *setting.Cf
 }
 
 func (s *Service) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
+	plog.Info("QueryData")
 	if len(req.Queries) == 0 {
 		return &backend.QueryDataResponse{}, fmt.Errorf("query contains no queries")
 	}
@@ -90,6 +93,7 @@ func (s *Service) QueryData(ctx context.Context, req *backend.QueryDataRequest) 
 }
 
 func (s *Service) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
+	plog.Info("CallResource")
 	i, err := s.getInstance(req.PluginContext)
 	if err != nil {
 		return err
@@ -118,6 +122,7 @@ func (s *Service) CallResource(ctx context.Context, req *backend.CallResourceReq
 }
 
 func (s *Service) getInstance(pluginCtx backend.PluginContext) (*instance, error) {
+	plog.Info("getInstance")
 	i, err := s.im.Get(pluginCtx)
 	if err != nil {
 		return nil, err
@@ -128,12 +133,14 @@ func (s *Service) getInstance(pluginCtx backend.PluginContext) (*instance, error
 
 // IsAPIError returns whether err is or wraps a Prometheus error.
 func IsAPIError(err error) bool {
+	plog.Info("IsAPIError")
 	// Check if the right error type is in err's chain.
 	var e *apiv1.Error
 	return errors.As(err, &e)
 }
 
 func ConvertAPIError(err error) error {
+	plog.Info("ConvertAPIError")
 	var e *apiv1.Error
 	if errors.As(err, &e) {
 		return fmt.Errorf("%s: %s", e.Msg, e.Detail)
