@@ -262,11 +262,12 @@ func (s *Service) Create(ctx context.Context, cmd *folder.CreateFolderCommand) (
 			// TODO: Today, if a UID isn't specified, the dashboard store
 			// generates a new UID. The new folder store will need to do this as
 			// well, but for now we take the UID from the newly created folder.
-			UID:         dash.UID,
-			OrgID:       cmd.OrgID,
-			Title:       cmd.Title,
-			Description: cmd.Description,
-			ParentUID:   cmd.ParentUID,
+			UID:          dash.UID,
+			OrgID:        cmd.OrgID,
+			Title:        cmd.Title,
+			Description:  cmd.Description,
+			ParentUID:    cmd.ParentUID,
+			SignedInUser: user,
 		}
 		nestedFolder, err = s.nestedFolderCreate(ctx, cmd)
 		if err != nil {
@@ -695,11 +696,22 @@ func getGuardianForSavePermissionCheck(ctx context.Context, d *dashboards.Dashbo
 }
 
 func (s *Service) nestedFolderCreate(ctx context.Context, cmd *folder.CreateFolderCommand) (*folder.Folder, error) {
+	parentUID := accesscontrol.RootFolderUID
 	if cmd.ParentUID != "" {
 		if err := s.validateParent(ctx, cmd.OrgID, cmd.ParentUID, cmd.UID); err != nil {
 			return nil, err
 		}
+		parentUID = cmd.ParentUID
 	}
+
+	canCreate, err := s.accessControl.Evaluate(ctx, cmd.SignedInUser, accesscontrol.EvalPermission(dashboards.ActionFoldersCreate, dashboards.ScopeFoldersProvider.GetResourceScopeUID(parentUID)))
+	if !canCreate {
+		return nil, dashboards.ErrFolderAccessDenied
+	}
+	if err != nil {
+		return nil, err
+	}
+
 	return s.store.Create(ctx, *cmd)
 }
 

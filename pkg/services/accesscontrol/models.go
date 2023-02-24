@@ -255,6 +255,7 @@ const (
 	RoleGrafanaAdmin   = "Grafana Admin"
 
 	GeneralFolderUID = "general"
+	RootFolderUID    = "root"
 
 	// Permission actions
 
