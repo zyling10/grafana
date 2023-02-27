@@ -126,6 +126,7 @@ export const getFieldDisplayValues = (options: GetFieldDisplayValuesOptions): Fi
       }
 
       const displayName = field.config.displayName ?? '';
+      let prefix = getFieldPrefix(field);
 
       const display =
         field.display ??
@@ -191,7 +192,7 @@ export const getFieldDisplayValues = (options: GetFieldDisplayValuesOptions): Fi
 
         for (const calc of calcs) {
           scopedVars[VAR_CALC] = { value: calc, text: calc };
-          const displayValue = display(results[calc]);
+          let displayValue = display(results[calc]);
 
           if (displayName !== '') {
             displayValue.title = replaceVariables(displayName, {
@@ -200,6 +201,12 @@ export const getFieldDisplayValues = (options: GetFieldDisplayValuesOptions): Fi
             });
           } else {
             displayValue.title = getFieldDisplayName(field, dataFrame, data);
+          }
+          if (prefix) {
+            if (displayValue.prefix) {
+              prefix = `${prefix}${displayValue.prefix}`;
+            }
+            displayValue = { ...displayValue, prefix };
           }
 
           let sparkline: FieldSparkline | undefined = undefined;
@@ -241,6 +248,32 @@ export const getFieldDisplayValues = (options: GetFieldDisplayValuesOptions): Fi
 
   return values;
 };
+
+function getFieldPrefix(field: Field): string | undefined {
+  // if (field.config?.custom?.prefix) {
+  //   return 'x';
+  // }
+  const results = reduceField({
+    field,
+    reducers: [ReducerID.firstNotNull, ReducerID.lastNotNull], // The stats to calculate
+  });
+  const first = results[ReducerID.firstNotNull];
+  const last = results[ReducerID.lastNotNull];
+  if (first == null || last == null) {
+    return undefined;
+  }
+
+  // trend down
+  if (last < first) {
+    return '\u2193'; // ↓
+  }
+  // trend up
+  if (last > first) {
+    return '\u2191'; // ↑
+  }
+
+  return undefined;
+}
 
 function getSmartDisplayNameForRow(
   frame: DataFrame,
