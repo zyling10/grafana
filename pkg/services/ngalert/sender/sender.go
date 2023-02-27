@@ -19,7 +19,6 @@ import (
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/config"
 	"github.com/prometheus/prometheus/discovery"
-	"github.com/prometheus/prometheus/notifier"
 	"github.com/prometheus/prometheus/pkg/labels"
 
 	"github.com/grafana/grafana/pkg/infra/log"
@@ -31,12 +30,17 @@ const (
 	defaultTimeout          = 10 * time.Second
 )
 
+type mcfg struct {
+	config.AlertmanagerConfig
+	Header http.Header
+}
+
 // ExternalAlertmanager is responsible for dispatching alert notifications to an external Alertmanager service.
 type ExternalAlertmanager struct {
 	logger log.Logger
 	wg     sync.WaitGroup
 
-	manager *notifier.Manager
+	manager *Manager
 
 	sdCancel  context.CancelFunc
 	sdManager *discovery.Manager
@@ -55,10 +59,10 @@ func NewExternalAlertmanagerSender(httpHeaders map[string]map[string]string) *Ex
 		sdCancel: sdCancel,
 	}
 
-	s.manager = notifier.NewManager(
+	s.manager = NewManager(
 		// Injecting a new registry here means these metrics are not exported.
 		// Once we fix the individual Alertmanager metrics we should fix this scenario too.
-		&notifier.Options{
+		&Options{
 			QueueCapacity: defaultMaxQueueCapacity,
 			Registerer:    prometheus.NewRegistry(),
 			// Overwrite the Do function to set the http headers that might be configured
@@ -76,7 +80,10 @@ func NewExternalAlertmanagerSender(httpHeaders map[string]map[string]string) *Ex
 						req.Header.Set(k, v)
 					}
 				}
-				req.URL.Query().Del(datasourceUIDQueryKey)
+
+				q := req.URL.Query()
+				q.Del(datasourceUIDQueryKey)
+				req.URL.RawQuery = q.Encode()
 
 				if headers, ok := httpHeaders[req.RequestURI]; ok {
 					for k, v := range headers {
@@ -139,7 +146,7 @@ func (s *ExternalAlertmanager) SendAlerts(alerts apimodels.PostableAlerts) {
 	if len(alerts.PostableAlerts) == 0 {
 		return
 	}
-	as := make([]*notifier.Alert, 0, len(alerts.PostableAlerts))
+	as := make([]*Alert, 0, len(alerts.PostableAlerts))
 	for _, a := range alerts.PostableAlerts {
 		na := s.alertToNotifierAlert(a)
 		as = append(as, na)
@@ -166,8 +173,8 @@ func (s *ExternalAlertmanager) DroppedAlertmanagers() []*url.URL {
 	return s.manager.DroppedAlertmanagers()
 }
 
-func buildNotifierConfig(alertmanagers []string) (*config.Config, error) {
-	amConfigs := make([]*config.AlertmanagerConfig, 0, len(alertmanagers))
+func buildNotifierConfig(alertmanagers []string) (*Config, error) {
+	amConfigs := make([]*AlertmanagerConfig, 0, len(alertmanagers))
 	for _, amURL := range alertmanagers {
 		u, err := url.Parse(amURL)
 		if err != nil {
@@ -182,12 +189,15 @@ func buildNotifierConfig(alertmanagers []string) (*config.Config, error) {
 			},
 		}
 
-		amConfig := &config.AlertmanagerConfig{
-			APIVersion:              config.AlertmanagerAPIVersionV2,
+		amConfig := &AlertmanagerConfig{
+			APIVersion:              AlertmanagerAPIVersionV2,
 			Scheme:                  u.Scheme,
 			PathPrefix:              u.Path,
 			Timeout:                 model.Duration(defaultTimeout),
 			ServiceDiscoveryConfigs: sdConfig,
+			Headers: map[string]string{
+				"ABC": "DEF",
+			},
 		}
 
 		// Check the URL for basic authentication information first
@@ -203,8 +213,8 @@ func buildNotifierConfig(alertmanagers []string) (*config.Config, error) {
 		amConfigs = append(amConfigs, amConfig)
 	}
 
-	notifierConfig := &config.Config{
-		AlertingConfig: config.AlertingConfig{
+	notifierConfig := &Config{
+		AlertingConfig: AlertingConfig{
 			AlertmanagerConfigs: amConfigs,
 		},
 	}
@@ -212,9 +222,9 @@ func buildNotifierConfig(alertmanagers []string) (*config.Config, error) {
 	return notifierConfig, nil
 }
 
-func (s *ExternalAlertmanager) alertToNotifierAlert(alert models.PostableAlert) *notifier.Alert {
+func (s *ExternalAlertmanager) alertToNotifierAlert(alert models.PostableAlert) *Alert {
 	// Prometheus alertmanager has stricter rules for annotations/labels than grafana's internal alertmanager, so we sanitize invalid keys.
-	return &notifier.Alert{
+	return &Alert{
 		Labels:       s.sanitizeLabelSet(alert.Alert.Labels),
 		Annotations:  s.sanitizeLabelSet(alert.Annotations),
 		StartsAt:     time.Time(alert.StartsAt),

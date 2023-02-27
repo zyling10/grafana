@@ -275,10 +275,11 @@ func (d *AlertsRouter) alertmanagersFromDatasources(orgID int64) ([]string, map[
 
 		const headerName = "httpHeaderName"
 
-		for k := range m {
+		for k, v := range m {
 			if !strings.HasPrefix(k, headerName) {
 				continue
 			}
+			keyName := v.(string)
 			// The header field names are saved as "httpHeaderName1", "httpHeaderName2" etc.
 			// We need to extract the number to create the right key that will enable us the
 			// extract the coresponding value in the secure json value, as it uses the same index
@@ -295,7 +296,7 @@ func (d *AlertsRouter) alertmanagersFromDatasources(orgID int64) ([]string, map[
 			if headers[ds.UID] == nil {
 				headers[ds.UID] = map[string]string{}
 			}
-			headers[ds.UID][k] = string(decVal)
+			headers[ds.UID][keyName] = string(decVal)
 		}
 		alertmanagers = append(alertmanagers, amURL)
 	}
