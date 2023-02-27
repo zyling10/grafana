@@ -1,10 +1,14 @@
 package sender
 
 import (
+	"encoding/base64"
+	"fmt"
+	"net/url"
 	"testing"
 
 	"github.com/prometheus/alertmanager/api/v2/models"
 	"github.com/prometheus/prometheus/pkg/labels"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -98,6 +102,127 @@ func TestSanitizeLabelSet(t *testing.T) {
 		am := NewExternalAlertmanagerSender()
 		t.Run(tc.desc, func(t *testing.T) {
 			require.Equal(t, tc.expectedResult, am.sanitizeLabelSet(tc.labelset))
+		})
+	}
+}
+
+func TestPathWithHeaders(t *testing.T) {
+	testCases := []struct {
+		name     string
+		url      string
+		headers  map[string]string
+		expected string
+	}{
+		{
+			name:     "returns url empty path if no headers",
+			url:      "http://localhost",
+			expected: "",
+		},
+		{
+			name:     "returns url path if no headers",
+			url:      "http://localhost/test",
+			expected: "/test",
+		},
+		{
+			name: "add headers to empty path as json object",
+			url:  "http://localhost",
+			headers: map[string]string{
+				"header-1": "header-value",
+			},
+			expected: "/headers-eyJoZWFkZXItMSI6ImhlYWRlci12YWx1ZSJ9",
+		},
+		{
+			name: "add headers to path as json object",
+			url:  "http://localhost/test-path",
+			headers: map[string]string{
+				"header-1":   "header-value",
+				"HEADER-KEY": "header-VALUE",
+			},
+			expected: "/headers-eyJIRUFERVItS0VZIjoiaGVhZGVyLVZBTFVFIiwiaGVhZGVyLTEiOiJoZWFkZXItdmFsdWUifQ==/test-path",
+		},
+	}
+
+	for _, c := range testCases {
+		t.Run(c.name, func(t *testing.T) {
+			u, err := url.Parse(c.url)
+			require.NoError(t, err)
+			path, err := pathWithHeaders(c.headers, u)
+			require.NoError(t, err)
+			require.Equal(t, c.expected, path)
+		})
+	}
+}
+
+func TestExtractHeadersFromUrl(t *testing.T) {
+	parseUrl := func(u string) *url.URL {
+		parsed, err := url.Parse(u)
+		if err != nil {
+			panic(err)
+		}
+		return parsed
+	}
+
+	invalidJsonEncoded := base64.StdEncoding.EncodeToString([]byte(`{ "test": 1 }`))
+
+	testCases := []struct {
+		name            string
+		url             *url.URL
+		expectedHeaders map[string]string
+		expectedURL     *url.URL
+	}{
+		{
+			name:            "should do nothing if no path",
+			url:             parseUrl("http://localhost:8080"),
+			expectedHeaders: nil,
+			expectedURL:     parseUrl("http://localhost:8080"),
+		},
+		{
+			name:            "should do nothing if regular url",
+			url:             parseUrl("http://localhost:8080/test-path"),
+			expectedHeaders: nil,
+			expectedURL:     parseUrl("http://localhost:8080/test-path"),
+		},
+		{
+			name:            "should do nothing if no prefix url",
+			url:             parseUrl("http://localhost:8080/eyJoZWFkZXItMSI6ImhlYWRlci12YWx1ZSJ9/test-path"),
+			expectedHeaders: nil,
+			expectedURL:     parseUrl("http://localhost:8080/eyJoZWFkZXItMSI6ImhlYWRlci12YWx1ZSJ9/test-path"),
+		},
+		{
+			name:            "should do nothing if no prefix url",
+			url:             parseUrl("http://localhost:8080/headers-/test-path"),
+			expectedHeaders: nil,
+			expectedURL:     parseUrl("http://localhost:8080/headers-/test-path"),
+		},
+		{
+			name:            "should do nothing if invalid base64 after prefix",
+			url:             parseUrl("http://localhost:8080/headers-test/test-path"),
+			expectedHeaders: nil,
+			expectedURL:     parseUrl("http://localhost:8080/headers-test/test-path"),
+		},
+		{
+			name:            "should do nothing if invalid base64 after prefix",
+			url:             parseUrl(fmt.Sprintf("http://localhost:8080/headers-%s/test-path", invalidJsonEncoded)),
+			expectedHeaders: nil,
+			expectedURL:     parseUrl(fmt.Sprintf("http://localhost:8080/headers-%s/test-path", invalidJsonEncoded)),
+		},
+		{
+			name: "should extract headers from path",
+			url:  parseUrl("http://localhost:8080/headers-eyJIRUFERVItS0VZIjoiaGVhZGVyLVZBTFVFIiwiaGVhZGVyLTEiOiJoZWFkZXItdmFsdWUifQ==/test-path"),
+			expectedHeaders: map[string]string{
+				"header-1":   "header-value",
+				"HEADER-KEY": "header-VALUE",
+			},
+			expectedURL: parseUrl("http://localhost:8080/test-path"),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actualUrl, actualHeaders, err := extractHeadersFromUrl(tc.url)
+			require.NoError(t, err)
+			assert.Equal(t, tc.expectedURL.String(), actualUrl.String())
+			assert.Equal(t, tc.expectedHeaders, actualHeaders)
 		})
 	}
 }

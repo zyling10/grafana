@@ -125,7 +125,7 @@ func (d *AlertsRouter) SyncAndApplyConfigFromDatabase() error {
 		}
 
 		// Avoid logging sensitive data
-		redactedAMs := buildRedactedAMs(d.logger, alertmanagers, cfg.OrgID)
+		redactedAMs := buildRedactedAMs(alertmanagers)
 		d.logger.Debug("Alertmanagers found in the configuration", "alertmanagers", redactedAMs)
 
 		// We have a running sender, check if we need to apply a new config.
@@ -184,28 +184,29 @@ func (d *AlertsRouter) SyncAndApplyConfigFromDatabase() error {
 	return nil
 }
 
-func buildRedactedAMs(l log.Logger, alertmanagers []string, ordId int64) []string {
+func buildRedactedAMs(alertmanagers []Target) []string {
 	var redactedAMs []string
 	for _, am := range alertmanagers {
-		parsedAM, err := url.Parse(am)
-		if err != nil {
-			l.Error("Failed to parse alertmanager string", "org", ordId, "error", err)
-			continue
-		}
-		redactedAMs = append(redactedAMs, parsedAM.Redacted())
+		parsedAM := *am.Url
+		parsedAM.User = url.UserPassword(am.User, "xxxxx")
+		redactedAMs = append(redactedAMs, parsedAM.String())
 	}
 	return redactedAMs
 }
 
-func asSHA256(strings []string) string {
+func asSHA256(targets []Target) string {
 	h := sha256.New()
+	strings := make([]string, 0, len(targets))
+	for _, t := range targets {
+		strings = append(strings, fmt.Sprintf("%s|%s|%s|%v", t.Url, t.User, t.Password, t.Headers))
+	}
 	sort.Strings(strings)
 	_, _ = h.Write([]byte(fmt.Sprintf("%v", strings)))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func (d *AlertsRouter) alertmanagersFromDatasources(orgID int64) ([]string, error) {
-	var alertmanagers []string
+func (d *AlertsRouter) alertmanagersFromDatasources(orgID int64) ([]Target, error) {
+	var alertmanagers []Target
 	// We might have alertmanager datasources that are acting as external
 	// alertmanager, let's fetch them.
 	query := &datasources.GetDataSourcesByTypeQuery{
@@ -235,12 +236,12 @@ func (d *AlertsRouter) alertmanagersFromDatasources(orgID int64) ([]string, erro
 	return alertmanagers, nil
 }
 
-func (d *AlertsRouter) buildExternalURL(ds *datasources.DataSource) (string, error) {
+func (d *AlertsRouter) buildExternalURL(ds *datasources.DataSource) (Target, error) {
 	// We re-use the same parsing logic as the datasource to make sure it matches whatever output the user received
 	// when doing the healthcheck.
 	parsed, err := datasource.ValidateURL(datasources.DS_ALERTMANAGER, ds.URL)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse alertmanager datasource url: %w", err)
+		return Target{}, fmt.Errorf("failed to parse alertmanager datasource url: %w", err)
 	}
 
 	// If this is a Mimir or Cortex implementation, the Alert API is under a different path than config API
@@ -256,17 +257,23 @@ func (d *AlertsRouter) buildExternalURL(ds *datasources.DataSource) (string, err
 		}
 	}
 
+	result := Target{
+		Url:     parsed,
+		Headers: nil,
+	}
+
 	// if basic auth is enabled we need to build the url with basic auth baked in
 	if !ds.BasicAuth {
-		return parsed.String(), nil
+		return result, nil
 	}
 
 	password := d.secretService.GetDecryptedValue(context.Background(), ds.SecureJsonData, "basicAuthPassword", "")
 	if password == "" {
-		return "", fmt.Errorf("basic auth enabled but no password set")
+		return Target{}, fmt.Errorf("basic auth enabled but no password set")
 	}
-	return fmt.Sprintf("%s://%s:%s@%s%s%s", parsed.Scheme, ds.BasicAuthUser,
-		password, parsed.Host, parsed.Path, parsed.RawQuery), nil
+	result.User = ds.BasicAuthUser
+	result.Password = password
+	return result, nil
 }
 
 func (d *AlertsRouter) Send(key models.AlertRuleKey, alerts definitions.PostableAlerts) {

@@ -3,9 +3,13 @@ package sender
 import (
 	"context"
 	"crypto/md5"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
+	"path"
 	"sort"
 	"strings"
 	"sync"
@@ -30,6 +34,14 @@ const (
 	defaultTimeout          = 10 * time.Second
 )
 
+type Target struct {
+	Key      string
+	Url      *url.URL
+	User     string
+	Password string
+	Headers  map[string]string
+}
+
 // ExternalAlertmanager is responsible for dispatching alert notifications to an external Alertmanager service.
 type ExternalAlertmanager struct {
 	logger log.Logger
@@ -52,7 +64,7 @@ func NewExternalAlertmanagerSender() *ExternalAlertmanager {
 	s.manager = notifier.NewManager(
 		// Injecting a new registry here means these metrics are not exported.
 		// Once we fix the individual Alertmanager metrics we should fix this scenario too.
-		&notifier.Options{QueueCapacity: defaultMaxQueueCapacity, Registerer: prometheus.NewRegistry()},
+		&notifier.Options{QueueCapacity: defaultMaxQueueCapacity, Registerer: prometheus.NewRegistry(), Do: s.appendHeaders},
 		s.logger,
 	)
 
@@ -61,8 +73,26 @@ func NewExternalAlertmanagerSender() *ExternalAlertmanager {
 	return s
 }
 
+func (s *ExternalAlertmanager) appendHeaders(ctx context.Context, client *http.Client, req *http.Request) (*http.Response, error) {
+	newUrl, headers, err := extractHeadersFromUrl(req.URL)
+	if err != nil {
+		s.logger.Error("Failed to extract headers from path", "path", req.URL.Path)
+		return nil, err
+	}
+	req.URL = newUrl
+	if len(headers) > 0 {
+		for key, val := range headers {
+			req.Header.Set(key, val)
+		}
+	}
+	if client == nil {
+		client = http.DefaultClient
+	}
+	return client.Do(req.WithContext(ctx))
+}
+
 // ApplyConfig syncs a configuration with the sender.
-func (s *ExternalAlertmanager) ApplyConfig(orgId, id int64, alertmanagers []string) error {
+func (s *ExternalAlertmanager) ApplyConfig(orgId, id int64, alertmanagers []Target) error {
 	notifierCfg, err := buildNotifierConfig(alertmanagers)
 	if err != nil {
 		return err
@@ -133,38 +163,37 @@ func (s *ExternalAlertmanager) DroppedAlertmanagers() []*url.URL {
 	return s.manager.DroppedAlertmanagers()
 }
 
-func buildNotifierConfig(alertmanagers []string) (*config.Config, error) {
+func buildNotifierConfig(alertmanagers []Target) (*config.Config, error) {
 	amConfigs := make([]*config.AlertmanagerConfig, 0, len(alertmanagers))
-	for _, amURL := range alertmanagers {
-		u, err := url.Parse(amURL)
-		if err != nil {
-			return nil, err
-		}
-
+	for _, am := range alertmanagers {
 		sdConfig := discovery.Configs{
 			discovery.StaticConfig{
 				{
-					Targets: []model.LabelSet{{model.AddressLabel: model.LabelValue(u.Host)}},
+					Targets: []model.LabelSet{{model.AddressLabel: model.LabelValue(am.Url.Host)}},
 				},
 			},
 		}
 
+		enrichedPath, err := pathWithHeaders(am.Headers, am.Url)
+		if err != nil {
+			return nil, err
+		}
+
 		amConfig := &config.AlertmanagerConfig{
 			APIVersion:              config.AlertmanagerAPIVersionV2,
-			Scheme:                  u.Scheme,
-			PathPrefix:              u.Path,
-			Timeout:                 model.Duration(defaultTimeout),
+			Scheme:                  am.Url.Scheme,
+			PathPrefix:              enrichedPath,
+			Timeout:                 model.Duration(defaultTimeout), // TODO make timeout configurable?
 			ServiceDiscoveryConfigs: sdConfig,
 		}
 
 		// Check the URL for basic authentication information first
-		if u.User != nil {
+		if am.User != "" {
 			amConfig.HTTPClientConfig.BasicAuth = &common_config.BasicAuth{
-				Username: u.User.Username(),
+				Username: am.User,
 			}
-
-			if password, isSet := u.User.Password(); isSet {
-				amConfig.HTTPClientConfig.BasicAuth.Password = common_config.Secret(password)
+			if am.Password != "" {
+				amConfig.HTTPClientConfig.BasicAuth.Password = common_config.Secret(am.Password)
 			}
 		}
 		amConfigs = append(amConfigs, amConfig)
@@ -177,6 +206,42 @@ func buildNotifierConfig(alertmanagers []string) (*config.Config, error) {
 	}
 
 	return notifierConfig, nil
+}
+
+func pathWithHeaders(headers map[string]string, u *url.URL) (string, error) {
+	if len(headers) == 0 {
+		return u.Path, nil
+	}
+	h, err := json.Marshal(headers)
+	if err != nil {
+		return "", err
+	}
+	segment := "/headers-" + base64.StdEncoding.EncodeToString(h)
+	return path.Join(segment, u.Path), nil
+}
+
+func extractHeadersFromUrl(uri *url.URL) (*url.URL, map[string]string, error) {
+	if !strings.HasPrefix(uri.Path, "/headers-") { // unexpected paths... skip
+		return uri, nil, nil
+	}
+	noHeader := uri.Path[9:]
+	idx := strings.IndexRune(noHeader, '/')
+	if idx == 1 {
+		return uri, nil, nil
+	}
+	jsonobj, err := base64.StdEncoding.DecodeString(noHeader[:idx])
+	if err != nil {
+		// this can happen when user-provided url happens to have path with that prefix but no headers were provided
+		return uri, nil, nil
+	}
+	var headers map[string]string
+	err = json.Unmarshal(jsonobj, &headers)
+	if err != nil {
+		return uri, nil, nil
+	}
+	result := *uri
+	result.Path = noHeader[idx:]
+	return &result, headers, nil
 }
 
 func (s *ExternalAlertmanager) alertToNotifierAlert(alert models.PostableAlert) *notifier.Alert {
