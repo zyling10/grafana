@@ -67,6 +67,7 @@ func (*OSSMigrations) AddMigration(mg *Migrator) {
 	addKVStoreMigrations(mg)
 	ualert.AddDashboardUIDPanelIDMigration(mg)
 	accesscontrol.AddMigration(mg)
+	accesscontrol.AddScopedAssignmentsMigrations(mg)
 	addQueryHistoryMigrations(mg)
 
 	accesscontrol.AddTeamMembershipMigrations(mg)

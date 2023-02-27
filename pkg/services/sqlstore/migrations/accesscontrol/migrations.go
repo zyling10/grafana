@@ -171,3 +171,44 @@ func AddMigration(mg *migrator.Migrator) {
 		Name: "hidden", Type: migrator.DB_Bool, Nullable: false, Default: "0",
 	}))
 }
+
+func AddScopedAssignmentsMigrations(mg *migrator.Migrator) {
+	builtinRoleTable := migrator.Table{Name: "builtin_role"}
+	teamRoleTable := migrator.Table{Name: "team_role"}
+	userRoleTable := migrator.Table{Name: "user_role"}
+
+	mg.AddMigration("add scope column to builtin_role table",
+		migrator.NewAddColumnMigration(builtinRoleTable,
+			&migrator.Column{Name: "scope", Type: migrator.DB_Varchar, Length: 190, Nullable: true}))
+	mg.AddMigration("add scope column to team_role table",
+		migrator.NewAddColumnMigration(teamRoleTable,
+			&migrator.Column{Name: "scope", Type: migrator.DB_Varchar, Length: 190, Nullable: true}))
+	mg.AddMigration("add scope column to user_role table",
+		migrator.NewAddColumnMigration(userRoleTable,
+			&migrator.Column{Name: "scope", Type: migrator.DB_Varchar, Length: 190, Nullable: true}))
+
+	mg.AddMigration("remove unique index role_id_role",
+		migrator.NewDropIndexMigration(builtinRoleTable,
+			&migrator.Index{Cols: []string{"org_id", "role_id", "role"}, Type: migrator.UniqueIndex}))
+
+	mg.AddMigration("remove unique index org_id user_id role_id",
+		migrator.NewDropIndexMigration(userRoleTable,
+			&migrator.Index{Cols: []string{"org_id", "user_id", "role_id"}, Type: migrator.UniqueIndex}))
+
+	mg.AddMigration("remove unique index org_id team_id role_id",
+		migrator.NewDropIndexMigration(teamRoleTable,
+			&migrator.Index{Cols: []string{"org_id", "team_id", "role_id"}, Type: migrator.UniqueIndex}))
+
+	mg.AddMigration("add unique index org_id role_id role scope",
+		migrator.NewAddIndexMigration(builtinRoleTable,
+			&migrator.Index{Cols: []string{"org_id", "role_id", "role", "scope"}, Type: migrator.UniqueIndex}))
+
+	mg.AddMigration("add unique index org_id user_id role_id scope",
+		migrator.NewAddIndexMigration(userRoleTable,
+			&migrator.Index{Cols: []string{"org_id", "role_id", "user_id", "scope"}, Type: migrator.UniqueIndex}))
+
+	mg.AddMigration("add unique index org_id team_id role_id scope",
+		migrator.NewAddIndexMigration(teamRoleTable,
+			&migrator.Index{Cols: []string{"org_id", "role_id", "team_id", "scope"}, Type: migrator.UniqueIndex}))
+
+}
