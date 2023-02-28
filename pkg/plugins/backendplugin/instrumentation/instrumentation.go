@@ -25,8 +25,8 @@ var (
 		Namespace: "grafana",
 		Name:      "plugin_request_duration_milliseconds",
 		Help:      "Plugin request duration",
-		Buckets:   []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000},
-	}, []string{"plugin_id", "endpoint", "status", "target"})
+		Buckets:   []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10, 25, 50, 100},
+	}, []string{"plugin_id", "endpoint", "target"})
 )
 
 var logger log.Logger = log.New("plugin.instrumentation")
@@ -45,7 +45,7 @@ func instrumentPluginRequest(ctx context.Context, cfg Cfg, pluginCtx *backend.Pl
 	}
 
 	elapsed := time.Since(start)
-	pluginRequestDuration.WithLabelValues(pluginCtx.PluginID, endpoint, status, string(cfg.Target)).Observe(float64(elapsed / time.Millisecond))
+	pluginRequestDuration.WithLabelValues(pluginCtx.PluginID, endpoint, string(cfg.Target)).Observe(float64(elapsed / time.Millisecond))
 	pluginRequestCounter.WithLabelValues(pluginCtx.PluginID, endpoint, status, string(cfg.Target)).Inc()
 
 	if cfg.LogDatasourceRequests {
