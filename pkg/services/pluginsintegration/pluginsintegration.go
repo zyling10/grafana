@@ -2,6 +2,7 @@ package pluginsintegration
 
 import (
 	"github.com/google/wire"
+
 	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin/coreplugin"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin/provider"
@@ -51,8 +52,6 @@ var WireSet = wire.NewSet(
 	plugincontext.ProvideService,
 	licensing.ProvideLicensing,
 	wire.Bind(new(plugins.Licensing), new(*licensing.Service)),
-	wire.Bind(new(sources.Resolver), new(*sources.Service)),
-	sources.ProvideService,
 )
 
 // WireExtensionSet provides a wire.ProviderSet of plugin providers that can be
@@ -62,6 +61,8 @@ var WireExtensionSet = wire.NewSet(
 	wire.Bind(new(plugins.BackendFactoryProvider), new(*provider.Service)),
 	signature.ProvideOSSAuthorizer,
 	wire.Bind(new(plugins.PluginLoaderAuthorizer), new(*signature.UnsignedPluginAuthorizer)),
+	wire.Bind(new(sources.Resolver), new(*sources.Service)),
+	sources.ProvideService,
 )
 
 func ProvideClientDecorator(cfg *setting.Cfg, pCfg *config.Cfg,
