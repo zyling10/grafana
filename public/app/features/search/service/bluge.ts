@@ -217,7 +217,17 @@ export class BlugeSearcher implements GrafanaSearcher {
   }
 
   async getFolderChildren(folderUid?: string): Promise<DashboardViewItem[]> {
-    throw new Error('PR TODO: Searcher not supported - use sql searcher');
+    const children = await this.doSearchQuery({
+      location: folderUid, // location is folderUID or dashboardUID (for panels inside dashboard)
+    });
+    return children.view.map(v => {
+      return {
+        kind: v.kind as 'folder' | 'dashboard' | 'panel', // ???
+        uid: v.uid,
+        url: v.url,
+        title: v.name,
+      };
+    });
   }
 
   getFolderViewSort(): string {

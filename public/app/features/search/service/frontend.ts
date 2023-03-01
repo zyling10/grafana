@@ -83,8 +83,7 @@ export class FrontendSearcher implements GrafanaSearcher {
   }
 
   async getFolderChildren(folderUid?: string): Promise<DashboardViewItem[]> {
-    // PR TODO: fill this out
-    throw new Error('PR TODO: Searcher not supported - use sql searcher');
+    return this.parent.getFolderChildren(folderUid);
   }
 }
 
