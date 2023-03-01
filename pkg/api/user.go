@@ -9,6 +9,7 @@ import (
 
 	"github.com/grafana/grafana/pkg/api/dtos"
 	"github.com/grafana/grafana/pkg/api/response"
+	"github.com/grafana/grafana/pkg/infra/log"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/org"
@@ -17,7 +18,17 @@ import (
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
+
+var logger = log.New("api.user")
+
+var apiUserTotal = promauto.NewCounterVec(prometheus.CounterOpts{
+	Namespace: "grafana",
+	Name:      "my_custom_api_user_total",
+	Help:      "The total amount of call to /api/user",
+}, []string{"status"})
 
 // swagger:route GET /user signed_in_user getSignedInUser
 //
@@ -30,7 +41,10 @@ import (
 // 404: notFoundError
 // 500: internalServerError
 func (hs *HTTPServer) GetSignedInUser(c *contextmodel.ReqContext) response.Response {
-	return hs.getUserUserProfile(c, c.UserID)
+	res := hs.getUserUserProfile(c, c.UserID)
+	apiUserTotal.WithLabelValues(strconv.Itoa(res.Status())).Inc()
+
+	return res
 }
 
 // swagger:route GET /users/{user_id} users getUserByID
