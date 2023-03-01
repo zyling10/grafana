@@ -54,12 +54,12 @@ func (c *cache) getOrCreate(ctx context.Context, log log.Logger, alertRule *ngMo
 	return states.getOrAdd(stateCandidate)
 }
 
-func (rs *ruleStates) getOrAdd(stateCandidate *State) *State {
+func (rs *ruleStates) getOrAdd(stateCandidate State) *State {
 	state, ok := rs.states[stateCandidate.CacheID]
 	// Check if the state with this ID already exists.
 	if !ok {
-		rs.states[stateCandidate.CacheID] = stateCandidate
-		return stateCandidate
+		rs.states[stateCandidate.CacheID] = &stateCandidate
+		return &stateCandidate
 	}
 
 	// Annotations can change over time, however we also want to maintain
@@ -79,7 +79,7 @@ func (rs *ruleStates) getOrAdd(stateCandidate *State) *State {
 	return state
 }
 
-func calculateState(ctx context.Context, log log.Logger, alertRule *ngModels.AlertRule, result eval.Result, extraLabels data.Labels, externalURL *url.URL) *State {
+func calculateState(ctx context.Context, log log.Logger, alertRule *ngModels.AlertRule, result eval.Result, extraLabels data.Labels, externalURL *url.URL) State {
 	ruleLabels, annotations := expandRuleLabelsAndAnnotations(ctx, log, alertRule, result, extraLabels, externalURL)
 
 	values := make(map[string]float64)
@@ -132,7 +132,7 @@ func calculateState(ctx context.Context, log log.Logger, alertRule *ngModels.Ale
 
 	// If the first result we get is alerting, set StartsAt to EvaluatedAt because we
 	// do not have data for determining StartsAt otherwise
-	newState := &State{
+	newState := State{
 		AlertRuleUID:       alertRule.UID,
 		OrgID:              alertRule.OrgID,
 		CacheID:            id,
