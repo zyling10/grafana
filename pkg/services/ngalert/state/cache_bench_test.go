@@ -56,6 +56,6 @@ goarch: amd64
 pkg: github.com/grafana/grafana/pkg/services/ngalert/state
 cpu: 11th Gen Intel(R) Core(TM) i9-11900H @ 2.50GHz
 BenchmarkGetOrCreateTest
-BenchmarkGetOrCreateTest-16         7894            150920 ns/op
+BenchmarkGetOrCreateTest-16        48218             26160 ns/op
 PASS
 */
