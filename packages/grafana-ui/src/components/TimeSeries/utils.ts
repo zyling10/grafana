@@ -257,14 +257,13 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<{
                 }
               : field.type === FieldType.enum
               ? (u: uPlot, dataMin: number, dataMax: number) => {
-                // this is the exhaustive enum (stable)
-                let len = field.config.type!.enum!.text!.length;
+                  // this is the exhaustive enum (stable)
+                  let len = field.config.type!.enum!.text!.length;
 
-                return [-1, len];
-
-                // these are only values that are present
-                // return [dataMin - 1, dataMax + 1]
-              }
+                  return [-1, len];
+                  // these are only values that are present
+                  // return [dataMin - 1, dataMax + 1]
+                }
               : undefined,
           decimals: field.config.decimals,
         },
