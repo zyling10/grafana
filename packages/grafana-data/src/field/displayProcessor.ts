@@ -225,10 +225,6 @@ export function getEnumDisplayProcessor(theme: GrafanaTheme2, cfg?: EnumFieldCon
       color,
     };
   };
-  // ({
-  //   text: getFieldTypeFromValue(value) === 'other' ? `${JSON.stringify(value, getCircularReplacer())}` : `${value}`,
-  //   numeric: null as unknown as number,
-  // });
 }
 
 export function getRawDisplayProcessor(): DisplayProcessor {
