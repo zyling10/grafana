@@ -2,7 +2,6 @@ package statscollector
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -459,14 +458,6 @@ type mockDatasourceService struct {
 	datasources.DataSourceService
 
 	datasources []*datasources.DataSource
-}
-
-func (s mockDatasourceService) GetDataSource(ctx context.Context, query *datasources.GetDataSourceQuery) (*datasources.DataSource, error) {
-	if len(s.datasources) > 0 {
-		return s.datasources[0], nil
-	}
-
-	return nil, errors.New("datasource mock not found")
 }
 
 func (s mockDatasourceService) GetDataSourcesByType(ctx context.Context, query *datasources.GetDataSourcesByTypeQuery) ([]*datasources.DataSource, error) {

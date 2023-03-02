@@ -15,6 +15,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/tracing"
 	uss "github.com/grafana/grafana/pkg/infra/usagestats/service"
 	"github.com/grafana/grafana/pkg/infra/usagestats/statscollector"
+	"github.com/grafana/grafana/pkg/plugins/manager/process"
 	"github.com/grafana/grafana/pkg/registry"
 	"github.com/grafana/grafana/pkg/services/alerting"
 	"github.com/grafana/grafana/pkg/services/auth"
@@ -47,7 +48,7 @@ import (
 
 func ProvideBackgroundServiceRegistry(
 	httpServer *api.HTTPServer, ng *ngalert.AlertNG, cleanup *cleanup.CleanUpService, live *live.GrafanaLive,
-	pushGateway *pushhttp.Gateway, notifications *notifications.NotificationService,
+	pushGateway *pushhttp.Gateway, notifications *notifications.NotificationService, processManager *process.Manager,
 	rendering *rendering.RenderingService, tokenService auth.UserTokenBackgroundService, tracing tracing.Tracer,
 	provisioning *provisioning.ProvisioningServiceImpl, alerting *alerting.AlertEngine, usageStats *uss.UsageStats,
 	statsCollector *statscollector.Service, grafanaUpdateChecker *updatechecker.GrafanaService,
@@ -62,9 +63,9 @@ func ProvideBackgroundServiceRegistry(
 	// Need to make sure these are initialized, is there a better place to put them?
 	_ dashboardsnapshots.Service, _ *alerting.AlertNotificationService,
 	_ serviceaccounts.Service, _ *guardian.Provider,
-	dashboardUpdater *plugindashboardsservice.DashboardUpdater, _ *sanitizer.Provider,
+	_ *plugindashboardsservice.DashboardUpdater, _ *sanitizer.Provider,
 	_ *grpcserver.HealthService, _ entity.EntityStoreServer, _ *grpcserver.ReflectionService, _ *ldapapi.Service,
-) (*BackgroundServiceRegistry, error) {
+) *BackgroundServiceRegistry {
 	r := NewBackgroundServiceRegistry(
 		httpServer,
 		ng,
@@ -91,17 +92,17 @@ func ProvideBackgroundServiceRegistry(
 		grpcServerProvider,
 		saService,
 		authInfoService,
+		processManager,
 		secretMigrationProvider,
 		loginAttemptService,
 		bundleService,
-		dashboardUpdater,
 	)
 
 	r.usageStatsProvidersRegistry = usageStatsProvidersRegistry
 	r.statsCollectorService = statsCollector
 	r.provisioningService = provisioningService
 
-	return r, nil
+	return r
 }
 
 // BackgroundServiceRegistry provides background services.

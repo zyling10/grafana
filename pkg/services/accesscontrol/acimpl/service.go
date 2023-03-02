@@ -15,8 +15,8 @@ import (
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/metrics"
 	"github.com/grafana/grafana/pkg/plugins"
-	"github.com/grafana/grafana/pkg/server/modules"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
+	"github.com/grafana/grafana/pkg/services/accesscontrol/api"
 	"github.com/grafana/grafana/pkg/services/accesscontrol/database"
 	"github.com/grafana/grafana/pkg/services/accesscontrol/pluginutils"
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
@@ -32,21 +32,28 @@ const (
 
 func ProvideService(cfg *setting.Cfg, store db.DB, routeRegister routing.RouteRegister, cache *localcache.CacheService,
 	accessControl accesscontrol.AccessControl, features *featuremgmt.FeatureManager) (*Service, error) {
-	return ProvideOSSService(cfg, database.ProvideService(store), cache, features, routeRegister, accessControl), nil
+	service := ProvideOSSService(cfg, database.ProvideService(store), cache, features)
+
+	if !accesscontrol.IsDisabled(cfg) {
+		api.NewAccessControlAPI(routeRegister, accessControl, service, features).RegisterAPIEndpoints()
+		if err := accesscontrol.DeclareFixedRoles(service); err != nil {
+			return nil, err
+		}
+	}
+
+	return service, nil
 }
 
-func ProvideOSSService(cfg *setting.Cfg, store store, cache *localcache.CacheService, features *featuremgmt.FeatureManager,
-	routeRegister routing.RouteRegister, accessControl accesscontrol.AccessControl) *Service {
+func ProvideOSSService(cfg *setting.Cfg, store store, cache *localcache.CacheService, features *featuremgmt.FeatureManager) *Service {
 	s := &Service{
-		cfg:           cfg,
-		store:         store,
-		log:           log.New("accesscontrol.service"),
-		cache:         cache,
-		roles:         accesscontrol.BuildBasicRoleDefinitions(),
-		features:      features,
-		routeRegister: routeRegister,
-		accessControl: accessControl,
+		cfg:      cfg,
+		store:    store,
+		log:      log.New("accesscontrol.service"),
+		cache:    cache,
+		roles:    accesscontrol.BuildBasicRoleDefinitions(),
+		features: features,
 	}
+
 	return s
 }
 
@@ -66,10 +73,6 @@ type Service struct {
 	registrations accesscontrol.RegistrationList
 	roles         map[string]*accesscontrol.RoleDTO
 	features      *featuremgmt.FeatureManager
-	moduleManager modules.Manager
-
-	routeRegister routing.RouteRegister
-	accessControl accesscontrol.AccessControl
 }
 
 func (s *Service) GetUsageStats(_ context.Context) map[string]interface{} {

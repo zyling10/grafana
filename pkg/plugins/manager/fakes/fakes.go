@@ -15,26 +15,6 @@ import (
 	"github.com/grafana/grafana/pkg/plugins/storage"
 )
 
-type FakePluginStore struct {
-	GetFunc func(ctx context.Context, pluginID string) (plugins.PluginDTO, bool)
-	// Plugins returns plugins by their requested type.
-	ListFunc func(ctx context.Context, pluginTypes ...plugins.Type) []plugins.PluginDTO
-}
-
-func (s *FakePluginStore) Plugin(ctx context.Context, pluginID string) (plugins.PluginDTO, bool) {
-	if s.GetFunc != nil {
-		return s.GetFunc(ctx, pluginID)
-	}
-	return plugins.PluginDTO{}, false
-}
-
-func (s *FakePluginStore) Plugins(ctx context.Context, pluginTypes ...plugins.Type) []plugins.PluginDTO {
-	if s.ListFunc != nil {
-		return s.ListFunc(ctx, pluginTypes...)
-	}
-	return nil
-}
-
 type FakePluginInstaller struct {
 	AddFunc func(ctx context.Context, pluginID, version string, opts plugins.CompatOpts) error
 	// Remove removes a plugin from the store.
@@ -314,10 +294,6 @@ func (m *FakeProcessManager) Stop(ctx context.Context, pluginID string) error {
 	if m.StopFunc != nil {
 		return m.StopFunc(ctx, pluginID)
 	}
-	return nil
-}
-
-func (m *FakeProcessManager) Shutdown(_ context.Context) error {
 	return nil
 }
 

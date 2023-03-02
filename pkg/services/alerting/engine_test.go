@@ -132,6 +132,7 @@ func TestEngineProcessJob(t *testing.T) {
 		DataSources: []*datasources.DataSource{{ID: 1, Type: datasources.DS_PROMETHEUS}},
 	}
 	engine := ProvideAlertEngine(nil, nil, nil, usMock, encService, nil, tracer, store, setting.NewCfg(), nil, nil, localcache.New(time.Minute, time.Minute), dsMock, annotationstest.NewFakeAnnotationsRepo())
+	setting.AlertingEvaluationTimeout = 30 * time.Second
 	setting.AlertingNotificationTimeout = 30 * time.Second
 	setting.AlertingMaxAttempts = 3
 	engine.resultHandler = &FakeResultHandler{}

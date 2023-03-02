@@ -14,31 +14,23 @@ var _ plugins.Store = (*Service)(nil)
 
 type Service struct {
 	pluginRegistry registry.Service
-	pluginSources  sources.Resolver
-	pluginLoader   loader.Service
 }
 
 func ProvideService(pluginRegistry registry.Service, pluginSources sources.Resolver,
-	pluginLoader loader.Service) *Service {
-	return New(pluginRegistry, pluginSources, pluginLoader)
-}
-
-func New(pluginRegistry registry.Service, pluginSources sources.Resolver,
-	pluginLoader loader.Service) *Service {
-	return &Service{
-		pluginRegistry: pluginRegistry,
-		pluginLoader:   pluginLoader,
-		pluginSources:  pluginSources,
-	}
-}
-
-func (s *Service) Run(ctx context.Context) error {
-	for _, ps := range s.pluginSources.List(ctx) {
-		if _, err := s.pluginLoader.Load(ctx, ps.Class, ps.Paths); err != nil {
-			return err
+	pluginLoader loader.Service) (*Service, error) {
+	ctx := context.Background()
+	for _, ps := range pluginSources.List(ctx) {
+		if _, err := pluginLoader.Load(ctx, ps.Class, ps.Paths); err != nil {
+			return nil, err
 		}
 	}
-	return nil
+	return New(pluginRegistry), nil
+}
+
+func New(pluginRegistry registry.Service) *Service {
+	return &Service{
+		pluginRegistry: pluginRegistry,
+	}
 }
 
 func (s *Service) Plugin(ctx context.Context, pluginID string) (plugins.PluginDTO, bool) {

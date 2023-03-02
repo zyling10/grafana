@@ -23,7 +23,6 @@ type Modules struct {
 	moduleManager  *modules.Manager
 	serviceManager *services.Manager
 	serviceMap     map[string]services.Service
-	deps           map[string][]string
 }
 
 type Engine interface {

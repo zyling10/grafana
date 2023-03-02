@@ -32,9 +32,10 @@ func NewManager(pluginRegistry registry.Service) *Manager {
 	}
 }
 
-func (m *Manager) Shutdown(ctx context.Context) error {
+func (m *Manager) Run(ctx context.Context) error {
+	<-ctx.Done()
 	m.shutdown(ctx)
-	return nil
+	return ctx.Err()
 }
 
 func (m *Manager) Start(ctx context.Context, pluginID string) error {
