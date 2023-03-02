@@ -16,6 +16,7 @@ import {
 } from '@grafana/data/src/transformations/transformers/convertFieldType';
 import { Button, InlineField, InlineFieldRow, Input, Select, getIconForFieldType } from '@grafana/ui';
 import { FieldNamePicker } from '@grafana/ui/src/components/MatchersUI/FieldNamePicker';
+import { hasAlphaPanels } from 'app/core/config';
 import { findField } from 'app/features/dimensions';
 
 const fieldNamePickerSettings: StandardEditorsRegistryItem<string, FieldNamePickerConfigSettings> = {
@@ -149,10 +150,10 @@ export const ConvertFieldTypeTransformerEditor = ({
                 aria-label={'Remove convert field type transformer'}
               />
             </InlineFieldRow>
-            {c.destinationType === FieldType.enum && (
+            {c.destinationType === FieldType.enum && hasAlphaPanels && (
               <InlineFieldRow>
                 <InlineField label={''} labelWidth={6}>
-                  <div>TODO... show options here</div>
+                  <div>TODO... show options here (alpha panels enabled)</div>
                 </InlineField>
               </InlineFieldRow>
             )}
