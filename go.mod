@@ -78,7 +78,7 @@ require (
 	github.com/m3db/prometheus_remote_client_golang v0.4.4
 	github.com/magefile/mage v1.14.0
 	github.com/mattn/go-isatty v0.0.16
-	github.com/mattn/go-sqlite3 v1.14.16
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/matttproud/golang_protobuf_extensions v1.0.4
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/opentracing/opentracing-go v1.2.0
@@ -110,7 +110,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.11.2
 	golang.org/x/crypto v0.4.0
 	golang.org/x/exp v0.0.0-20221211140036-ad323defaf05
-	golang.org/x/net v0.4.0
+	golang.org/x/net v0.7.0
 	golang.org/x/oauth2 v0.3.0
 	golang.org/x/sync v0.1.0
 	golang.org/x/time v0.2.0
@@ -123,7 +123,7 @@ require (
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/ldap.v3 v3.1.0
 	gopkg.in/mail.v2 v2.3.1
-	gopkg.in/square/go-jose.v2 v2.5.2-0.20210529014059-a5c7eec3c614
+	gopkg.in/square/go-jose.v2 v2.6.0
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	xorm.io/builder v0.3.6
@@ -232,8 +232,8 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.uber.org/atomic v1.10.0
 	go.uber.org/goleak v1.2.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef
@@ -276,10 +276,10 @@ require (
 	buf.build/gen/go/parca-dev/parca/protocolbuffers/go v1.28.1-20221222094228-8b1d3d0f62e6.4
 	github.com/Masterminds/semver/v3 v3.1.1
 	github.com/dave/dst v0.27.2
-	github.com/go-oauth2/oauth2/v4 v4.5.1
 	github.com/grafana/thema v0.0.0-20230122235053-b4b6714dd1c9
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
+	github.com/ory/fosite v0.44.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
-	github.com/zitadel/oidc v1.12.1
 	k8s.io/apimachinery v0.25.3
 )
 
@@ -299,7 +299,6 @@ require (
 	github.com/dave/jennifer v1.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.0 // indirect
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/digitalocean/godo v1.80.0 // indirect
 	github.com/dnaeon/go-vcr v1.2.0 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
@@ -314,8 +313,6 @@ require (
 	github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1 // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.6.7 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/go-oauth2/oauth2/v4 v4.5.1 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -339,11 +336,9 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
-	github.com/ory/fosite v0.44.0 // indirect
 	github.com/ory/go-acc v0.2.6 // indirect
 	github.com/ory/go-convenience v0.1.0 // indirect
 	github.com/ory/viper v1.7.5 // indirect
@@ -361,24 +356,15 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
-	github.com/tidwall/btree v0.0.0-20191029221954-400434d76274 // indirect
-	github.com/tidwall/buntdb v1.1.2 // indirect
-	github.com/tidwall/gjson v1.12.1 // indirect
-	github.com/tidwall/grect v0.0.0-20161006141115-ba9a043346eb // indirect
-	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	github.com/tidwall/rtree v0.0.0-20180113144539-6cd427091e0e // indirect
-	github.com/tidwall/tinyqueue v0.0.0-20180302190814-1e39f5511563 // indirect
 	github.com/unknwon/bra v0.0.0-20200517080246-1e3013ecaff8 // indirect
 	github.com/unknwon/com v1.0.1 // indirect
 	github.com/unknwon/log v0.0.0-20150304194804-e617c87089d3 // indirect
-	github.com/zitadel/logging v0.3.4 // indirect
 	go.opentelemetry.io/otel/metric v0.34.0 // indirect
 	go.starlark.net v0.0.0-20221020143700-22309ac47eac // indirect
-	golang.org/x/term v0.3.0 // indirect
+	golang.org/x/term v0.5.0 // indirect
 	gopkg.in/fsnotify/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	gopkg.in/oauth2.v3 v3.12.0 // indirect
 	k8s.io/api v0.25.3 // indirect
 	k8s.io/klog/v2 v2.80.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20220803162953-67bda5d908f1 // indirect
@@ -467,4 +453,4 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.45.0
 
 replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20220421151946-72621c1f0bd3
 
-replace github.com/ory/fosite => ../fosite
+replace github.com/ory/fosite => github.com/mgyongyosi/fosite v0.0.0-20230226104133-439351815964
