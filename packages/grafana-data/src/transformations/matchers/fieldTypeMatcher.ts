@@ -21,24 +21,6 @@ const fieldTypeMatcher: FieldMatcherInfo<FieldType> = {
   },
 };
 
-// General Field matcher (multiple types)
-const fieldTypesMatcher: FieldMatcherInfo<Set<FieldType>> = {
-  id: FieldMatcherID.byTypes,
-  name: 'Field Type',
-  description: 'match based on the field types',
-  defaultOptions: new Set(),
-
-  get: (types) => {
-    return (field: Field, frame: DataFrame, allFrames: DataFrame[]) => {
-      return types.has(field.type);
-    };
-  },
-
-  getOptionsDisplayText: (types) => {
-    return `Field types: ${[...types].join(' | ')}`;
-  },
-};
-
 // Numeric Field matcher
 // This gets its own entry so it shows up in the dropdown
 const numericMatcher: FieldMatcherInfo = {
@@ -74,5 +56,5 @@ const timeMatcher: FieldMatcherInfo = {
  * Registry Initialization
  */
 export function getFieldTypeMatchers(): FieldMatcherInfo[] {
-  return [fieldTypeMatcher, fieldTypesMatcher, numericMatcher, timeMatcher];
+  return [fieldTypeMatcher, numericMatcher, timeMatcher];
 }

@@ -128,7 +128,7 @@ export function preparePlotFrame(frames: DataFrame[], dimFields: XYFieldMatchers
   return null;
 }
 
-export function buildScaleKey(config: FieldConfig<GraphFieldConfig>, fieldType: FieldType) {
+export function buildScaleKey(config: FieldConfig<GraphFieldConfig>) {
   const defaultPart = 'na';
 
   const scaleRange = `${config.min !== undefined ? config.min : defaultPart}-${
@@ -151,7 +151,7 @@ export function buildScaleKey(config: FieldConfig<GraphFieldConfig>, fieldType: 
 
   const scaleLabel = Boolean(config.custom?.axisLabel) ? config.custom!.axisLabel : defaultPart;
 
-  return `${scaleUnit}/${scaleRange}/${scaleSoftRange}/${scalePlacement}/${scaleDistribution}/${scaleLabel}/${fieldType}`;
+  return `${scaleUnit}/${scaleRange}/${scaleSoftRange}/${scalePlacement}/${scaleDistribution}/${scaleLabel}`;
 }
 
 function getScaleDistributionPart(config: ScaleDistributionConfig) {
