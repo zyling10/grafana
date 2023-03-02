@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/grafana/dskit/services"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/metrics"
 	"github.com/grafana/grafana/pkg/infra/remotecache"
@@ -16,7 +16,6 @@ import (
 	uss "github.com/grafana/grafana/pkg/infra/usagestats/service"
 	"github.com/grafana/grafana/pkg/infra/usagestats/statscollector"
 	"github.com/grafana/grafana/pkg/registry"
-	"github.com/grafana/grafana/pkg/server/modules"
 	"github.com/grafana/grafana/pkg/services/alerting"
 	"github.com/grafana/grafana/pkg/services/auth"
 	"github.com/grafana/grafana/pkg/services/cleanup"
@@ -47,7 +46,7 @@ import (
 )
 
 func ProvideBackgroundServiceRegistry(
-	ng *ngalert.AlertNG, cleanup *cleanup.CleanUpService, live *live.GrafanaLive,
+	httpServer *api.HTTPServer, ng *ngalert.AlertNG, cleanup *cleanup.CleanUpService, live *live.GrafanaLive,
 	pushGateway *pushhttp.Gateway, notifications *notifications.NotificationService,
 	rendering *rendering.RenderingService, tokenService auth.UserTokenBackgroundService, tracing tracing.Tracer,
 	provisioning *provisioning.ProvisioningServiceImpl, alerting *alerting.AlertEngine, usageStats *uss.UsageStats,
@@ -60,7 +59,6 @@ func ProvideBackgroundServiceRegistry(
 	bundleService *supportbundlesimpl.Service,
 	usageStatsProvidersRegistry registry.UsageStatsProvidersRegistry,
 	provisioningService provisioning.ProvisioningService,
-	moduleManager modules.Manager,
 	// Need to make sure these are initialized, is there a better place to put them?
 	_ dashboardsnapshots.Service, _ *alerting.AlertNotificationService,
 	_ serviceaccounts.Service, _ *guardian.Provider,
@@ -68,6 +66,7 @@ func ProvideBackgroundServiceRegistry(
 	_ *grpcserver.HealthService, _ entity.EntityStoreServer, _ *grpcserver.ReflectionService, _ *ldapapi.Service,
 ) (*BackgroundServiceRegistry, error) {
 	r := NewBackgroundServiceRegistry(
+		httpServer,
 		ng,
 		cleanup,
 		live,
@@ -98,14 +97,6 @@ func ProvideBackgroundServiceRegistry(
 		dashboardUpdater,
 	)
 
-	err := moduleManager.RegisterModule(modules.Core, func() (services.Service, error) {
-		r.BasicService = services.NewBasicService(r.start, r.run, r.stop)
-		return r, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	r.usageStatsProvidersRegistry = usageStatsProvidersRegistry
 	r.statsCollectorService = statsCollector
 	r.provisioningService = provisioningService
@@ -115,7 +106,6 @@ func ProvideBackgroundServiceRegistry(
 
 // BackgroundServiceRegistry provides background services.
 type BackgroundServiceRegistry struct {
-	*services.BasicService
 	statsCollectorService       *statscollector.Service
 	usageStatsProvidersRegistry registry.UsageStatsProvidersRegistry
 	provisioningService         provisioning.ProvisioningService

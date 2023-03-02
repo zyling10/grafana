@@ -12,15 +12,7 @@ import (
 )
 
 const (
-	All           string = "all"
-	Core          string = "core"
-	HTTPServer    string = "http-server"
-	AccessControl string = "access-control"
-
-	Plugins             string = "plugins"
-	PluginManagerServer string = "plugins-server"
-	PluginManagerClient string = "plugins-client"
-	PluginManagement    string = "plugin-management"
+	All string = "all"
 )
 
 type Modules struct {
@@ -59,21 +51,7 @@ func (m *Modules) Init(_ context.Context) error {
 	m.moduleManager.RegisterModule(All, nil)
 
 	deps := map[string][]string{
-		PluginManagerServer: {},
-		PluginManagerClient: {},
-		PluginManagement:    {},
-		Plugins:             {},
-
-		AccessControl: {},
-		Core:          {AccessControl, Plugins},
-		HTTPServer:    {Core, Plugins},
-		All:           {Core, HTTPServer, AccessControl, Plugins},
-	}
-
-	if m.isModuleEnabled(All) {
-		deps[Plugins] = append(deps[Plugins], PluginManagement)
-	} else {
-		deps[Plugins] = append(deps[Plugins], PluginManagerClient)
+		All: {},
 	}
 
 	for mod, targets := range deps {
@@ -82,23 +60,20 @@ func (m *Modules) Init(_ context.Context) error {
 		}
 	}
 
-	m.deps = deps
-
-	return nil
-}
-
-func (m *Modules) Run(ctx context.Context) error {
-	serviceMap, err := m.moduleManager.InitModuleServices(m.targets...)
+	var err error
+	m.serviceMap, err = m.moduleManager.InitModuleServices(m.targets...)
 	if err != nil {
 		return err
 	}
-	m.serviceMap = serviceMap
 
-	var svcs []services.Service
-	for _, s := range serviceMap {
-		svcs = append(svcs, s)
+	if len(m.serviceMap) == 0 {
+		return nil
 	}
 
+	var svcs []services.Service
+	for _, s := range m.serviceMap {
+		svcs = append(svcs, s)
+	}
 	sm, err := services.NewManager(svcs...)
 	if err != nil {
 		return err
@@ -106,14 +81,23 @@ func (m *Modules) Run(ctx context.Context) error {
 
 	m.serviceManager = sm
 
+	return nil
+}
+
+func (m *Modules) Run(ctx context.Context) error {
+	if len(m.serviceMap) == 0 {
+		<-ctx.Done()
+		return nil
+	}
+
 	healthy := func() { m.log.Info("Modules started") }
 	stopped := func() { m.log.Info("Modules stopped") }
 	serviceFailed := func(service services.Service) {
 		// if any service fails, stop all services
-		sm.StopAsync()
+		m.serviceManager.StopAsync()
 
 		// log which module failed
-		for module, s := range serviceMap {
+		for module, s := range m.serviceMap {
 			if s == service {
 				if errors.Is(service.FailureCase(), modules.ErrStopProcess) {
 					m.log.Info("Received stop signal via return error", "module", module, "err", service.FailureCase())
@@ -127,16 +111,16 @@ func (m *Modules) Run(ctx context.Context) error {
 		m.log.Error("Module failed", "module", "unknown", "err", service.FailureCase())
 	}
 
-	sm.AddListener(services.NewManagerListener(healthy, stopped, serviceFailed))
+	m.serviceManager.AddListener(services.NewManagerListener(healthy, stopped, serviceFailed))
 
 	// wait until a service fails or stop signal received
-	err = sm.StartAsync(ctx)
+	err := m.serviceManager.StartAsync(ctx)
 	if err == nil {
-		err = sm.AwaitStopped(ctx)
+		err = m.serviceManager.AwaitStopped(ctx)
 	}
 
 	if err == nil {
-		if failed := sm.ServicesByState()[services.Failed]; len(failed) > 0 {
+		if failed := m.serviceManager.ServicesByState()[services.Failed]; len(failed) > 0 {
 			for _, f := range failed {
 				if !errors.Is(f.FailureCase(), modules.ErrStopProcess) {
 					// Details were reported via failure listener before
@@ -162,20 +146,6 @@ func (m *Modules) Shutdown(ctx context.Context) error {
 		return nil
 	}
 	return nil
-}
-
-func (m *Modules) isModuleEnabled(name string) bool {
-	return stringsContain(m.targets, name)
-}
-
-func stringsContain(values []string, search string) bool {
-	for _, v := range values {
-		if search == v {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (m *Modules) RegisterModule(name string, initFn func() (services.Service, error), deps ...string) error {

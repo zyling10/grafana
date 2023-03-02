@@ -166,7 +166,7 @@ var wireSet = wire.NewSet(
 	wire.Bind(new(legacydata.RequestHandler), new(*legacydataservice.Service)),
 	alerting.ProvideAlertStore,
 	alerting.ProvideAlertEngine,
-	alerting.ProvideStats,
+	wire.Bind(new(alerting.UsageStatsQuerier), new(*alerting.AlertEngine)),
 	api.ProvideHTTPServer,
 	query.ProvideService,
 	thumbs.ProvideService,

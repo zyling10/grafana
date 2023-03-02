@@ -13,7 +13,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/grafana/dskit/services"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -107,14 +106,12 @@ import (
 )
 
 type HTTPServer struct {
-	*services.BasicService
 	log              log.Logger
 	web              *web.Mux
 	httpSrv          *http.Server
 	middlewares      []web.Handler
 	namedMiddlewares []routing.RegisterNamedMiddleware
 	bus              bus.Bus
-	moduleManager    modules.Manager
 
 	PluginContextProvider        *plugincontext.Provider
 	RouteRegister                routing.RouteRegister
@@ -264,7 +261,6 @@ func ProvideHTTPServer(opts ServerOptions, cfg *setting.Cfg, routeRegister routi
 	m := web.New()
 
 	hs := &HTTPServer{
-		moduleManager:                moduleManager,
 		Cfg:                          cfg,
 		RouteRegister:                routeRegister,
 		bus:                          bus,
@@ -375,14 +371,6 @@ func ProvideHTTPServer(opts ServerOptions, cfg *setting.Cfg, routeRegister routi
 	// Register access control scope resolver for annotations
 	hs.AccessControl.RegisterScopeAttributeResolver(AnnotationTypeScopeResolver(hs.annotationsRepo))
 
-	err := hs.moduleManager.RegisterModule(modules.HTTPServer, func() (services.Service, error) {
-		hs.BasicService = services.NewBasicService(hs.start, hs.run, nil)
-		return hs, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	if err := hs.declareFixedRoles(); err != nil {
 		return nil, err
 	}
@@ -397,7 +385,7 @@ func (hs *HTTPServer) AddNamedMiddleware(middleware routing.RegisterNamedMiddlew
 	hs.namedMiddlewares = append(hs.namedMiddlewares, middleware)
 }
 
-func (hs *HTTPServer) start(ctx context.Context) error {
+func (hs *HTTPServer) Run(ctx context.Context) error {
 	hs.applyRoutes()
 
 	// Remove any square brackets enclosing IPv6 addresses, a format we support for backwards compatibility
@@ -419,10 +407,6 @@ func (hs *HTTPServer) start(ctx context.Context) error {
 	default:
 	}
 
-	return nil
-}
-
-func (hs *HTTPServer) run(ctx context.Context) error {
 	listener, err := hs.getListener()
 	if err != nil {
 		return err

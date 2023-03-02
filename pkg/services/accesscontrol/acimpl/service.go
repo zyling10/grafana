@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grafana/dskit/services"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/grafana/grafana/pkg/api/routing"
@@ -18,7 +17,6 @@ import (
 	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/server/modules"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
-	"github.com/grafana/grafana/pkg/services/accesscontrol/api"
 	"github.com/grafana/grafana/pkg/services/accesscontrol/database"
 	"github.com/grafana/grafana/pkg/services/accesscontrol/pluginutils"
 	"github.com/grafana/grafana/pkg/services/featuremgmt"
@@ -33,13 +31,12 @@ const (
 )
 
 func ProvideService(cfg *setting.Cfg, store db.DB, routeRegister routing.RouteRegister, cache *localcache.CacheService,
-	accessControl accesscontrol.AccessControl, features *featuremgmt.FeatureManager, moduleManager modules.Manager) (*Service, error) {
-	return ProvideOSSService(cfg, database.ProvideService(store), cache, features, routeRegister, accessControl, moduleManager)
+	accessControl accesscontrol.AccessControl, features *featuremgmt.FeatureManager) (*Service, error) {
+	return ProvideOSSService(cfg, database.ProvideService(store), cache, features, routeRegister, accessControl), nil
 }
 
 func ProvideOSSService(cfg *setting.Cfg, store store, cache *localcache.CacheService, features *featuremgmt.FeatureManager,
-	routeRegister routing.RouteRegister, accessControl accesscontrol.AccessControl,
-	moduleManager modules.Manager) (*Service, error) {
+	routeRegister routing.RouteRegister, accessControl accesscontrol.AccessControl) *Service {
 	s := &Service{
 		cfg:           cfg,
 		store:         store,
@@ -49,16 +46,8 @@ func ProvideOSSService(cfg *setting.Cfg, store store, cache *localcache.CacheSer
 		features:      features,
 		routeRegister: routeRegister,
 		accessControl: accessControl,
-		moduleManager: moduleManager,
 	}
-	err := s.moduleManager.RegisterModule(modules.AccessControl, func() (services.Service, error) {
-		s.BasicService = services.NewBasicService(s.start, s.run, nil)
-		return s, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return s, nil
+	return s
 }
 
 type store interface {
@@ -70,7 +59,6 @@ type store interface {
 
 // Service is the service implementing role based access control.
 type Service struct {
-	*services.BasicService
 	log           log.Logger
 	cfg           *setting.Cfg
 	store         store
@@ -82,25 +70,6 @@ type Service struct {
 
 	routeRegister routing.RouteRegister
 	accessControl accesscontrol.AccessControl
-}
-
-func (s *Service) start(ctx context.Context) error {
-	if err := s.RegisterFixedRoles(ctx); err != nil {
-		return err
-	}
-
-	if !accesscontrol.IsDisabled(s.cfg) {
-		api.NewAccessControlAPI(s.routeRegister, s.accessControl, s, s.features).RegisterAPIEndpoints()
-		if err := accesscontrol.DeclareFixedRoles(s); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (s *Service) run(ctx context.Context) error {
-	<-ctx.Done()
-	return ctx.Err()
 }
 
 func (s *Service) GetUsageStats(_ context.Context) map[string]interface{} {

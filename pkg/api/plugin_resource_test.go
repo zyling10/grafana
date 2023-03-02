@@ -100,7 +100,7 @@ func TestCallResource(t *testing.T) {
 		require.Equal(t, 200, resp.StatusCode)
 	})
 
-	pc, err := pluginClient.NewDecorator(&fakes.FakePluginBackend{
+	pc, err := pluginClient.NewDecorator(&fakes.FakePluginClient{
 		CallResourceHandlerFunc: backend.CallResourceHandlerFunc(func(ctx context.Context,
 			req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
 			return errors.New("something went wrong")
