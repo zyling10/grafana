@@ -126,7 +126,10 @@ export function getStackingGroups(frame: DataFrame) {
         ? (custom.lineInterpolation as LineInterpolation)
         : null;
 
-    let stackKey = `${stackDir}|${stackingMode}|${stackingGroup}|${buildScaleKey(config, type)}|${drawStyle}|${drawStyle2}`;
+    let stackKey = `${stackDir}|${stackingMode}|${stackingGroup}|${buildScaleKey(
+      config,
+      type
+    )}|${drawStyle}|${drawStyle2}`;
 
     let group = groups.get(stackKey);
 
