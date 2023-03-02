@@ -14,7 +14,7 @@ import {
   ConvertFieldTypeOptions,
   ConvertFieldTypeTransformerOptions,
 } from '@grafana/data/src/transformations/transformers/convertFieldType';
-import { Button, InlineField, InlineFieldRow, Input, Select, getFieldTypeIconName } from '@grafana/ui';
+import { Button, InlineField, InlineFieldRow, Input, Select, getIconForFieldType } from '@grafana/ui';
 import { FieldNamePicker } from '@grafana/ui/src/components/MatchersUI/FieldNamePicker';
 import { findField } from 'app/features/dimensions';
 
@@ -28,12 +28,12 @@ export const ConvertFieldTypeTransformerEditor = ({
   onChange,
 }: TransformerUIProps<ConvertFieldTypeTransformerOptions>) => {
   const allTypes: Array<SelectableValue<FieldType>> = [
-    { value: FieldType.number, label: 'Number', icon: getFieldTypeIconName(FieldType.number) },
-    { value: FieldType.string, label: 'String', icon: getFieldTypeIconName(FieldType.string) },
-    { value: FieldType.time, label: 'Time', icon: getFieldTypeIconName(FieldType.time) },
-    { value: FieldType.boolean, label: 'Boolean', icon: getFieldTypeIconName(FieldType.boolean) },
-    { value: FieldType.enum, label: 'Enum', icon: getFieldTypeIconName(FieldType.enum) },
-    { value: FieldType.other, label: 'JSON', icon: getFieldTypeIconName(FieldType.other) },
+    { value: FieldType.number, label: 'Number', icon: getIconForFieldType(FieldType.number) },
+    { value: FieldType.string, label: 'String', icon: getIconForFieldType(FieldType.string) },
+    { value: FieldType.time, label: 'Time', icon: getIconForFieldType(FieldType.time) },
+    { value: FieldType.boolean, label: 'Boolean', icon: getIconForFieldType(FieldType.boolean) },
+    { value: FieldType.enum, label: 'Enum', icon: getIconForFieldType(FieldType.enum) },
+    { value: FieldType.other, label: 'JSON', icon: getIconForFieldType(FieldType.other) },
   ];
 
   const onSelectField = useCallback(
