@@ -107,6 +107,7 @@ import (
 type HTTPServer struct {
 	log              log.Logger
 	web              *web.Mux
+	context          context.Context
 	httpSrv          *http.Server
 	middlewares      []web.Handler
 	namedMiddlewares []routing.RegisterNamedMiddleware
@@ -385,6 +386,8 @@ func (hs *HTTPServer) AddNamedMiddleware(middleware routing.RegisterNamedMiddlew
 }
 
 func (hs *HTTPServer) Run(ctx context.Context) error {
+	hs.context = ctx
+
 	hs.applyRoutes()
 
 	// Remove any square brackets enclosing IPv6 addresses, a format we support for backwards compatibility

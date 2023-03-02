@@ -18,9 +18,8 @@ type Service struct {
 
 func ProvideService(pluginRegistry registry.Service, pluginSources sources.Resolver,
 	pluginLoader loader.Service) (*Service, error) {
-	ctx := context.Background()
-	for _, ps := range pluginSources.List(ctx) {
-		if _, err := pluginLoader.Load(ctx, ps.Class, ps.Paths); err != nil {
+	for _, ps := range pluginSources.List(context.Background()) {
+		if _, err := pluginLoader.Load(context.Background(), ps.Class, ps.Paths); err != nil {
 			return nil, err
 		}
 	}

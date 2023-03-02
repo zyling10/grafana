@@ -274,9 +274,9 @@ func newTestScenario(t *testing.T, name string, opts []testScenarioOption, callb
 	}))
 	t.Cleanup(tsCtx.outgoingServer.Close)
 
-	p, backendTestPlugin := createTestPlugin(tsCtx.testPluginID)
+	testPlugin, backendTestPlugin := createTestPlugin(tsCtx.testPluginID)
 	tsCtx.backendTestPlugin = backendTestPlugin
-	err := testEnv.PluginRegistry.Add(ctx, p)
+	err := testEnv.PluginRegistry.Add(ctx, testPlugin)
 	require.NoError(t, err)
 
 	jsonData := simplejson.New()
