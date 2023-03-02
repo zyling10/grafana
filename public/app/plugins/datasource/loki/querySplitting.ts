@@ -110,7 +110,7 @@ export function runGroupedQueries(datasource: LokiDatasource, requests: LokiGrou
     const nextRequest = () => {
       mergedResponse = mergedResponse || { data: [] };
       const { nextRequestN, nextRequestGroup } = getNextRequestPointers(requests, requestGroup, requestN);
-      if (nextRequestN > 0) {
+      if (nextRequestN > 0 && nextRequestGroup >= 0) {
         mergedResponse.state = LoadingState.Streaming;
         subscriber.next(mergedResponse);
 
@@ -170,7 +170,8 @@ function getNextRequestPointers(requests: LokiGroupedRequest, requestGroup: numb
     };
   }
   return {
-    nextRequestGroup: 0,
+    // Find the first group where `[requestN - 1]` is defined
+    nextRequestGroup: requests.findIndex((group) => group?.partition[requestN - 1] !== undefined),
     nextRequestN: requestN - 1,
   };
 }
