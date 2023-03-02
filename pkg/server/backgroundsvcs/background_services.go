@@ -122,12 +122,12 @@ func NewBackgroundServiceRegistry(s ...registry.BackgroundService) *BackgroundSe
 	}
 }
 
-func (r *BackgroundServiceRegistry) start(ctx context.Context) error {
+func (r *BackgroundServiceRegistry) Init(ctx context.Context) error {
 	r.statsCollectorService.RegisterProviders(r.usageStatsProvidersRegistry.GetServices())
 	return r.provisioningService.RunInitProvisioners(ctx)
 }
 
-func (r *BackgroundServiceRegistry) run(ctx context.Context) error {
+func (r *BackgroundServiceRegistry) Run(ctx context.Context) error {
 	childRoutines, childCtx := errgroup.WithContext(ctx)
 
 	// Start background services.

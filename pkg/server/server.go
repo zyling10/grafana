@@ -13,7 +13,7 @@ import (
 	_ "github.com/grafana/grafana/pkg/extensions"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/metrics"
-	"github.com/grafana/grafana/pkg/registry"
+	"github.com/grafana/grafana/pkg/server/backgroundsvcs"
 	"github.com/grafana/grafana/pkg/server/modules"
 	"github.com/grafana/grafana/pkg/setting"
 )
@@ -30,7 +30,7 @@ type Options struct {
 
 // New returns a new instance of Server.
 func New(opts Options, cfg *setting.Cfg, moduleService *modules.Modules, httpServer *api.HTTPServer,
-	backgroundServiceRegistry registry.BackgroundServiceRegistry) (*Server, error) {
+	backgroundServiceRegistry *backgroundsvcs.BackgroundServiceRegistry) (*Server, error) {
 	s := newServer(opts, cfg, moduleService, backgroundServiceRegistry, httpServer)
 
 	if err := s.init(context.Background()); err != nil {
@@ -41,7 +41,7 @@ func New(opts Options, cfg *setting.Cfg, moduleService *modules.Modules, httpSer
 }
 
 func newServer(opts Options, cfg *setting.Cfg, modulesEngine modules.Engine,
-	backgroundServiceRegistry registry.BackgroundServiceRegistry, httpServer *api.HTTPServer) *Server {
+	backgroundServiceRegistry *backgroundsvcs.BackgroundServiceRegistry, httpServer *api.HTTPServer) *Server {
 	return &Server{
 		log:                       log.New("server"),
 		cfg:                       cfg,
@@ -65,7 +65,7 @@ type Server struct {
 	shutdownFinished chan struct{}
 
 	httpServer                *api.HTTPServer
-	backgroundServiceRegistry registry.BackgroundServiceRegistry
+	backgroundServiceRegistry *backgroundsvcs.BackgroundServiceRegistry
 }
 
 // init initializes the server and its services.
@@ -83,6 +83,14 @@ func (s *Server) init(ctx context.Context) error {
 	}
 
 	if err := metrics.SetEnvironmentInformation(s.cfg.MetricsGrafanaEnvironmentInfo); err != nil {
+		return err
+	}
+
+	if err := s.backgroundServiceRegistry.Init(ctx); err != nil {
+		return err
+	}
+
+	if err := s.backgroundServiceRegistry.Run(ctx); err != nil {
 		return err
 	}
 

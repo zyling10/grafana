@@ -12,7 +12,7 @@ import (
 func TestBackgroundServiceRegistry_Run_Error(t *testing.T) {
 	testErr := errors.New("boom")
 	s := NewBackgroundServiceRegistry(newTestService(nil, false), newTestService(testErr, false))
-	err := s.run(context.Background())
+	err := s.Run(context.Background())
 	require.ErrorIs(t, err, testErr)
 }
 
