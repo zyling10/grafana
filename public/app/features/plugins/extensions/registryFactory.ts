@@ -1,6 +1,7 @@
 import {
   AppPluginExtensionCommand,
   AppPluginExtensionCommandConfig,
+  AppPluginExtensionCommandHelpers,
   AppPluginExtensionLink,
   AppPluginExtensionLinkConfig,
   PluginExtensionCommand,
@@ -8,6 +9,8 @@ import {
   PluginExtensionTypes,
 } from '@grafana/data';
 import type { PluginExtensionRegistry, PluginExtensionRegistryItem } from '@grafana/runtime';
+import appEvents from 'app/core/app_events';
+import { ShowModalReactEvent, ShowModalReactPayload } from 'app/types/events';
 
 import { PluginPreloadResult } from '../pluginPreloader';
 
@@ -147,18 +150,20 @@ function createCommandConfigure(
     title: config.title,
     logger: console.warn,
   };
-
-  const handlerWithErrorHandler = commandErrorHandling(options);
+  const openModal = ({ component, props }: ShowModalReactPayload) =>
+    appEvents.publish(new ShowModalReactEvent({ component, props: props || undefined }));
+  const helpers = { openModal };
+  const handlerWithErrorHandler = commandErrorHandling(options, helpers);
   const handler = handlerWithErrorHandler(config.handler);
 
   if (!config.configure) {
     return (context) => ({
       ...extension,
-      callHandlerWithContext: () => handler(context),
+      callHandlerWithContext: () => handler(context, helpers),
     });
   }
 
-  const mapper = mapCommandToRegistryType(extension, config, handlerWithErrorHandler);
+  const mapper = mapCommandToRegistryType(extension, config, handlerWithErrorHandler, helpers);
   const errorHandler = createErrorHandling<AppPluginExtensionCommand>(options);
 
   return mapper(errorHandler(config.configure));
@@ -194,7 +199,8 @@ function mapLinkToRegistryType(
 function mapCommandToRegistryType(
   extension: PluginExtensionCommand,
   config: AppPluginExtensionCommandConfig,
-  createHandlerFunc: (handler: CommandHandlerFunc) => CommandHandlerFunc
+  createHandlerFunc: (handler: CommandHandlerFunc) => CommandHandlerFunc,
+  helpers: AppPluginExtensionCommandHelpers
 ): (configure: ConfigureFunc<AppPluginExtensionCommand>) => PluginExtensionRegistryItem<PluginExtensionCommand> {
   const configurable: AppPluginExtensionCommand = {
     title: extension.title,
@@ -215,7 +221,7 @@ function mapCommandToRegistryType(
         ...extension,
         title: configured.title ?? extension.title,
         description: configured.description ?? extension.description,
-        callHandlerWithContext: () => handler(context),
+        callHandlerWithContext: () => handler(context, helpers),
       };
     };
   };

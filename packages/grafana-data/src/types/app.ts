@@ -64,13 +64,17 @@ export type AppPluginExtensionLinkConfig<C extends object = object> = {
   configure?: (extension: AppPluginExtensionLink, context?: C) => Partial<AppPluginExtensionLink> | undefined;
 };
 
+export type AppPluginExtensionCommandHelpers = {
+  openModal: (payload: { component: React.ComponentType<any>; props: any }) => void;
+};
+
 export type AppPluginExtensionCommand = Pick<PluginExtensionCommand, 'description' | 'title'>;
 
 export type AppPluginExtensionCommandConfig<C extends object = object> = {
   title: string;
   description: string;
   placement: string;
-  handler: (context?: C) => void;
+  handler: (context?: C, helpers?: AppPluginExtensionCommandHelpers) => void;
   configure?: (extension: AppPluginExtensionCommand, context?: C) => Partial<AppPluginExtensionCommand> | undefined;
 };
 
